@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" role="img" aria-label="Publication graphical highlight">
+  <rect width="800" height="600" fill="#f6f4ef"/>
+  <rect x="70" y="72" width="660" height="456" rx="22" fill="#ffffff" stroke="#d9e0e4"/>
+  <path d="M144 392 C226 310 280 410 352 314 C424 218 484 282 550 194 C594 136 646 154 690 118" fill="none" stroke="#17518c" stroke-width="10" stroke-linecap="round"/>
+  <circle cx="252" cy="334" r="44" fill="#eaf1f4" stroke="#17518c" stroke-width="7"/>
+  <circle cx="428" cy="258" r="52" fill="#eaf1f4" stroke="#b84a39" stroke-width="7"/>
+  <circle cx="596" cy="168" r="34" fill="#eaf1f4" stroke="#17518c" stroke-width="7"/>
+  <text x="118" y="134" fill="#17518c" font-family="Arial, sans-serif" font-size="32" font-weight="700">Pd / BiOCl nanosheets</text>
+  <text x="118" y="492" fill="#5f6c76" font-family="Arial, sans-serif" font-size="22">ambient electrosynthesis of urea</text>
+</svg>

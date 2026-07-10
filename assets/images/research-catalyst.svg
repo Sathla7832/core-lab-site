@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" role="img" aria-label="Catalyst materials">
+  <rect width="800" height="600" fill="#f6f4ef"/>
+  <rect x="76" y="78" width="648" height="444" rx="22" fill="#ffffff" stroke="#d9e0e4"/>
+  <g fill="#eaf1f4" stroke="#17518c" stroke-width="6">
+    <circle cx="250" cy="230" r="58"/>
+    <circle cx="365" cy="208" r="34"/>
+    <circle cx="456" cy="260" r="48"/>
+    <circle cx="330" cy="350" r="46"/>
+    <circle cx="505" cy="375" r="62"/>
+  </g>
+  <g fill="#b84a39">
+    <circle cx="250" cy="230" r="12"/>
+    <circle cx="365" cy="208" r="10"/>
+    <circle cx="456" cy="260" r="12"/>
+    <circle cx="330" cy="350" r="10"/>
+    <circle cx="505" cy="375" r="14"/>
+  </g>
+  <path d="M296 220L332 212M397 222L420 238M350 316L424 285M372 362L450 374" stroke="#9aa8b2" stroke-width="6"/>
+  <text x="116" y="126" fill="#17518c" font-family="Arial, sans-serif" font-size="34" font-weight="700">Catalyst design</text>
+  <text x="116" y="478" fill="#5f6c76" font-family="Arial, sans-serif" font-size="22">single atom / core shell / high entropy</text>
+</svg>
