@@ -50,10 +50,10 @@
         <p>逢甲大學 材料科學與工程系<br>407102台中市西屯區文華路100號</p>
         <p><strong>張又中 助理教授</strong><br><a href="mailto:ychungchang@o365.fcu.edu.tw">ychungchang@o365.fcu.edu.tw</a></p>
       </div>
-      <form class="contact-form" onsubmit="alert('表單尚未串接寄信服務，請先使用 Email 聯絡。'); return false;">
-        <label>姓名<input type="text" name="name" autocomplete="name"></label>
-        <label>Email<input type="email" name="email" autocomplete="email"></label>
-        <label>訊息<textarea name="message" rows="5"></textarea></label>
+      <form class="contact-form" data-mailto="ychungchang@o365.fcu.edu.tw">
+        <label>姓名<input type="text" name="name" autocomplete="name" required></label>
+        <label>Email<input type="email" name="email" autocomplete="email" required></label>
+        <label>訊息<textarea name="message" rows="5" required></textarea></label>
         <button class="btn btn-primary" type="submit">送出訊息</button>
       </form>
     </div>
