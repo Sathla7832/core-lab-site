@@ -6,14 +6,15 @@
   --ink: #17212b;
   --muted: #5f6c76;
   --line: #d9e0e4;
-  --brand: https://scholar.google.com/citations?hl=zh-TW&user=eIZESKAAAAAJ&view_op=list_works&sortby=pubdate;
+  --brand: #17518C;
   --brand-dark: #0d355d;
   --accent: #b84a39;
   --maxw: 1120px;
+  --sans: "Noto Sans TC", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
-body { margin: 0; font-family: "Noto Sans TC", system-ui, sans-serif; color: var(--ink); background: var(--paper); line-height: 1.75; }
+body { margin: 0; font-family: var(--sans); color: var(--ink); background: var(--paper); line-height: 1.75; }
 a { color: var(--brand); text-decoration: none; }
 a:hover { color: var(--accent); }
 .container { max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
@@ -22,20 +23,20 @@ a:hover { color: var(--accent); }
 .brand { display: flex; align-items: center; gap: 12px; color: var(--ink); }
 .brand-mark { width: 42px; height: 42px; display: block; background: var(--surface); border: 1px solid var(--brand); border-radius: 4px; overflow: hidden; }
 .brand-mark img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.brand-text { font-family: "Noto Serif TC", serif; font-weight: 800; line-height: 1.2; }
-.brand-text small { display: block; font-family: "Noto Sans TC", sans-serif; font-weight: 400; color: var(--muted); font-size: 12px; }
+.brand-text { font-family: var(--sans); font-weight: 800; line-height: 1.2; }
+.brand-text small { display: block; font-family: var(--sans); font-weight: 400; color: var(--muted); font-size: 12px; }
 .nav-links { margin-left: auto; display: flex; gap: 2px; align-items: center; }
 .nav-links a { padding: 8px 11px; color: var(--muted); font-size: 15px; border-bottom: 2px solid transparent; white-space: nowrap; }
 .nav-links a.active, .nav-links a:hover { color: var(--brand-dark); border-bottom-color: var(--brand); }
 .nav-toggle { display: none; }
-section { padding: 72px 0; }
-.hero { min-height: auto; display: flex; align-items: flex-start; border-bottom: 1px solid var(--line); overflow: hidden; padding-top: 96px; padding-bottom: 72px; }
+section { padding: 56px 0; }
+.hero { min-height: auto; display: flex; align-items: flex-start; border-bottom: 1px solid var(--line); overflow: hidden; padding-top: 68px; padding-bottom: 56px; }
 .hero-grid { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(320px, .8fr); gap: 56px; align-items: start; }
 .eyebrow { margin: 0 0 12px; color: var(--brand); font-size: 12px; font-weight: 800; letter-spacing: .18em; text-transform: uppercase; }
-h1, h2, h3 { font-family: "Noto Serif TC", serif; line-height: 1.22; margin: 0; letter-spacing: 0; }
+h1, h2, h3 { font-family: var(--sans); line-height: 1.22; margin: 0; letter-spacing: 0; }
 h1 { font-size: clamp(34px, 5vw, 64px); }
 .home-hero h1 { font-size: clamp(34px, 4.2vw, 54px); }
-.home-hero .lead { max-width: 72ch; font-size: clamp(22px, 2.2vw, 28px); line-height: 1.75; text-align: justify; text-align-last: left; }
+.home-hero .lead { max-width: 70ch; font-size: clamp(19px, 1.9vw, 24px); line-height: 1.6; text-align: left; }
 h2 { font-size: 28px; margin-bottom: 18px; }
 h3 { font-size: 21px; }
 .lead { max-width: 66ch; color: var(--muted); font-size: 19px; margin: 20px 0 0; }
@@ -55,6 +56,17 @@ h3 { font-size: 21px; }
 .peak-three { right: 3%; height: 125px; }
 .advisor-photo { margin: 0; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: var(--surface); aspect-ratio: 4 / 5; max-height: 520px; justify-self: end; width: min(100%, 420px); }
 .advisor-photo img { width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block; }
+.profile { padding-top: 84px; padding-bottom: 56px; }
+.profile-card { display: grid; grid-template-columns: minmax(240px, 340px) 1fr; gap: 44px; align-items: start; }
+.profile-photo { margin: 0; border-radius: 10px; overflow: hidden; background: var(--surface); border: 1px solid var(--line); aspect-ratio: 4 / 5; }
+.profile-photo img { width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block; }
+.profile-info h1 { color: var(--brand-dark); font-size: clamp(28px, 3.4vw, 40px); margin-bottom: 14px; }
+.profile-role, .profile-org { margin: 0 0 6px; color: var(--muted); font-size: 18px; }
+.profile-h { color: var(--brand-dark); font-size: 22px; margin: 22px 0 6px; }
+.profile-line { margin: 0; color: var(--ink); font-size: 17px; }
+.profile-line a { color: var(--brand); }
+.profile .hero-actions { margin-top: 26px; }
+@media (max-width: 760px) { .profile-card { grid-template-columns: 1fr; gap: 22px; } .profile-photo { max-width: 320px; } }
 .section-soft { background: var(--soft); }
 .stats { display: grid; grid-template-columns: repeat(4, 1fr); border: 1px solid var(--line); background: var(--surface); }
 .stat { padding: 30px 16px; text-align: center; border-right: 1px solid var(--line); }
@@ -72,9 +84,9 @@ h3 { font-size: 21px; }
 .card-kicker { margin: 0 0 8px; color: var(--accent); font-size: 13px; font-weight: 800; }
 .card p { color: var(--muted); }
 .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }
-.timeline { list-style: none; padding: 0; margin: 0; display: grid; gap: 18px; }
-.timeline li { display: grid; grid-template-columns: 150px 1fr; gap: 18px; padding-bottom: 18px; border-bottom: 1px solid var(--line); }
-.timeline time { color: var(--brand); font-weight: 700; }
+.timeline { list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; }
+.timeline li { display: grid; grid-template-columns: max-content 1fr; gap: 28px; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
+.timeline time { color: var(--brand); font-weight: 700; white-space: nowrap; }
 .timeline span { display: block; color: var(--muted); }
 .stack { display: grid; gap: 18px; }
 .research-row { display: grid; grid-template-columns: 280px minmax(0, 1fr) 260px; gap: 32px; padding: 34px 0; border-bottom: 1px solid var(--line); align-items: center; }
@@ -89,8 +101,8 @@ h3 { font-size: 21px; }
 .pub-body .pub-text { min-width: 0; }
 .pub-text h3 { margin: 0 0 16px; font-family: var(--sans); font-size: clamp(22px, 2.4vw, 29px); line-height: 1.35; color: var(--ink); font-weight: 800; }
 .pub-text h3 sub, .pub-text h3 sup { font-size: .62em; line-height: 0; }
-.pub-title { text-align: justify; text-align-last: left; }
-.pub-citation { margin: 0; color: var(--muted); font-size: clamp(16px, 1.55vw, 20px); line-height: 1.6; text-align: justify; text-align-last: left; }
+.pub-title { text-align: left; }
+.pub-citation { margin: 0; color: var(--muted); font-size: clamp(16px, 1.55vw, 20px); line-height: 1.6; text-align: left; }
 .pub-citation em { color: var(--ink); font-style: italic; }
 .pub-citation strong:not(.pi-author) { color: var(--ink); font-weight: 800; }
 .pub-citation sub, .pub-citation sup { font-size: .62em; line-height: 0; }
