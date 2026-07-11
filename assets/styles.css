@@ -88,7 +88,8 @@ h3 { font-size: 21px; }
 .pub-body .pub-text { min-width: 0; }
 .pub-text h3 { margin: 0 0 16px; font-family: var(--sans); font-size: clamp(22px, 2.4vw, 29px); line-height: 1.35; color: var(--ink); font-weight: 800; }
 .pub-text h3 sub, .pub-text h3 sup { font-size: .62em; line-height: 0; }
-.pub-citation { margin: 0; color: var(--muted); font-size: clamp(18px, 2vw, 22px); line-height: 1.7; text-align: justify; text-align-last: left; }
+.pub-title { text-align: left; }
+.pub-citation { margin: 0; color: var(--muted); font-size: clamp(16px, 1.55vw, 20px); line-height: 1.6; text-align: justify; text-align-last: left; }
 .pub-citation em { color: var(--ink); font-style: italic; }
 .pub-citation strong:not(.pi-author) { color: var(--ink); font-weight: 800; }
 .pub-citation sub, .pub-citation sup { font-size: .62em; line-height: 0; }
