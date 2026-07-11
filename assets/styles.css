@@ -34,7 +34,7 @@ section { padding: 72px 0; }
 h1, h2, h3 { font-family: "Noto Serif TC", serif; line-height: 1.22; margin: 0; letter-spacing: 0; }
 h1 { font-size: clamp(34px, 5vw, 64px); }
 .home-hero h1 { font-size: clamp(34px, 4.2vw, 54px); }
-.home-hero .lead { max-width: 72ch; font-size: clamp(22px, 2.2vw, 28px); line-height: 1.75; }
+.home-hero .lead { max-width: 72ch; font-size: clamp(22px, 2.2vw, 28px); line-height: 1.75; text-align: justify; text-align-last: left; }
 h2 { font-size: 28px; margin-bottom: 18px; }
 h3 { font-size: 21px; }
 .lead { max-width: 66ch; color: var(--muted); font-size: 19px; margin: 20px 0 0; }
