@@ -176,7 +176,10 @@ input:focus, textarea:focus { outline: 3px solid rgba(23,81,140,.18); border-col
 .footer h2 { color: #fff; font-size: 18px; margin-bottom: 12px; }
 .footer a { color: #f3f7fa; }
 .footer ul { list-style: none; padding: 0; margin: 0; }
-.fine { border-top: 1px solid rgba(255,255,255,.16); margin-top: 36px; padding-top: 20px; color: #aab6bf; font-size: 13px; }
+.fine { border-top: 1px solid rgba(255,255,255,.16); margin-top: 36px; padding-top: 20px; color: #aab6bf; font-size: 13px; display: flex; align-items: center; justify-content: space-between; gap: 18px; flex-wrap: wrap; }
+.visitor-stats { display: inline-flex; align-items: center; gap: 14px; flex-wrap: wrap; color: #c5d0d8; }
+.visitor-stats span { white-space: nowrap; }
+.visitor-stats strong { color: #fff; font-weight: 800; margin-left: 4px; }
 .nav, .brand-mark, .hero, .btn, .spectrum, .peak, .advisor-photo, .stats, .stat, .card, .info-panel, .empty-state, .contact-form, .timeline li, .research-row, .tags span, .research-media, .pub-list li, .pub-tags, .pub-media, .news-item, input, textarea, .fine, .nav-toggle { border-color: transparent !important; }
 .nav-links a.active, .nav-links a:hover { border-bottom-color: transparent !important; }
 .axis { background: transparent !important; }

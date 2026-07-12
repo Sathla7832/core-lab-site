@@ -1,6 +1,12 @@
 document.addEventListener("click", (event) => {
   const toggle = event.target.closest(".nav-toggle");
-  if (toggle) document.querySelector(".nav-links").classList.toggle("open");
+  if (!toggle) return;
+
+  const nav = document.querySelector(".nav-links");
+  if (!nav) return;
+
+  const isOpen = nav.classList.toggle("open");
+  toggle.setAttribute("aria-expanded", String(isOpen));
 });
 
 document.addEventListener("submit", (event) => {

@@ -17,8 +17,8 @@
         <span class="brand-mark"><img src="assets/images/lab-icon.jpg" alt="CORE Lab icon" width="42" height="42" style="width:42px;height:42px;object-fit:cover;display:block;"></span>
         <span class="brand-text">CORE Lab</span>
       </a>
-      <button class="nav-toggle" aria-label="Open menu" type="button">Menu</button>
-      <nav class="nav-links" aria-label="Main menu">
+      <button class="nav-toggle" aria-label="Open menu" aria-controls="main-menu" aria-expanded="false" type="button">Menu</button>
+      <nav class="nav-links" id="main-menu" aria-label="Main menu">
         <a class="" href="index.html">Home</a>
         <a class="active" href="about.html">Members</a>
         <a class="" href="publications.html">Publications</a>
@@ -67,8 +67,16 @@
         </ul>
       </div>
     </div>
-    <div class="container fine">&copy; 2026 CORE Lab. All rights reserved.</div>
+    <div class="container fine">
+      <span>&copy; 2026 CORE Lab. All rights reserved.</span>
+      <span class="visitor-stats" aria-label="Visitor statistics">
+        <span id="busuanzi_container_site_uv">Total visitors <strong id="busuanzi_value_site_uv">--</strong></span>
+        <span id="busuanzi_container_site_pv">Total views <strong id="busuanzi_value_site_pv">--</strong></span>
+        <span id="busuanzi_container_page_pv">Page views <strong id="busuanzi_value_page_pv">--</strong></span>
+      </span>
+    </div>
   </footer>
+  <script defer src="https://vercount.one/js"></script>
   <script src="assets/main.js"></script>
 </body>
 </html>
