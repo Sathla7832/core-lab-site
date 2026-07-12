@@ -37,6 +37,7 @@ section { padding: 56px 0; }
 .publication-hero h1 { margin-bottom: 12px; }
 .publication-hero .lead { margin-top: 0; }
 .publication-hero .hero-actions { margin-top: 16px; }
+.publication-hero .spectrum { display: none; }
 .hero-grid { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(320px, .8fr); gap: 56px; align-items: start; }
 .eyebrow { margin: 0 0 12px; color: var(--brand); font-size: 12px; font-weight: 800; letter-spacing: .18em; text-transform: uppercase; }
 h1, h2, h3 { font-family: var(--sans); line-height: 1.22; margin: 0; letter-spacing: 0; }
