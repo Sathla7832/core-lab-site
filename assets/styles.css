@@ -69,12 +69,7 @@ h3 { font-size: 21px; }
 .profile-line { margin: 0; color: var(--ink); font-size: 17px; }
 .profile-line a { color: var(--brand); }
 .profile .hero-actions { margin-top: 26px; }
-.profile-contact-form { margin-top: 8px; display: grid; grid-template-columns: minmax(140px, 1fr) minmax(180px, 1fr) minmax(220px, 1.4fr) auto; align-items: end; gap: 10px; padding: 14px; }
-.profile-contact-form label { gap: 4px; font-size: 14px; }
-.profile-contact-form input, .profile-contact-form textarea { min-height: 38px; padding: 7px 9px; }
-.profile-contact-form textarea { height: 38px; resize: none; }
-.profile-contact-form .btn { min-height: 38px; padding: 7px 14px; white-space: nowrap; }
-@media (max-width: 760px) { .profile-card { grid-template-columns: 1fr; gap: 22px; } .profile-photo { max-width: 320px; } .profile-contact-form { grid-template-columns: 1fr; } }
+@media (max-width: 760px) { .profile-card { grid-template-columns: 1fr; gap: 22px; } .profile-photo { max-width: 320px; } }
 .section-soft { background: var(--soft); }
 .stats { display: grid; grid-template-columns: repeat(4, 1fr); border: 1px solid var(--line); background: var(--surface); }
 .stat { padding: 30px 16px; text-align: center; border-right: 1px solid var(--line); }
