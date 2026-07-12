@@ -91,7 +91,7 @@ h3 { font-size: 21px; }
 .research-strip .card p { min-height: 118px; text-align: justify; text-align-last: left; text-justify: inter-word; }
 .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }
 .timeline { list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; }
-.timeline li { display: grid; grid-template-columns: max-content 1fr; gap: 28px; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
+.timeline li { display: grid; grid-template-columns: 240px minmax(0, 1fr); gap: 28px; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
 .timeline time { color: var(--brand); font-weight: 700; white-space: nowrap; }
 .timeline span { display: block; color: var(--muted); }
 .stack { display: grid; gap: 18px; }
