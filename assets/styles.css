@@ -77,6 +77,7 @@ h3 { font-size: 21px; }
 .stat strong { display: block; font-size: 38px; color: var(--brand-dark); line-height: 1; }
 .stat span { display: block; color: var(--muted); margin-top: 10px; }
 .section-head { margin-bottom: 26px; }
+.home-research-head h2 { color: var(--brand); font-weight: 800; }
 .grid { display: grid; gap: 16px; }
 .grid-3 { grid-template-columns: repeat(3, 1fr); }
 .research-strip { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; align-items: stretch; }
@@ -85,7 +86,9 @@ h3 { font-size: 21px; }
 .card-media { margin: auto 0 0; border-radius: 6px; overflow: hidden; background: transparent; aspect-ratio: 16 / 9; width: 100%; }
 .card-media img { width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; }
 .card-kicker { margin: 0 0 8px; color: var(--accent); font-size: 13px; font-weight: 800; }
+.research-strip .card h3 { min-height: 70px; text-align: justify; text-align-last: left; text-justify: inter-word; }
 .card p { color: var(--muted); }
+.research-strip .card p { min-height: 118px; text-align: justify; text-align-last: left; text-justify: inter-word; }
 .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }
 .timeline { list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; }
 .timeline li { display: grid; grid-template-columns: max-content 1fr; gap: 28px; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
