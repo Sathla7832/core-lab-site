@@ -142,6 +142,7 @@ h3 { font-size: 21px; }
 .chart-card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 22px 24px; }
 .chart-card h3 { margin: 0 0 18px; color: var(--ink); font-size: 20px; }
 .chart-canvas { position: relative; height: 340px !important; width: 100%; }
+.sankey-canvas { height: 380px !important; }
 .chart-grid { align-items: stretch; }
 .chart-card { display: flex; flex-direction: column; }
 .data-bar { display: grid; grid-template-columns: 180px minmax(120px, 1fr) 42px; align-items: center; gap: 12px; margin: 10px 0; }
