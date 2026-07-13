@@ -1,4 +1,17 @@
 document.addEventListener("click", (event) => {
+  const activityButton = event.target.closest("[data-activity-scroll]");
+  if (activityButton) {
+    const carousel = document.querySelector("[data-activity-carousel]");
+    const track = carousel && carousel.querySelector(".activity-strip");
+    const card = carousel && carousel.querySelector(".activity-card");
+    if (carousel && track && card) {
+      const direction = Number(activityButton.dataset.activityScroll || 1);
+      const gap = parseFloat(getComputedStyle(track).gap || "0");
+      carousel.scrollBy({ left: direction * (card.getBoundingClientRect().width + gap), behavior: "smooth" });
+    }
+    return;
+  }
+
   const toggle = event.target.closest(".nav-toggle");
   if (!toggle) return;
 
