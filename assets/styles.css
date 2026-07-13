@@ -115,6 +115,15 @@ h3 { font-size: 21px; }
 .appointment-timeline div { grid-column: 2; padding-bottom: 12px; border-bottom: 1px solid transparent; }
 .timeline time { color: var(--brand); font-weight: 700; white-space: nowrap; }
 .timeline span { display: block; color: var(--muted); }
+.member-groups { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; align-items: start; }
+.member-group { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 24px; }
+.member-group h3 { color: var(--brand-dark); margin-bottom: 16px; font-size: 22px; }
+.member-table { display: grid; gap: 0; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+.member-row { display: grid; grid-template-columns: minmax(110px, .9fr) minmax(0, 1.4fr); gap: 16px; padding: 12px 14px; background: var(--surface); border-bottom: 1px solid var(--line); align-items: center; }
+.member-row:last-child { border-bottom: 0; }
+.member-head { background: var(--soft); color: var(--brand-dark); font-weight: 800; }
+.member-row span:first-child { font-weight: 800; color: var(--ink); }
+.member-row span:last-child { color: var(--muted); }
 .stack { display: grid; gap: 18px; }
 .research-row { display: grid; grid-template-columns: 280px minmax(0, 1fr) 260px; gap: 32px; padding: 34px 0; border-bottom: 1px solid var(--line); align-items: center; }
 .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
@@ -218,7 +227,7 @@ input:focus, textarea:focus { outline: 3px solid rgba(23,81,140,.18); border-col
   .home-hero .lead { font-size: 18px; text-align: left; text-align-last: auto; }
   .spectrum { height: 180px; }
   .advisor-photo { justify-self: stretch; width: 100%; max-height: none; }
-  .grid-3, .stats, .research-strip, .activity-strip { grid-template-columns: 1fr; }
+  .grid-3, .stats, .research-strip, .activity-strip, .member-groups { grid-template-columns: 1fr; }
   .research-strip, .activity-strip { gap: 14px; }
   .card, .info-panel, .empty-state, .contact-form { padding: 22px; }
   .research-strip .card h3, .research-strip .card p { min-height: 0; text-align: left; text-align-last: auto; }
@@ -232,6 +241,8 @@ input:focus, textarea:focus { outline: 3px solid rgba(23,81,140,.18); border-col
   .timeline.appointment-timeline li { display: grid; grid-template-columns: minmax(0, 1fr); gap: 6px; }
   .timeline.appointment-timeline time, .timeline.appointment-timeline div { grid-column: auto; padding-bottom: 0; min-width: 0; }
   .timeline.appointment-timeline span { overflow-wrap: anywhere; }
+  .member-group { padding: 18px; }
+  .member-row { grid-template-columns: minmax(84px, .8fr) minmax(0, 1.5fr); gap: 10px; padding: 10px 12px; }
   .profile { padding-top: 40px; }
   .profile-photo { width: min(100%, 320px); }
   .profile-info h1 { font-size: clamp(30px, 9vw, 38px); }
@@ -257,7 +268,7 @@ input:focus, textarea:focus { outline: 3px solid rgba(23,81,140,.18); border-col
   .hero { padding-top: 28px; padding-bottom: 30px; }
   .home-hero h1 { font-size: clamp(31px, 10vw, 40px); }
   .home-hero .lead { font-size: 17px; }
-  .card, .info-panel, .empty-state, .contact-form, .chart-card, .activity-card { padding: 18px; }
+  .card, .info-panel, .empty-state, .contact-form, .chart-card, .activity-card, .member-group { padding: 18px; }
   .metric-grid { grid-template-columns: 1fr; }
   .metric-card:nth-child(odd) { border-right: 0; }
   .chart-canvas { height: 250px !important; }
