@@ -119,11 +119,11 @@ h3 { font-size: 21px; }
 .member-group { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 24px; }
 .member-group h3 { color: var(--brand-dark); margin-bottom: 16px; font-size: 22px; }
 .member-table { display: grid; gap: 0; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
-.member-row { display: grid; grid-template-columns: minmax(110px, .9fr) minmax(0, 1.4fr); gap: 16px; padding: 12px 14px; background: var(--surface); border-bottom: 1px solid var(--line); align-items: center; }
+.member-row { display: grid; grid-template-columns: minmax(92px, .75fr) minmax(0, 1.55fr) minmax(120px, .8fr); gap: 16px; padding: 12px 14px; background: var(--surface); border-bottom: 1px solid var(--line); align-items: center; }
 .member-row:last-child { border-bottom: 0; }
 .member-head { background: var(--soft); color: var(--brand-dark); font-weight: 800; }
 .member-row span:first-child { font-weight: 800; color: var(--ink); }
-.member-row span:last-child { color: var(--muted); }
+.member-row span:not(:first-child) { color: var(--muted); }
 .stack { display: grid; gap: 18px; }
 .research-row { display: grid; grid-template-columns: 280px minmax(0, 1fr) 260px; gap: 32px; padding: 34px 0; border-bottom: 1px solid var(--line); align-items: center; }
 .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
@@ -242,7 +242,7 @@ input:focus, textarea:focus { outline: 3px solid rgba(23,81,140,.18); border-col
   .timeline.appointment-timeline time, .timeline.appointment-timeline div { grid-column: auto; padding-bottom: 0; min-width: 0; }
   .timeline.appointment-timeline span { overflow-wrap: anywhere; }
   .member-group { padding: 18px; }
-  .member-row { grid-template-columns: minmax(84px, .8fr) minmax(0, 1.5fr); gap: 10px; padding: 10px 12px; }
+  .member-row { grid-template-columns: minmax(76px, .75fr) minmax(0, 1.45fr) minmax(106px, .85fr); gap: 10px; padding: 10px 12px; }
   .profile { padding-top: 40px; }
   .profile-photo { width: min(100%, 320px); }
   .profile-info h1 { font-size: clamp(30px, 9vw, 38px); }
