@@ -98,15 +98,13 @@ h3 { font-size: 21px; }
 .card p { color: var(--muted); }
 .research-strip .card p { min-height: 118px; text-align: justify; text-align-last: left; text-justify: inter-word; }
 .academic-activity-section { padding-top: 18px; }
-.activity-head { display: flex; align-items: center; justify-content: space-between; gap: 18px; }
-.activity-controls { display: flex; align-items: center; gap: 8px; }
-.activity-nav { width: 38px; height: 38px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); color: var(--brand-dark); font-size: 28px; line-height: 1; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; }
-.activity-nav:hover { background: var(--soft); }
-.activity-carousel { overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; scroll-behavior: smooth; padding-bottom: 10px; scrollbar-width: thin; -webkit-overflow-scrolling: touch; touch-action: pan-x; overscroll-behavior-x: contain; }
-.activity-strip { display: flex; gap: 18px; align-items: stretch; }
-.activity-card { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 28px; display: flex; flex: 0 0 min(620px, 48vw); flex-direction: column; min-width: 360px; scroll-snap-align: start; }
-.activity-card p { color: var(--muted); font-size: 17px; line-height: 1.65; margin: 0 0 26px; min-height: 112px; text-align: justify; text-align-last: left; text-justify: inter-word; }
-.activity-media { margin: auto 0 0; border-radius: 6px; overflow: hidden; background: transparent; aspect-ratio: 16 / 9; width: 100%; }
+.activity-strip { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; align-items: stretch; }
+.activity-card { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 28px; display: flex; flex-direction: column; min-width: 0; }
+.activity-card h3 { min-height: 88px; font-size: 21px; text-align: justify; text-align-last: left; text-justify: inter-word; }
+.activity-card p { color: var(--muted); font-size: 17px; line-height: 1.65; margin: 24px 0 26px; min-height: 112px; text-align: justify; text-align-last: left; text-justify: inter-word; }
+.activity-gallery { margin: auto 0 0; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; scroll-behavior: smooth; scrollbar-width: thin; -webkit-overflow-scrolling: touch; touch-action: pan-x; overscroll-behavior-x: contain; border-radius: 6px; }
+.activity-gallery-track { display: flex; }
+.activity-media { flex: 0 0 100%; margin: 0; border-radius: 6px; overflow: hidden; background: transparent; aspect-ratio: 16 / 9; width: 100%; scroll-snap-align: start; }
 .activity-media img { width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; }
 .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }
 .timeline { list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; }
@@ -220,13 +218,12 @@ input:focus, textarea:focus { outline: 3px solid rgba(23,81,140,.18); border-col
   .home-hero .lead { font-size: 18px; text-align: left; text-align-last: auto; }
   .spectrum { height: 180px; }
   .advisor-photo { justify-self: stretch; width: 100%; max-height: none; }
-  .grid-3, .stats, .research-strip { grid-template-columns: 1fr; }
-  .research-strip { gap: 14px; }
-  .activity-head { align-items: flex-end; }
-  .activity-strip { gap: 14px; }
+  .grid-3, .stats, .research-strip, .activity-strip { grid-template-columns: 1fr; }
+  .research-strip, .activity-strip { gap: 14px; }
   .card, .info-panel, .empty-state, .contact-form { padding: 22px; }
   .research-strip .card h3, .research-strip .card p { min-height: 0; text-align: left; text-align-last: auto; }
-  .activity-card { flex-basis: min(86vw, 420px); min-width: min(86vw, 420px); padding: 22px; }
+  .activity-card { padding: 22px; }
+  .activity-card h3 { min-height: 0; text-align: left; text-align-last: auto; }
   .activity-card p { min-height: 0; text-align: left; text-align-last: auto; }
   .stat { border-right: 0; border-bottom: 1px solid var(--line); }
   .stat:last-child { border-bottom: 0; }
@@ -268,6 +265,5 @@ input:focus, textarea:focus { outline: 3px solid rgba(23,81,140,.18); border-col
   .pub-citation { font-size: 16px; }
 }
 @media (min-width: 881px) and (max-width: 1180px) {
-  .research-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .activity-card { flex-basis: min(72vw, 560px); }
+  .research-strip, .activity-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
