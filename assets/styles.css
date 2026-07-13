@@ -117,9 +117,9 @@ h3 { font-size: 21px; }
 .timeline span { display: block; color: var(--muted); }
 .member-groups { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; align-items: start; }
 .member-group { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 24px; }
-.member-group h3 { color: var(--brand-dark); margin-bottom: 16px; font-size: 22px; }
+.member-group h3 { color: var(--brand-dark); margin-bottom: 16px; font-size: 22px; text-align: center; }
 .member-table { display: grid; gap: 0; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
-.member-row { display: grid; grid-template-columns: minmax(92px, .75fr) minmax(0, 1.55fr) minmax(120px, .8fr); gap: 16px; padding: 12px 14px; background: var(--surface); border-bottom: 1px solid var(--line); align-items: center; }
+.member-row { display: grid; grid-template-columns: minmax(92px, .75fr) minmax(0, 1.55fr) minmax(120px, .8fr); gap: 16px; padding: 12px 14px; background: var(--surface); border-bottom: 1px solid var(--line); align-items: center; text-align: center; }
 .member-row:last-child { border-bottom: 0; }
 .member-head { background: var(--soft); color: var(--brand-dark); font-weight: 800; }
 .member-row span:first-child { font-weight: 800; color: var(--ink); }
