@@ -1,13 +1,41 @@
+const activityCarousel = document.querySelector("[data-activity-carousel]");
+const activityStatus = document.querySelector("[data-activity-status]");
+const activityControls = Array.from(document.querySelectorAll("[data-activity-scroll]"));
+
+function activityStep() {
+  if (!activityCarousel) return 0;
+  const track = activityCarousel.querySelector(".activity-strip");
+  const card = activityCarousel.querySelector(".activity-card");
+  if (!track || !card) return 0;
+  const gap = parseFloat(getComputedStyle(track).gap || "0");
+  return card.getBoundingClientRect().width + gap;
+}
+
+function updateActivityControls() {
+  if (!activityCarousel) return;
+  const cards = activityCarousel.querySelectorAll(".activity-card");
+  const step = activityStep();
+  const index = step ? Math.min(cards.length, Math.max(1, Math.round(activityCarousel.scrollLeft / step) + 1)) : 1;
+  const maxScroll = activityCarousel.scrollWidth - activityCarousel.clientWidth - 2;
+
+  if (activityStatus && cards.length) {
+    activityStatus.textContent = `${index} / ${cards.length}`;
+  }
+
+  activityControls.forEach((control) => {
+    const direction = Number(control.dataset.activityScroll || 1);
+    control.disabled = direction < 0 ? activityCarousel.scrollLeft <= 2 : activityCarousel.scrollLeft >= maxScroll;
+  });
+}
+
 document.addEventListener("click", (event) => {
   const activityButton = event.target.closest("[data-activity-scroll]");
   if (activityButton) {
-    const carousel = document.querySelector("[data-activity-carousel]");
-    const track = carousel && carousel.querySelector(".activity-strip");
-    const card = carousel && carousel.querySelector(".activity-card");
-    if (carousel && track && card) {
+    const carousel = activityCarousel;
+    const step = activityStep();
+    if (carousel && step) {
       const direction = Number(activityButton.dataset.activityScroll || 1);
-      const gap = parseFloat(getComputedStyle(track).gap || "0");
-      carousel.scrollBy({ left: direction * (card.getBoundingClientRect().width + gap), behavior: "smooth" });
+      carousel.scrollBy({ left: direction * step, behavior: "smooth" });
     }
     return;
   }
@@ -41,4 +69,23 @@ document.addEventListener("submit", (event) => {
   ].join("\n");
 
   window.location.href = `mailto:${recipient}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+});
+
+if (activityCarousel) {
+  activityCarousel.addEventListener("scroll", updateActivityControls, { passive: true });
+  window.addEventListener("resize", updateActivityControls);
+  updateActivityControls();
+}
+
+window.addEventListener("load", () => {
+  window.setTimeout(() => {
+    const visitorStats = document.querySelector("[data-visitor-stats]");
+    if (!visitorStats) return;
+
+    const values = Array.from(visitorStats.querySelectorAll("strong"));
+    const hasLoadedValue = values.some((value) => value.textContent.trim() && value.textContent.trim() !== "--");
+    if (!hasLoadedValue) {
+      visitorStats.hidden = true;
+    }
+  }, 3500);
 });
