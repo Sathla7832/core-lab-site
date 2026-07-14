@@ -33,6 +33,7 @@ a:hover { color: var(--accent); }
 section { padding: 56px 0; }
 .hero { min-height: auto; display: flex; align-items: flex-start; border-bottom: 1px solid var(--line); overflow: hidden; padding-top: 68px; padding-bottom: 56px; }
 .publication-hero { padding-top: 30px; padding-bottom: 18px; border-bottom: 0; }
+.publication-hero .container, .publication-stats .container { max-width: none; margin-left: 0; margin-right: 0; padding-left: 48px; padding-right: 48px; }
 .publication-hero .hero-grid { grid-template-columns: 1fr; justify-items: start; }
 .publication-hero .hero-copy { width: 100%; max-width: none; }
 .publication-hero h1 { margin-bottom: 12px; text-align: left; }
@@ -173,7 +174,7 @@ h3 { font-size: 21px; }
 .stats-table th, .stats-table td { padding: 10px 12px; border-bottom: 1px solid var(--line); text-align: left; }
 .stats-table th { color: var(--brand-dark); font-weight: 800; }
 .stats-table td:nth-child(2), .stats-table td:nth-child(3), .stats-table th:nth-child(2), .stats-table th:nth-child(3) { text-align: right; }
-.pub-note { display: inline-block; color: var(--accent); font-size: .86em; font-weight: 700; margin-left: 8px; white-space: nowrap; }
+.pub-note { display: block; color: var(--accent); font-size: .86em; font-weight: 700; margin: 3px 0 0; white-space: nowrap; text-align: left; }
 .pub-list { list-style: none; padding: 0; margin: 0; }
 .pub-list li { padding: 0; border-bottom: 1px solid var(--line); }
 .pub-body { color: var(--ink); padding: 18px 0 22px; }
@@ -222,6 +223,7 @@ input:focus, textarea:focus { outline: 3px solid rgba(23,81,140,.18); border-col
 .visitor-stats[hidden] { display: none; }
 @media (max-width: 880px) {
   .container, .nav-inner { max-width: 100%; padding-left: 18px; padding-right: 18px; }
+  .publication-hero .container, .publication-stats .container { max-width: 100%; padding-left: 18px; padding-right: 18px; }
   .nav-inner { gap: 12px; padding-top: 10px; padding-bottom: 10px; }
   .brand { gap: 10px; min-width: 0; }
   .brand-text { font-size: 16px; }
@@ -284,6 +286,7 @@ input:focus, textarea:focus { outline: 3px solid rgba(23,81,140,.18); border-col
 }
 @media (max-width: 480px) {
   .container, .nav-inner { padding-left: 14px; padding-right: 14px; }
+  .publication-hero .container, .publication-stats .container { padding-left: 14px; padding-right: 14px; }
   .hero { padding-top: 28px; padding-bottom: 30px; }
   .home-hero h1 { font-size: clamp(31px, 10vw, 40px); }
   .home-hero .lead { font-size: 17px; }
