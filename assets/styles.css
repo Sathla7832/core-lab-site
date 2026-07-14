@@ -187,6 +187,7 @@ h3 { font-size: 21px; }
 .pub-citation strong:not(.pi-author) { color: var(--ink); font-weight: 800; }
 .pub-citation sub, .pub-citation sup { font-size: .62em; line-height: 0; }
 .pub-citation .pi-author { color: #08796f; font-weight: 800; }
+.pub-citation .doi-wrap { white-space: nowrap; }
 .pub-citation .doi-link { color: var(--brand); font-weight: 700; text-decoration: none; overflow-wrap: anywhere; }
 .pub-citation .doi-link:hover { text-decoration: underline; }
 .pub-number { color: #08796f; font-weight: 800; }
