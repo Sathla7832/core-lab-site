@@ -33,11 +33,11 @@ a:hover { color: var(--accent); }
 section { padding: 56px 0; }
 .hero { min-height: auto; display: flex; align-items: flex-start; border-bottom: 1px solid var(--line); overflow: hidden; padding-top: 68px; padding-bottom: 56px; }
 .publication-hero { padding-top: 30px; padding-bottom: 18px; border-bottom: 0; }
-.publication-hero .hero-grid { grid-template-columns: 1fr; }
-.publication-hero .hero-copy { max-width: 980px; }
-.publication-hero h1 { margin-bottom: 12px; }
+.publication-hero .hero-grid { grid-template-columns: 1fr; justify-items: start; }
+.publication-hero .hero-copy { width: 100%; max-width: none; }
+.publication-hero h1 { margin-bottom: 12px; text-align: left; }
 .publication-hero .lead { margin-top: 0; }
-.publication-hero .hero-actions { margin-top: 16px; }
+.publication-hero .hero-actions { margin-top: 16px; justify-content: flex-start; }
 .publication-hero .spectrum { display: none; }
 .hero-grid { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(320px, .8fr); gap: 56px; align-items: start; }
 .eyebrow { margin: 0 0 12px; color: var(--brand); font-size: 12px; font-weight: 800; letter-spacing: .18em; text-transform: uppercase; }
