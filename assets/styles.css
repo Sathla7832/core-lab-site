@@ -33,7 +33,7 @@ a:hover { color: var(--accent); }
 section { padding: 56px 0; }
 .hero { min-height: auto; display: flex; align-items: flex-start; border-bottom: 1px solid var(--line); overflow: hidden; padding-top: 68px; padding-bottom: 56px; }
 .publication-hero { padding-top: 30px; padding-bottom: 18px; border-bottom: 0; }
-.publication-hero .container, .publication-stats .container { max-width: none; margin-left: 0; margin-right: 0; padding-left: 48px; padding-right: 48px; }
+.publication-hero .container, .publication-stats .container { width: 100%; max-width: var(--maxw); margin: 0 auto; padding-left: 24px; padding-right: 24px; }
 .publication-hero .hero-grid { grid-template-columns: 1fr; justify-items: start; }
 .publication-hero .hero-copy { width: 100%; max-width: none; }
 .publication-hero h1 { margin-bottom: 12px; text-align: left; }
