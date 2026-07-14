@@ -22,8 +22,8 @@ a:hover { color: var(--accent); }
 .nav { position: sticky; top: 0; z-index: 20; background: rgba(246,244,239,.92); backdrop-filter: blur(12px); border-bottom: 1px solid var(--line); }
 .nav-inner { max-width: var(--maxw); margin: 0 auto; padding: 14px 24px; display: flex; align-items: center; gap: 20px; }
 .brand { display: flex; align-items: center; gap: 12px; color: var(--ink); }
-.brand-mark { flex: 0 0 42px; width: 42px; height: 42px; max-width: 42px; max-height: 42px; display: block; background: transparent; border: 0; border-radius: 0; overflow: hidden; }
-.brand-mark img { width: 42px !important; height: 42px !important; max-width: 42px; max-height: 42px; object-fit: cover; display: block; }
+.brand-mark { flex: 0 0 42px; width: 42px; height: 42px; max-width: 42px; max-height: 42px; display: block; background: transparent; border: 0; border-radius: 8px; overflow: hidden; }
+.brand-mark img { width: 42px !important; height: 42px !important; max-width: 42px; max-height: 42px; object-fit: cover; display: block; border-radius: 8px; }
 .brand-text { font-family: var(--sans); font-weight: 800; line-height: 1.2; }
 .brand-text small { display: block; font-family: var(--sans); font-weight: 400; color: var(--muted); font-size: 12px; }
 .nav-links { margin-left: auto; display: flex; gap: 2px; align-items: center; }
