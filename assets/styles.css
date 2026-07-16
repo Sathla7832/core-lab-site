@@ -110,7 +110,7 @@ h3 { font-size: 21px; }
 .activity-carousel { max-width: 100%; overflow-x: auto; overflow-y: hidden; padding-bottom: 10px; scroll-snap-type: x mandatory; scroll-behavior: smooth; scrollbar-width: thin; -webkit-overflow-scrolling: touch; touch-action: pan-x pan-y; overscroll-behavior-x: contain; }
 .activity-strip { display: grid; grid-auto-flow: column; grid-auto-columns: calc((100% - 36px) / 3); grid-template-columns: none; gap: 18px; align-items: stretch; min-width: 100%; }
 .activity-card { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 28px; display: flex; flex-direction: column; min-width: 0; scroll-snap-align: start; }
-.activity-card h3 { min-height: 88px; font-size: clamp(17px, 1.25vw, 19px); line-height: 1.35; text-align: justify; text-align-last: left; text-justify: inter-word; letter-spacing: 0; word-spacing: normal; overflow-wrap: break-word; hyphens: auto; }
+.activity-card h3 { min-height: 96px; font-size: clamp(16px, 1.1vw, 18px); line-height: 1.45; text-align: left; letter-spacing: 0; word-spacing: normal; overflow-wrap: break-word; hyphens: auto; }
 .activity-card p { color: var(--muted); font-size: clamp(14px, 1.05vw, 16px); line-height: 1.7; margin: 24px 0 26px; min-height: 112px; text-align: justify; text-align-last: left; text-justify: inter-word; letter-spacing: 0; word-spacing: normal; overflow-wrap: break-word; hyphens: auto; }
 .activity-card p a { color: var(--brand); font-weight: 800; text-decoration: none; }
 .activity-card p a:hover { text-decoration: underline; }
@@ -253,7 +253,7 @@ input:focus, textarea:focus { outline: 3px solid rgba(23,81,140,.18); border-col
   .card, .info-panel, .empty-state, .contact-form { padding: 22px; }
   .research-strip .card h3, .research-strip .card p { min-height: 0; text-align: left; text-align-last: auto; }
   .activity-card { padding: 22px; }
-  .activity-card h3 { min-height: 0; text-align: justify; text-align-last: left; }
+  .activity-card h3 { min-height: 0; text-align: left; }
   .activity-card p { min-height: 0; text-align: justify; text-align-last: left; }
   .stat { border-right: 0; border-bottom: 1px solid var(--line); }
   .stat:last-child { border-bottom: 0; }
