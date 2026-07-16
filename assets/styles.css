@@ -187,6 +187,7 @@ h3 { font-size: 21px; }
 .pub-citation .pub-venue { margin-bottom: 0; }
 .author-contribution { display: inline-block; margin-left: 7px; color: var(--accent); font-size: .88em; font-weight: 800; white-space: nowrap; }
 .co-first-mark { color: var(--accent); font-size: .72em !important; font-weight: 900; margin-left: 1px; }
+.corresponding-mark { color: var(--accent); font-size: .72em !important; font-weight: 900; margin-left: 1px; }
 .pub-citation em { color: var(--ink); font-style: italic; }
 .pub-citation strong:not(.pi-author) { color: var(--ink); font-weight: 800; }
 .pub-citation sub, .pub-citation sup { font-size: .62em; line-height: 0; }
