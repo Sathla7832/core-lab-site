@@ -195,6 +195,8 @@ h3 { font-size: 21px; }
 .pub-citation .doi-wrap { white-space: nowrap; }
 .pub-citation .doi-link { color: var(--brand); font-weight: 700; text-decoration: none; overflow-wrap: anywhere; }
 .pub-citation .doi-link:hover { text-decoration: underline; }
+.pub-citation .article-link { color: var(--accent); font-weight: 700; text-decoration: none; margin-left: .35rem; }
+.pub-citation .article-link:hover { text-decoration: underline; }
 .pub-number { color: #08796f; font-weight: 800; }
 .pub-authors { margin: 0 0 12px; color: var(--muted); font-size: 21px; line-height: 1.55; }
 .pub-authors strong { color: #08796f; font-weight: 800; }
