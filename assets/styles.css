@@ -177,6 +177,8 @@ h3 { font-size: 21px; }
 .pub-note { display: block; color: var(--accent); font-size: .86em; font-weight: 700; margin: 5px 0 0; white-space: normal; text-align: left; }
 .pub-list { list-style: none; padding: 0; margin: 0; }
 .pub-list li { padding: 0; border-bottom: 1px solid var(--line); }
+.pub-list .publication-divider { display: flex; align-items: center; gap: 14px; padding: 13px 0 12px; border-bottom: 0; color: var(--muted); font-size: .78rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+.pub-list .publication-divider::before, .pub-list .publication-divider::after { content: ""; height: 1px; flex: 1; background: var(--brand); opacity: .65; }
 .pub-body { color: var(--ink); padding: 18px 0 22px; }
 .pub-body .pub-text { min-width: 0; }
 .pub-text h3 { margin: 0 0 10px; font-family: var(--sans); font-size: 20px; line-height: 1.35; color: var(--ink); font-weight: 800; }
