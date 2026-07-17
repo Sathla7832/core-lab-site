@@ -178,10 +178,10 @@ h3 { font-size: 21px; }
 .pub-list { list-style: none; padding: 0; margin: 0; }
 .pub-list li { padding: 0; border-bottom: 1px solid var(--line); }
 .pub-list li.pub-item { margin: 0; border-left: 0; transition: background-color .2s ease; }
-.pub-list li.pub-item:nth-child(odd) { background: #f4f8fa; }
-.pub-list li.pub-item:nth-child(even) { background: #fbf8f3; }
+.pub-list li.pub-item.pub-tone-1 { background: #f4f8fa; }
+.pub-list li.pub-item.pub-tone-2 { background: #fbf8f3; }
 .pub-list li.pub-item:hover { background: #eef3f5; }
-.pub-list-2026 > li:nth-child(2) { border-bottom: 0; }
+.pub-list li.pub-item.publication-boundary-before { border-bottom: 0; }
 .pub-list .publication-divider { display: flex; align-items: center; gap: 14px; padding: 13px 0 12px; border-bottom: 0; color: var(--brand); font-size: .95rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
 .pub-list .publication-divider span { padding: 0 10px; background: var(--paper); white-space: nowrap; }
 .pub-list .publication-divider::before, .pub-list .publication-divider::after { content: ""; height: 2px; flex: 1; background: var(--brand); opacity: .85; }
