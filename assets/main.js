@@ -48,6 +48,18 @@ document.addEventListener("click", (event) => {
 
   const isOpen = nav.classList.toggle("open");
   toggle.setAttribute("aria-expanded", String(isOpen));
+  toggle.setAttribute("aria-label", isOpen ? "Close menu" : "Open menu");
+});
+
+document.addEventListener("keydown", (event) => {
+  if (event.key !== "Escape") return;
+  const nav = document.querySelector(".nav-links.open");
+  const toggle = document.querySelector(".nav-toggle");
+  if (!nav || !toggle) return;
+  nav.classList.remove("open");
+  toggle.setAttribute("aria-expanded", "false");
+  toggle.setAttribute("aria-label", "Open menu");
+  toggle.focus();
 });
 
 document.addEventListener("submit", (event) => {
@@ -73,8 +85,72 @@ document.addEventListener("submit", (event) => {
 
 if (activityCarousel) {
   activityCarousel.addEventListener("scroll", updateActivityControls, { passive: true });
+  activityCarousel.addEventListener("keydown", (event) => {
+    if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+    const step = activityStep();
+    if (!step) return;
+    event.preventDefault();
+    activityCarousel.scrollBy({ left: (event.key === "ArrowLeft" ? -1 : 1) * step, behavior: "smooth" });
+  });
   window.addEventListener("resize", updateActivityControls);
   updateActivityControls();
+}
+
+const publicationTools = document.querySelector("[data-publication-tools]");
+if (publicationTools) {
+  const search = publicationTools.querySelector("[data-publication-search]");
+  const area = publicationTools.querySelector("[data-publication-area]");
+  const status = publicationTools.querySelector("[data-publication-status]");
+  const years = Array.from(document.querySelectorAll("[data-publication-year]"));
+  const allItems = Array.from(document.querySelectorAll(".pub-item"));
+
+  const applyPublicationFilters = () => {
+    const query = String(search?.value || "").trim().toLocaleLowerCase();
+    const selectedArea = String(area?.value || "");
+    let visibleTotal = 0;
+
+    years.forEach((year) => {
+      const items = Array.from(year.querySelectorAll(".pub-item"));
+      let visibleYear = 0;
+      items.forEach((item) => {
+        const matchesText = !query || item.textContent.toLocaleLowerCase().includes(query);
+        const matchesArea = !selectedArea || String(item.dataset.pubAreas || "").split("|").includes(selectedArea);
+        item.hidden = !(matchesText && matchesArea);
+        if (!item.hidden) visibleYear += 1;
+      });
+
+      year.hidden = visibleYear === 0;
+      if (query || selectedArea) year.open = visibleYear > 0;
+      const count = year.querySelector(".publication-year-count");
+      if (count) count.textContent = `${visibleYear} ${visibleYear === 1 ? "article" : "articles"}`;
+
+      const divider = year.querySelector(".publication-divider");
+      if (divider) {
+        const before = Array.from(divider.parentElement.children).slice(0, Array.from(divider.parentElement.children).indexOf(divider)).some((node) => node.matches?.(".pub-item") && !node.hidden);
+        const after = Array.from(divider.parentElement.children).slice(Array.from(divider.parentElement.children).indexOf(divider) + 1).some((node) => node.matches?.(".pub-item") && !node.hidden);
+        divider.hidden = !(before && after);
+      }
+      visibleTotal += visibleYear;
+    });
+
+    if (status) status.textContent = `Showing ${visibleTotal} of ${allItems.length} publications`;
+  };
+
+  search?.addEventListener("input", applyPublicationFilters);
+  area?.addEventListener("change", applyPublicationFilters);
+  publicationTools.querySelector("[data-publication-expand]")?.addEventListener("click", () => {
+    years.filter((year) => !year.hidden).forEach((year) => { year.open = true; });
+  });
+  publicationTools.querySelector("[data-publication-collapse]")?.addEventListener("click", () => {
+    years.filter((year) => !year.hidden).forEach((year) => { year.open = false; });
+  });
+  publicationTools.querySelectorAll('.publication-year-nav a').forEach((link) => {
+    link.addEventListener("click", () => {
+      const target = document.querySelector(link.getAttribute("href"));
+      if (target) target.open = true;
+    });
+  });
+  applyPublicationFilters();
 }
 
 window.addEventListener("load", () => {

@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://sathla7832.github.io/core-lab-site/sitemap.xml
