@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Member Portal | CORE Lab</title>
+  <meta name="description" content="Private portal for approved CORE Lab members." />
+  <meta name="robots" content="noindex,nofollow" />
+  <link rel="canonical" href="https://sathla7832.github.io/core-lab-site/member-login.html" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="CORE Lab" />
+  <meta property="og:title" content="Member Portal | CORE Lab" />
+  <meta property="og:description" content="Private portal for approved CORE Lab members." />
+  <meta property="og:url" content="https://sathla7832.github.io/core-lab-site/member-login.html" />
+  <meta property="og:image" content="https://sathla7832.github.io/core-lab-site/assets/images/og-image.webp" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Member Portal | CORE Lab" />
+  <meta name="twitter:description" content="Private portal for approved CORE Lab members." />
+  <meta name="twitter:image" content="https://sathla7832.github.io/core-lab-site/assets/images/og-image.webp" />
+  <link rel="icon" type="image/webp" href="assets/images/lab-icon.webp" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/styles.css?v=011929b16e08" />
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"CORE Lab","alternateName":"Catalysis & Operando Research for Energy","url":"https://sathla7832.github.io/core-lab-site/index.html","logo":"https://sathla7832.github.io/core-lab-site/assets/images/lab-icon.webp","email":"ychungchang@o365.fcu.edu.tw","parentOrganization":{"@type":"CollegeOrUniversity","name":"Feng Chia University"},"sameAs":["https://scholar.google.com/citations?hl=zh-TW&user=eIZESKAAAAAJ&view_op=list_works&sortby=pubdate","https://orcid.org/0009-0006-7764-4332"]}</script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  <header class="nav">
+    <div class="nav-inner">
+      <a class="brand" href="index.html" aria-label="CORE Lab">
+        <span class="brand-mark"><img src="assets/images/lab-icon.webp" alt="CORE Lab icon" width="42" height="42"></span>
+        <span class="brand-text">CORE Lab</span>
+      </a>
+      <button class="nav-toggle" aria-label="Open menu" aria-controls="main-menu" aria-expanded="false" type="button">Menu</button>
+      <nav class="nav-links" id="main-menu" aria-label="Main menu">
+        <a class="" href="index.html">Home</a>
+        <a class="" href="about.html">Members</a>
+        <a class="" href="publications.html">Publications</a>
+        <a class="active" href="member-login.html" aria-current="page">Member Login</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main-content">
+  <section class="member-portal-section" data-member-portal>
+    <div class="container">
+      <header class="member-portal-head">
+        <div>
+          <p class="eyebrow">CORE Lab Members</p>
+          <h1>Internal Member Portal</h1>
+          <p class="member-status" data-member-status role="status" aria-live="polite">Verifying your access...</p>
+        </div>
+        <div class="member-account" data-member-account hidden>
+          <span data-member-name></span>
+          <button class="btn btn-secondary" type="button" data-member-sign-out>Sign out</button>
+        </div>
+      </header>
+
+      <section class="member-access-panel" data-member-denied hidden>
+        <h2>Access pending</h2>
+        <p>Your Google account is signed in, but it has not yet been approved for the CORE Lab portal. An administrator can approve it from the member list.</p>
+        <a class="btn btn-secondary" href="index.html">Return to public site</a>
+      </section>
+
+      <div class="member-portal-content" data-member-content hidden>
+        <section class="member-content-section">
+          <div class="member-section-head"><div><p class="eyebrow">Updates</p><h2>Announcements</h2></div></div>
+          <div class="member-card-grid" data-announcement-list><p class="muted">Loading announcements...</p></div>
+        </section>
+        <section class="member-content-section">
+          <div class="member-section-head"><div><p class="eyebrow">Files and links</p><h2>Laboratory Resources</h2></div></div>
+          <div class="member-resource-list" data-resource-list><p class="muted">Loading resources...</p></div>
+        </section>
+
+        <section class="member-admin" data-member-admin hidden>
+          <div class="member-section-head"><div><p class="eyebrow">Administrator</p><h2>Manage Portal</h2></div></div>
+          <div class="member-admin-grid">
+            <form class="member-form" data-announcement-form>
+              <h3>Add announcement</h3>
+              <label>Title<input name="title" type="text" maxlength="120" required></label>
+              <label>Message<textarea name="body" rows="5" maxlength="2000" required></textarea></label>
+              <button class="btn btn-primary" type="submit">Publish announcement</button>
+            </form>
+            <form class="member-form" data-resource-form>
+              <h3>Add resource</h3>
+              <label>Title<input name="title" type="text" maxlength="120" required></label>
+              <label>Description<textarea name="description" rows="3" maxlength="500"></textarea></label>
+              <label>Category<input name="category" type="text" maxlength="60" placeholder="Protocol, data, instrument..."></label>
+              <label>Secure URL<input name="url" type="url" inputmode="url" placeholder="https://drive.google.com/..." required></label>
+              <button class="btn btn-primary" type="submit">Add resource</button>
+            </form>
+          </div>
+          <section class="member-approval-section">
+            <h3>Member approvals</h3>
+            <p class="muted">New accounts remain inactive until approved here.</p>
+            <div class="member-approval-list" data-member-list><p class="muted">Loading members...</p></div>
+          </section>
+        </section>
+      </div>
+    </div>
+  </section>
+  </main>
+  <footer class="footer">
+    <div class="container footer-grid">
+      <div>
+        <h2>Catalysis &amp; Operando Research for Energy</h2>
+        <p>Feng Chia University<br>No. 100, Wenhua Rd., Xitun Dist., Taichung 407102, Taiwan</p>
+      </div>
+    </div>
+    <div class="container fine">
+      <span>&copy; 2026 CORE Lab. All rights reserved.</span>
+      <span class="visitor-stats" aria-label="Visitor statistics" data-visitor-stats>
+        <span id="busuanzi_container_site_uv">Total visitors <strong id="busuanzi_value_site_uv">--</strong></span>
+        <span id="busuanzi_container_site_pv">Total views <strong id="busuanzi_value_site_pv">--</strong></span>
+        <span id="busuanzi_container_page_pv">Page views <strong id="busuanzi_value_page_pv">--</strong></span>
+      </span>
+    </div>
+  </footer>
+  <script defer src="https://vercount.one/js"></script>
+  <script src="assets/main.js?v=011929b16e08"></script>
+  <script src="assets/firebase-config.js?v=011929b16e08"></script><script type="module" src="assets/member.js?v=011929b16e08"></script>
+</body>
+</html>

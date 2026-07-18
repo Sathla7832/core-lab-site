@@ -3,19 +3,19 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>News | CORE Lab</title>
-  <meta name="description" content="News" />
-  <meta name="robots" content="index,follow" />
-  <link rel="canonical" href="https://sathla7832.github.io/core-lab-site/news.html" />
+  <title>Member Login | CORE Lab</title>
+  <meta name="description" content="Secure sign-in for approved CORE Lab members." />
+  <meta name="robots" content="noindex,nofollow" />
+  <link rel="canonical" href="https://sathla7832.github.io/core-lab-site/member-login.html" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="CORE Lab" />
-  <meta property="og:title" content="News | CORE Lab" />
-  <meta property="og:description" content="News" />
-  <meta property="og:url" content="https://sathla7832.github.io/core-lab-site/news.html" />
+  <meta property="og:title" content="Member Login | CORE Lab" />
+  <meta property="og:description" content="Secure sign-in for approved CORE Lab members." />
+  <meta property="og:url" content="https://sathla7832.github.io/core-lab-site/member-login.html" />
   <meta property="og:image" content="https://sathla7832.github.io/core-lab-site/assets/images/og-image.webp" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="News | CORE Lab" />
-  <meta name="twitter:description" content="News" />
+  <meta name="twitter:title" content="Member Login | CORE Lab" />
+  <meta name="twitter:description" content="Secure sign-in for approved CORE Lab members." />
   <meta name="twitter:image" content="https://sathla7832.github.io/core-lab-site/assets/images/og-image.webp" />
   <link rel="icon" type="image/webp" href="assets/images/lab-icon.webp" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -37,27 +37,30 @@
         <a class="" href="index.html">Home</a>
         <a class="" href="about.html">Members</a>
         <a class="" href="publications.html">Publications</a>
-        <a class="" href="member-login.html">Member Login</a>
+        <a class="active" href="member-login.html" aria-current="page">Member Login</a>
       </nav>
     </div>
   </header>
   <main id="main-content">
-  <section class="hero">
-    <div class="container hero-grid">
-      <div class="hero-copy">
-        <p class="eyebrow">News</p>
-        <h1>News</h1>
-        <p class="lead">Announcements, research highlights, events, and openings.</p>
-        
+  <section class="member-auth-section" data-member-login>
+    <div class="container member-auth-layout">
+      <div class="member-auth-copy">
+        <p class="eyebrow">CORE Lab Members</p>
+        <h1>Member Login</h1>
+        <p class="lead">Sign in with your approved Google account to access internal announcements and laboratory resources.</p>
+        <div class="member-auth-actions">
+          <button class="btn btn-member-login" type="button" data-member-sign-in>Sign in with Google</button>
+          <a class="btn btn-secondary" href="index.html">Return to public site</a>
+        </div>
+        <p class="member-status" data-member-status role="status" aria-live="polite">Checking sign-in status...</p>
       </div>
-      <div class="spectrum" aria-hidden="true">
-        <div class="axis"></div>
-        <div class="peak peak-one"></div>
-        <div class="peak peak-two"></div>
-        <div class="peak peak-three"></div>
-      </div>
+      <aside class="member-security-note">
+        <h2>Approved members only</h2>
+        <p>Access is granted by the laboratory administrator. Signing in does not automatically reveal private content.</p>
+        <p>Use only an account that you are authorized to use for CORE Lab work.</p>
+      </aside>
     </div>
-  </section><section><div class="container news-list"></div></section>
+  </section>
   </main>
   <footer class="footer">
     <div class="container footer-grid">
@@ -77,6 +80,6 @@
   </footer>
   <script defer src="https://vercount.one/js"></script>
   <script src="assets/main.js?v=011929b16e08"></script>
-  
+  <script src="assets/firebase-config.js?v=011929b16e08"></script><script type="module" src="assets/member.js?v=011929b16e08"></script>
 </body>
 </html>
