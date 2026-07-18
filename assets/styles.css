@@ -157,8 +157,8 @@ h3 { font-size: 21px; }
 .publication-tools-section { padding: 30px 0 10px; }
 .publication-tools { display: grid; gap: 16px; }
 .publication-filter-row { display: grid; grid-template-columns: minmax(260px, 1.5fr) minmax(210px, .8fr) auto; gap: 16px; align-items: end; }
-.publication-search, .publication-area-filter { color: var(--brand-dark); }
-.publication-search input, .publication-area-filter select { min-height: 48px; border: 1px solid #9eabb4; border-radius: 6px; padding: 10px 12px; background: var(--surface); color: var(--ink); font: inherit; }
+.publication-search, .publication-area-filter { min-width: 0; color: var(--brand-dark); }
+.publication-search input, .publication-area-filter select { width: 100%; min-width: 0; max-width: 100%; min-height: 48px; border: 1px solid #9eabb4; border-radius: 6px; padding: 10px 12px; background: var(--surface); color: var(--ink); font: inherit; }
 .publication-view-actions { display: flex; gap: 8px; }
 .publication-view-actions .btn { cursor: pointer; white-space: nowrap; }
 .publication-year-nav { display: flex; flex-wrap: wrap; gap: 8px; }
