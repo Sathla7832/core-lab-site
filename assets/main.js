@@ -100,31 +100,33 @@ const publicationTools = document.querySelector("[data-publication-tools]");
 if (publicationTools) {
   const search = publicationTools.querySelector("[data-publication-search]");
   const area = publicationTools.querySelector("[data-publication-area]");
+  const yearFilter = publicationTools.querySelector("[data-publication-year-filter]");
   const status = publicationTools.querySelector("[data-publication-status]");
   const years = Array.from(document.querySelectorAll("[data-publication-year]"));
   const allItems = Array.from(document.querySelectorAll(".pub-item"));
   if (area) area.value = "";
+  if (yearFilter) yearFilter.value = "";
 
   const applyPublicationFilters = () => {
     const query = String(search?.value || "").trim().toLocaleLowerCase();
     const selectedArea = String(area?.value || "");
-    const filtersActive = Boolean(query || selectedArea);
+    const selectedYear = String(yearFilter?.value || "");
+    const filtersActive = Boolean(query || selectedArea || selectedYear);
     let visibleTotal = 0;
 
     years.forEach((year) => {
       const items = Array.from(year.querySelectorAll(".pub-item"));
+      const matchesYear = !selectedYear || year.dataset.publicationYear === selectedYear;
       let visibleYear = 0;
       items.forEach((item) => {
         const matchesText = !query || item.textContent.toLocaleLowerCase().includes(query);
         const matchesArea = !selectedArea || String(item.dataset.pubAreas || "").split("|").includes(selectedArea);
-        item.hidden = !(matchesText && matchesArea);
+        item.hidden = !(matchesYear && matchesText && matchesArea);
         if (!item.hidden) visibleYear += 1;
       });
 
       year.hidden = visibleYear === 0;
       year.open = filtersActive ? visibleYear > 0 : year.dataset.defaultOpen === "true";
-      const yearLink = publicationTools.querySelector(`[data-publication-year-link="${year.dataset.publicationYear}"]`);
-      if (yearLink) yearLink.hidden = year.hidden;
       const count = year.querySelector(".publication-year-count");
       if (count) count.textContent = `${visibleYear} ${visibleYear === 1 ? "article" : "articles"}`;
 
@@ -142,17 +144,12 @@ if (publicationTools) {
 
   search?.addEventListener("input", applyPublicationFilters);
   area?.addEventListener("change", applyPublicationFilters);
+  yearFilter?.addEventListener("change", applyPublicationFilters);
   publicationTools.querySelector("[data-publication-expand]")?.addEventListener("click", () => {
     years.filter((year) => !year.hidden).forEach((year) => { year.open = true; });
   });
   publicationTools.querySelector("[data-publication-collapse]")?.addEventListener("click", () => {
     years.filter((year) => !year.hidden).forEach((year) => { year.open = false; });
-  });
-  publicationTools.querySelectorAll('.publication-year-nav a').forEach((link) => {
-    link.addEventListener("click", () => {
-      const target = document.querySelector(link.getAttribute("href"));
-      if (target) target.open = true;
-    });
   });
   applyPublicationFilters();
 }

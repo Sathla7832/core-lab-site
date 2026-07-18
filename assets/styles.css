@@ -156,14 +156,11 @@ h3 { font-size: 21px; }
 .research-media img { width: 100%; height: 100%; object-fit: contain; display: block; padding: 10px; }
 .publication-tools-section { padding: 30px 0 10px; }
 .publication-tools { display: grid; gap: 16px; }
-.publication-filter-row { display: grid; grid-template-columns: minmax(260px, 1.5fr) minmax(210px, .8fr) auto; gap: 16px; align-items: end; }
-.publication-search, .publication-area-filter { min-width: 0; color: var(--brand-dark); }
-.publication-search input, .publication-area-filter select { width: 100%; min-width: 0; max-width: 100%; min-height: 48px; border: 1px solid #9eabb4; border-radius: 6px; padding: 10px 12px; background: var(--surface); color: var(--ink); font: inherit; }
+.publication-filter-row { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, .85fr) minmax(140px, .45fr) max-content; gap: 16px; align-items: end; }
+.publication-search, .publication-area-filter, .publication-year-filter { min-width: 0; color: var(--brand-dark); }
+.publication-search input, .publication-area-filter select, .publication-year-filter select { width: 100%; min-width: 0; max-width: 100%; min-height: 48px; border: 1px solid #9eabb4; border-radius: 6px; padding: 10px 12px; background: var(--surface); color: var(--ink); font: inherit; }
 .publication-view-actions { display: flex; gap: 8px; }
 .publication-view-actions .btn { cursor: pointer; white-space: nowrap; }
-.publication-year-nav { display: flex; flex-wrap: wrap; gap: 8px; }
-.publication-year-nav a { min-width: 50px; padding: 6px 10px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); color: var(--brand-dark); font-weight: 800; text-align: center; }
-.publication-year-nav a:hover { border-color: var(--brand); background: var(--soft); }
 .publication-filter-status { margin: 0; }
 .publication-year { scroll-margin-top: 88px; border-bottom: 1px solid var(--line); }
 .publication-year[hidden] { display: none; }
