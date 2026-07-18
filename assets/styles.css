@@ -178,7 +178,7 @@ h3 { font-size: 21px; }
 .publication-year > summary { display: flex; align-items: center; gap: 14px; padding: 26px 4px 18px; color: var(--brand-dark); cursor: pointer; list-style: none; }
 .publication-year > summary::-webkit-details-marker { display: none; }
 .publication-year > summary::before { content: "+"; display: inline-grid; width: 34px; height: 34px; place-items: center; border: 1px solid var(--brand); border-radius: 999px; font-size: 23px; line-height: 1; }
-.publication-year[open] > summary::before { content: "2"; }
+.publication-year[open] > summary::before { content: "\2212"; }
 .publication-year-title { font-size: clamp(32px, 5vw, 50px); font-weight: 800; line-height: 1; }
 .publication-year-count { margin-left: auto; color: var(--muted); font-weight: 700; }
 .publication-stats-head h2 { color: var(--brand); font-weight: 800; }

@@ -103,10 +103,12 @@ if (publicationTools) {
   const status = publicationTools.querySelector("[data-publication-status]");
   const years = Array.from(document.querySelectorAll("[data-publication-year]"));
   const allItems = Array.from(document.querySelectorAll(".pub-item"));
+  if (area) area.value = "";
 
   const applyPublicationFilters = () => {
     const query = String(search?.value || "").trim().toLocaleLowerCase();
     const selectedArea = String(area?.value || "");
+    const filtersActive = Boolean(query || selectedArea);
     let visibleTotal = 0;
 
     years.forEach((year) => {
@@ -120,7 +122,9 @@ if (publicationTools) {
       });
 
       year.hidden = visibleYear === 0;
-      if (query || selectedArea) year.open = visibleYear > 0;
+      year.open = filtersActive ? visibleYear > 0 : year.dataset.defaultOpen === "true";
+      const yearLink = publicationTools.querySelector(`[data-publication-year-link="${year.dataset.publicationYear}"]`);
+      if (yearLink) yearLink.hidden = year.hidden;
       const count = year.querySelector(".publication-year-count");
       if (count) count.textContent = `${visibleYear} ${visibleYear === 1 ? "article" : "articles"}`;
 
