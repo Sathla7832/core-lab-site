@@ -282,6 +282,16 @@ input:focus, textarea:focus { outline: 3px solid rgba(23,81,140,.18); border-col
 .member-content-section, .member-admin { padding: 46px 0; border-bottom: 1px solid var(--line); }
 .member-section-head { display: flex; justify-content: space-between; gap: 20px; align-items: end; margin-bottom: 24px; }
 .member-section-head h2 { color: var(--brand-dark); margin: 0; }
+.member-calendar-section { padding-top: 34px; }
+.member-calendar-intro { align-items: start; }
+.member-calendar-intro p:last-child { max-width: 78ch; margin: 10px 0 0; color: var(--muted); }
+.member-calendar-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 24px; }
+.member-calendar-card { overflow: hidden; background: var(--surface); border: 1px solid var(--line); border-top: 4px solid var(--brand); border-radius: 10px; }
+.member-calendar-card-head { display: flex; justify-content: space-between; gap: 24px; align-items: center; padding: 24px; }
+.member-calendar-card-head h3 { margin: 0; color: var(--brand-dark); font-size: clamp(24px, 3vw, 32px); }
+.member-calendar-card-head p:not(.eyebrow) { max-width: 72ch; margin: 8px 0 0; color: var(--muted); }
+.member-calendar-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 10px; flex: 0 0 auto; }
+.member-calendar-frame { display: block; width: 100%; min-height: 560px; border: 0; border-top: 1px solid var(--line); background: #fff; }
 .member-card-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
 .member-card { padding: 24px; border-top: 4px solid var(--brand); }
 .member-card h3, .member-resource h3, .member-form h3 { color: var(--brand-dark); margin-bottom: 8px; }
@@ -324,7 +334,9 @@ input:focus, textarea:focus { outline: 3px solid rgba(23,81,140,.18); border-col
   .nav-links.open { display: flex; }
   .member-auth-layout, .member-admin-grid { grid-template-columns: 1fr; }
   .member-card-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .member-portal-head, .member-approval-row { align-items: stretch; flex-direction: column; }
+  .member-portal-head, .member-approval-row, .member-calendar-card-head { align-items: stretch; flex-direction: column; }
+  .member-calendar-actions { justify-content: flex-start; }
+  .member-calendar-frame { min-height: 500px; }
   .member-resource { grid-template-columns: 1fr; }
   .member-account { justify-content: flex-start; }
   .nav-toggle { display: inline-flex; margin-left: auto; border: 1px solid var(--line); background: var(--surface); border-radius: 6px; padding: 8px 12px; font-size: 14px; }
