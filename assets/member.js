@@ -4,7 +4,6 @@ const portalPage = document.querySelector("[data-member-portal]");
 if (loginPage || portalPage) {
   const statusElement = document.querySelector("[data-member-status]");
   const config = window.CORE_LAB_FIREBASE_CONFIG || {};
-  const bootstrapAdmin = String(window.CORE_LAB_BOOTSTRAP_ADMIN || "").toLowerCase();
   const configured = Boolean(config.apiKey && config.apiKey !== "PENDING_FIREBASE_SETUP" && config.authDomain && config.projectId && config.appId);
 
   const setStatus = (message, tone = "") => {
@@ -70,6 +69,91 @@ if (loginPage || portalPage) {
         node.textContent = text;
         if (className) node.className = className;
         return node;
+      };
+
+      const calendarIdPattern = /^[A-Za-z0-9._%+-]+@group\.calendar\.google\.com$/;
+      const calendarPresentation = Object.freeze({
+        instrument: {
+          order: 1,
+          eyebrow: "Equipment",
+          title: "Instrument Reservation",
+          description: "Check existing reservations, then create a booking with the instrument name and operator in the event title.",
+          mode: "WEEK",
+          action: "Create instrument booking",
+          eventTitle: "[Instrument] Instrument name - Member name",
+          eventDetails: "Instrument:\nMember:\nSample or project:\nNotes:",
+        },
+        leave: {
+          order: 2,
+          eyebrow: "Attendance",
+          title: "Leave Schedule",
+          description: "Review laboratory availability and submit leave dates with your name and leave type in the event title.",
+          mode: "MONTH",
+          action: "Submit leave schedule",
+          eventTitle: "[Leave] Member name - Leave type",
+          eventDetails: "Member:\nLeave type:\nReason or handover note:\nEmergency contact if needed:",
+        },
+        meeting: {
+          order: 3,
+          eyebrow: "Collaboration",
+          title: "Lab Meetings",
+          description: "View upcoming meetings and add a meeting invitation with the topic, location, and participants.",
+          mode: "AGENDA",
+          action: "Add meeting",
+          eventTitle: "[Meeting] Topic",
+          eventDetails: "Organizer:\nLocation or Google Meet:\nParticipants:\nAgenda:",
+        },
+      });
+
+      const calendarUrl = (base, parameters) => {
+        const url = new URL(base);
+        Object.entries(parameters).forEach(([key, value]) => url.searchParams.set(key, value));
+        return url.href;
+      };
+
+      const renderCalendars = async () => {
+        const list = document.querySelector("[data-calendar-list]");
+        if (!list) return;
+        const snapshot = await dbSdk.getDocs(dbSdk.collection(db, "calendars"));
+        const calendars = snapshot.docs
+          .map((item) => ({ key: item.id, ...item.data() }))
+          .filter((item) => item.active === true && calendarPresentation[item.key] && calendarIdPattern.test(String(item.calendarId || "")))
+          .sort((a, b) => calendarPresentation[a.key].order - calendarPresentation[b.key].order);
+        list.replaceChildren();
+        if (!calendars.length) {
+          list.append(createText("p", "No protected calendars are configured yet. An administrator can add them below.", "muted"));
+          return;
+        }
+        calendars.forEach((calendar) => {
+          const presentation = calendarPresentation[calendar.key];
+          const calendarId = String(calendar.calendarId);
+          const card = document.createElement("article");
+          card.className = `member-calendar-card member-calendar-${calendar.key}`;
+          const header = document.createElement("header");
+          header.className = "member-calendar-card-head";
+          const copy = document.createElement("div");
+          copy.append(createText("p", presentation.eyebrow, "eyebrow"), createText("h3", presentation.title), createText("p", presentation.description));
+          const actions = document.createElement("div");
+          actions.className = "member-calendar-actions";
+          const createLink = createText("a", presentation.action, "btn btn-primary");
+          createLink.href = calendarUrl("https://calendar.google.com/calendar/render", { action: "TEMPLATE", text: presentation.eventTitle, details: presentation.eventDetails, add: calendarId, ctz: "Asia/Taipei" });
+          createLink.target = "_blank";
+          createLink.rel = "noopener noreferrer";
+          const openLink = createText("a", "Open in Google Calendar", "btn btn-secondary");
+          openLink.href = calendarUrl("https://calendar.google.com/calendar/u/1/r", { cid: calendarId });
+          openLink.target = "_blank";
+          openLink.rel = "noopener noreferrer";
+          actions.append(createLink, openLink);
+          header.append(copy, actions);
+          const frame = document.createElement("iframe");
+          frame.className = "member-calendar-frame";
+          frame.title = `${presentation.title} Google Calendar`;
+          frame.src = calendarUrl("https://calendar.google.com/calendar/embed", { src: calendarId, ctz: "Asia/Taipei", mode: presentation.mode, showTitle: "0", showPrint: "0", showTabs: "0", showCalendars: "0", showTz: "0" });
+          frame.loading = "lazy";
+          frame.referrerPolicy = "strict-origin-when-cross-origin";
+          card.append(header, frame);
+          list.append(card);
+        });
       };
 
       const renderAnnouncements = async () => {
@@ -148,10 +232,11 @@ if (loginPage || portalPage) {
           return;
         }
         members.forEach((member) => {
+          const isCurrentAccount = member.id === auth.currentUser?.uid;
           const row = document.createElement("article");
           row.className = "member-approval-row";
           const identity = document.createElement("div");
-          identity.append(createText("strong", member.displayName || member.email || "Member"), createText("span", member.email || "", "muted"));
+          identity.append(createText("strong", member.displayName || member.email || "Member"), createText("span", `${member.email || ""}${isCurrentAccount ? " (current account)" : ""}`, "muted"));
           const controls = document.createElement("div");
           controls.className = "member-approval-controls";
           const role = document.createElement("select");
@@ -165,6 +250,8 @@ if (loginPage || portalPage) {
           });
           const toggle = createText("button", member.active ? "Deactivate" : "Approve", member.active ? "btn btn-secondary" : "btn btn-primary");
           toggle.type = "button";
+          role.disabled = isCurrentAccount;
+          toggle.disabled = isCurrentAccount;
           toggle.addEventListener("click", async () => {
             toggle.disabled = true;
             await dbSdk.updateDoc(member.ref, { active: !member.active, role: role.value, updatedAt: dbSdk.serverTimestamp() });
@@ -218,6 +305,33 @@ if (loginPage || portalPage) {
             submit.disabled = false;
           }
         });
+
+        const calendarForm = document.querySelector("[data-calendar-form]");
+        calendarForm?.addEventListener("submit", async (event) => {
+          event.preventDefault();
+          const submit = calendarForm.querySelector('button[type="submit"]');
+          submit.disabled = true;
+          const values = new FormData(calendarForm);
+          const calendarKey = String(values.get("calendarKey") || "");
+          const calendarId = String(values.get("calendarId") || "").trim();
+          try {
+            if (!calendarPresentation[calendarKey] || !calendarIdPattern.test(calendarId)) throw new Error("invalid-calendar");
+            await dbSdk.setDoc(dbSdk.doc(db, "calendars", calendarKey), {
+              calendarId,
+              active: values.get("active") === "on",
+              updatedAt: dbSdk.serverTimestamp(),
+              updatedBy: user.uid,
+            });
+            calendarForm.reset();
+            calendarForm.querySelector('[name="active"]').checked = true;
+            await renderCalendars();
+            setStatus("Protected calendar setting saved.", "success");
+          } catch (error) {
+            setStatus(error?.message === "invalid-calendar" ? "Enter a valid Google group calendar ID." : friendlyError(error), "error");
+          } finally {
+            submit.disabled = false;
+          }
+        });
       };
 
       authSdk.onAuthStateChanged(auth, async (user) => {
@@ -233,30 +347,25 @@ if (loginPage || portalPage) {
         document.querySelector("[data-member-account]")?.removeAttribute("hidden");
         const name = document.querySelector("[data-member-name]");
         if (name) name.textContent = user.displayName || user.email || "Signed-in member";
-        const email = String(user.email || "").toLowerCase();
         const memberRef = dbSdk.doc(db, "members", user.uid);
-        const bootstrap = email === bootstrapAdmin;
         try {
           let memberSnapshot = await dbSdk.getDoc(memberRef);
-          if (bootstrap) {
-            await dbSdk.setDoc(memberRef, { email: user.email || bootstrapAdmin, displayName: user.displayName || "CORE Lab Administrator", active: true, role: "admin", lastLoginAt: dbSdk.serverTimestamp() }, { merge: true });
-            memberSnapshot = await dbSdk.getDoc(memberRef);
-          } else if (!memberSnapshot.exists()) {
+          if (!memberSnapshot.exists()) {
             await dbSdk.setDoc(memberRef, { email: user.email || "", displayName: user.displayName || "", active: false, role: "member", createdAt: dbSdk.serverTimestamp() });
             memberSnapshot = await dbSdk.getDoc(memberRef);
           }
           const member = memberSnapshot.exists() ? memberSnapshot.data() : {};
-          if (!bootstrap && member.active !== true) {
+          if (member.active !== true) {
             document.querySelector("[data-member-denied]")?.removeAttribute("hidden");
             setStatus("Signed in - administrator approval is required.", "warning");
             return;
           }
-          currentIsAdmin = bootstrap || member.role === "admin";
+          currentIsAdmin = member.role === "admin";
           document.querySelector("[data-member-content]")?.removeAttribute("hidden");
           if (currentIsAdmin) document.querySelector("[data-member-admin]")?.removeAttribute("hidden");
           setStatus(currentIsAdmin ? "Administrator access verified." : "Member access verified.", "success");
           if (currentIsAdmin) bindAdminForms(user);
-          await Promise.all([renderAnnouncements(), renderResources(), currentIsAdmin ? renderMembers() : Promise.resolve()]);
+          await Promise.all([renderCalendars(), renderAnnouncements(), renderResources(), currentIsAdmin ? renderMembers() : Promise.resolve()]);
         } catch (error) {
           setStatus(friendlyError(error), "error");
         }
