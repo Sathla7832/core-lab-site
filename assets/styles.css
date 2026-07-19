@@ -160,14 +160,13 @@ h3 { font-size: 21px; }
 .research-media { margin: 0; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: var(--surface); aspect-ratio: 4 / 3; }
 .research-media img { width: 100%; height: 100%; object-fit: contain; display: block; padding: 10px; }
 .publication-tools-section { padding: 30px 0 10px; }
-.publication-tools { display: grid; gap: 16px; }
-.publication-filter-row { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, .85fr) minmax(140px, .45fr) max-content; gap: 16px; align-items: end; }
+.publication-tools { display: grid; }
+.publication-filter-row { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; align-items: stretch; }
 .publication-search, .publication-area-filter, .publication-year-filter { min-width: 0; color: var(--brand-dark); }
-.publication-search input, .publication-area-filter select, .publication-year-filter select { width: 100%; min-width: 0; max-width: 100%; min-height: 48px; border: 1px solid #9eabb4; border-radius: 6px; padding: 10px 12px; background: var(--surface); color: var(--ink); font: inherit; }
-.publication-role-filters { display: flex; gap: 8px; }
-.publication-role-filter { cursor: pointer; white-space: nowrap; }
+.publication-search input, .publication-area-filter select, .publication-year-filter select { width: 100%; min-width: 0; max-width: 100%; height: 64px; border: 1px solid #9eabb4; border-radius: 6px; padding: 10px 12px; background: var(--surface); color: var(--ink); font: inherit; }
+.publication-role-filters { display: contents; }
+.publication-role-filter { width: 100%; height: 64px; min-width: 0; padding: 10px 12px; cursor: pointer; white-space: normal; line-height: 1.2; }
 .publication-role-filter[aria-pressed="true"] { border-color: var(--brand-dark); background: var(--brand-dark); color: #fff; box-shadow: 0 0 0 2px rgba(6, 56, 96, .14); }
-.publication-filter-status { margin: 0; }
 .publication-year { scroll-margin-top: 88px; border-bottom: 1px solid var(--line); }
 .publication-year[hidden] { display: none; }
 .publication-year > summary { display: flex; align-items: center; gap: 14px; padding: 26px 4px 18px; color: var(--brand-dark); cursor: pointer; list-style: none; }
@@ -410,7 +409,6 @@ input:focus, textarea:focus { outline: 3px solid rgba(23,81,140,.18); border-col
   .profile-info h1 { font-size: clamp(30px, 9vw, 38px); }
   .metric-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .publication-filter-row { grid-template-columns: 1fr; }
-  .publication-role-filters { flex-wrap: wrap; }
   .publication-year > summary { padding-top: 22px; }
   .metric-card { border-right: 0; border-bottom: 1px solid var(--line); padding: 18px; }
   .metric-card:nth-child(odd) { border-right: 1px solid var(--line); }

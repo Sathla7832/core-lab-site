@@ -102,9 +102,7 @@ if (publicationTools) {
   const area = publicationTools.querySelector("[data-publication-area]");
   const yearFilter = publicationTools.querySelector("[data-publication-year-filter]");
   const roleButtons = Array.from(publicationTools.querySelectorAll("[data-publication-role]"));
-  const status = publicationTools.querySelector("[data-publication-status]");
   const years = Array.from(document.querySelectorAll("[data-publication-year]"));
-  const allItems = Array.from(document.querySelectorAll(".pub-item"));
   if (area) area.value = "";
   if (yearFilter) yearFilter.value = "";
 
@@ -116,8 +114,6 @@ if (publicationTools) {
       .filter((button) => button.getAttribute("aria-pressed") === "true")
       .map((button) => String(button.dataset.publicationRole || ""));
     const filtersActive = Boolean(query || selectedArea || selectedYear || selectedRoles.length);
-    let visibleTotal = 0;
-
     years.forEach((year) => {
       const items = Array.from(year.querySelectorAll(".pub-item"));
       const matchesYear = !selectedYear || year.dataset.publicationYear === selectedYear;
@@ -142,10 +138,7 @@ if (publicationTools) {
         const after = Array.from(divider.parentElement.children).slice(Array.from(divider.parentElement.children).indexOf(divider) + 1).some((node) => node.matches?.(".pub-item") && !node.hidden);
         divider.hidden = !(before && after);
       }
-      visibleTotal += visibleYear;
     });
-
-    if (status) status.textContent = `Showing ${visibleTotal} of ${allItems.length} publications`;
   };
 
   search?.addEventListener("input", applyPublicationFilters);
