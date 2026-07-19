@@ -101,6 +101,7 @@ if (publicationTools) {
   const search = publicationTools.querySelector("[data-publication-search]");
   const area = publicationTools.querySelector("[data-publication-area]");
   const yearFilter = publicationTools.querySelector("[data-publication-year-filter]");
+  const roleButtons = Array.from(publicationTools.querySelectorAll("[data-publication-role]"));
   const status = publicationTools.querySelector("[data-publication-status]");
   const years = Array.from(document.querySelectorAll("[data-publication-year]"));
   const allItems = Array.from(document.querySelectorAll(".pub-item"));
@@ -111,7 +112,10 @@ if (publicationTools) {
     const query = String(search?.value || "").trim().toLocaleLowerCase();
     const selectedArea = String(area?.value || "");
     const selectedYear = String(yearFilter?.value || "");
-    const filtersActive = Boolean(query || selectedArea || selectedYear);
+    const selectedRoles = roleButtons
+      .filter((button) => button.getAttribute("aria-pressed") === "true")
+      .map((button) => String(button.dataset.publicationRole || ""));
+    const filtersActive = Boolean(query || selectedArea || selectedYear || selectedRoles.length);
     let visibleTotal = 0;
 
     years.forEach((year) => {
@@ -121,7 +125,9 @@ if (publicationTools) {
       items.forEach((item) => {
         const matchesText = !query || item.textContent.toLocaleLowerCase().includes(query);
         const matchesArea = !selectedArea || String(item.dataset.pubAreas || "").split("|").includes(selectedArea);
-        item.hidden = !(matchesYear && matchesText && matchesArea);
+        const itemRoles = String(item.dataset.pubRoles || "").split("|").filter(Boolean);
+        const matchesRole = !selectedRoles.length || selectedRoles.some((role) => itemRoles.includes(role));
+        item.hidden = !(matchesYear && matchesText && matchesArea && matchesRole);
         if (!item.hidden) visibleYear += 1;
       });
 
@@ -145,11 +151,11 @@ if (publicationTools) {
   search?.addEventListener("input", applyPublicationFilters);
   area?.addEventListener("change", applyPublicationFilters);
   yearFilter?.addEventListener("change", applyPublicationFilters);
-  publicationTools.querySelector("[data-publication-expand]")?.addEventListener("click", () => {
-    years.filter((year) => !year.hidden).forEach((year) => { year.open = true; });
-  });
-  publicationTools.querySelector("[data-publication-collapse]")?.addEventListener("click", () => {
-    years.filter((year) => !year.hidden).forEach((year) => { year.open = false; });
+  roleButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      button.setAttribute("aria-pressed", button.getAttribute("aria-pressed") === "true" ? "false" : "true");
+      applyPublicationFilters();
+    });
   });
   applyPublicationFilters();
 }
