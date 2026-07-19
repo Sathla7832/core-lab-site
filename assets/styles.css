@@ -79,16 +79,15 @@ h3 { font-size: 21px; }
 .profile-photo { margin: 0; border-radius: 10px; overflow: hidden; background: var(--surface); border: 1px solid var(--line); aspect-ratio: 4 / 5; }
 .profile-photo img { width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block; }
 .profile-info h1 { color: var(--brand-dark); font-size: clamp(28px, 3.4vw, 40px); margin-bottom: 14px; }
-.profile-role { margin: 0 0 6px; color: var(--muted); }
+.profile-role { margin: 0 0 6px; }
 .profile-h { color: var(--brand-dark); font-size: 22px; margin: 22px 0 6px; }
-.profile-line { margin: 0; color: var(--ink); font-size: 17px; }
-.profile-education { color: var(--muted); }
-.profile-single-line { font-size: clamp(12px, 1.18vw, 16px); line-height: 1.55; letter-spacing: -.012em; white-space: nowrap; }
-.profile-line a { color: var(--brand); }
-.profile-honors { margin: 0; padding-left: 24px; color: var(--ink); font-size: 17px; }
-.profile-honors a { color: var(--brand); text-decoration: underline; text-underline-offset: 3px; }
+.profile-role, .profile-line, .profile-honors { color: var(--muted); font-family: inherit; font-size: clamp(12px, 1.18vw, 16px); line-height: 1.55; letter-spacing: -.012em; }
+.profile-line { margin: 0; }
+.profile-single-line { white-space: nowrap; }
+.profile-honors { margin: 0; padding-left: 24px; }
+.profile-info a, .profile-info a:visited, .profile-info a:hover, .profile-info a:active { color: inherit; text-decoration: none; }
 .profile .hero-actions { margin-top: 26px; }
-@media (max-width: 760px) { .profile-card { grid-template-columns: 1fr; gap: 22px; } .profile-photo { max-width: 320px; } .profile-single-line { font-size: 15px; white-space: normal; } }
+@media (max-width: 760px) { .profile-card { grid-template-columns: 1fr; gap: 22px; } .profile-photo { max-width: 320px; } .profile-role, .profile-line, .profile-honors { font-size: 15px; } .profile-single-line { white-space: normal; } }
 .section-soft { background: var(--soft); }
 .stats { display: grid; grid-template-columns: repeat(4, 1fr); border: 1px solid var(--line); background: var(--surface); }
 .stat { padding: 30px 16px; text-align: center; border-right: 1px solid var(--line); }
