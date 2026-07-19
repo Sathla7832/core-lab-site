@@ -202,6 +202,7 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
           title: "Lab Meetings",
           description: "View upcoming meetings and add a meeting invitation with the topic, location, and participants.",
           mode: "MONTH",
+          account: "corelabfcu@gmail.com",
           action: "Add meeting",
           eventTitle: "[Meeting] Topic",
           eventDetails: "Organizer:\nLocation or Google Meet:\nParticipants:\nAgenda:",
@@ -239,7 +240,14 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
           const actions = document.createElement("div");
           actions.className = "member-calendar-actions";
           const createLink = createText("a", presentation.action, "btn btn-primary");
-          createLink.href = calendarUrl("https://calendar.google.com/calendar/render", { action: "TEMPLATE", text: presentation.eventTitle, details: presentation.eventDetails, add: calendarId, ctz: "Asia/Taipei" });
+          createLink.href = calendarUrl("https://calendar.google.com/calendar/render", {
+            action: "TEMPLATE",
+            text: presentation.eventTitle,
+            details: presentation.eventDetails,
+            add: calendarId,
+            ctz: "Asia/Taipei",
+            ...(presentation.account ? { authuser: presentation.account } : {}),
+          });
           createLink.target = "_blank";
           createLink.rel = "noopener noreferrer";
           const openLink = createText("a", "Open in Google Calendar", "btn btn-secondary");
