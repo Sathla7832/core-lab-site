@@ -16,6 +16,7 @@ if (memberPageIsFramed) {
 if ((loginPage || portalPage) && !memberPageIsFramed) {
   const statusElement = document.querySelector("[data-member-status]");
   const config = window.CORE_LAB_FIREBASE_CONFIG || {};
+  const syncApiUrl = String(window.CORE_LAB_SYNC_API_URL || "").replace(/\/$/, "");
   const configured = Boolean(config.apiKey && config.apiKey !== "PENDING_FIREBASE_SETUP" && config.authDomain && config.projectId && config.appId);
 
   const setStatus = (message, tone = "") => {
@@ -126,6 +127,53 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
         }
       };
 
+      const callSyncApi = async (announcementId, method, payload = {}) => {
+        if (!syncApiUrl) throw new Error("The Discord synchronization service is not configured.");
+        const token = await auth.currentUser?.getIdToken();
+        if (!token) throw new Error("Please sign in again before synchronizing with Discord.");
+        const response = await fetch(`${syncApiUrl}/api/announcements/${encodeURIComponent(announcementId)}`, {
+          method,
+          headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(String(data.error || "Discord synchronization failed."));
+        return data;
+      };
+
+      const publishAnnouncementToDiscord = async (item, data) => {
+        await dbSdk.updateDoc(item.ref, {
+          syncStatus: "pending",
+          syncError: "",
+          discordMessageId: String(data.discordMessageId || ""),
+          discordChannelId: String(data.discordChannelId || ""),
+          updatedAt: dbSdk.serverTimestamp(),
+        });
+        try {
+          const result = await callSyncApi(item.id, "POST", {
+            title: String(data.title || "").trim(),
+            body: String(data.body || "").trim(),
+            discordMessageId: String(data.discordMessageId || ""),
+          });
+          await dbSdk.updateDoc(item.ref, {
+            syncStatus: "synced",
+            syncError: "",
+            discordMessageId: String(result.discordMessageId || ""),
+            discordChannelId: String(result.discordChannelId || ""),
+            syncedAt: dbSdk.serverTimestamp(),
+            updatedAt: dbSdk.serverTimestamp(),
+          });
+          return true;
+        } catch (error) {
+          await dbSdk.updateDoc(item.ref, {
+            syncStatus: "failed",
+            syncError: String(error?.message || "Discord synchronization failed.").slice(0, 500),
+            updatedAt: dbSdk.serverTimestamp(),
+          });
+          throw error;
+        }
+      };
+
       const calendarIdPattern = /^[A-Za-z0-9._%+-]+@group\.calendar\.google\.com$/;
       const calendarPresentation = Object.freeze({
         instrument: {
@@ -226,14 +274,39 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
           card.className = "member-card";
           card.append(createText("p", formatDate(data.createdAt), "member-card-meta"), createText("h3", data.title || "Announcement"), createText("p", data.body || ""));
           if (currentIsAdmin) {
+            const syncLabel = data.syncStatus === "synced" ? "Discord: Synced" : data.syncStatus === "failed" ? "Discord: Failed" : "Discord: Pending";
+            card.append(createText("p", syncLabel, `member-sync-status is-${data.syncStatus || "pending"}`));
+            const actions = document.createElement("div");
+            actions.className = "member-resource-actions";
+            const retry = createText("button", data.syncStatus === "synced" ? "Update Discord" : "Sync to Discord", "btn btn-secondary");
+            retry.type = "button";
+            retry.addEventListener("click", async () => {
+              retry.disabled = true;
+              try {
+                await publishAnnouncementToDiscord(item, data);
+                setStatus("Announcement synchronized with Discord.", "success");
+              } catch (error) {
+                setStatus(String(error?.message || "Discord synchronization failed."), "error");
+              }
+              await renderAnnouncements();
+            });
             const remove = createText("button", "Delete", "member-delete");
             remove.type = "button";
             remove.addEventListener("click", async () => {
               if (!window.confirm("Delete this announcement?")) return;
-              await dbSdk.deleteDoc(item.ref);
-              await renderAnnouncements();
+              remove.disabled = true;
+              try {
+                await callSyncApi(item.id, "DELETE", { discordMessageId: String(data.discordMessageId || "") });
+                await dbSdk.deleteDoc(item.ref);
+                await renderAnnouncements();
+                setStatus("Announcement removed from the portal and Discord.", "success");
+              } catch (error) {
+                remove.disabled = false;
+                setStatus(String(error?.message || "The announcement could not be deleted from Discord."), "error");
+              }
             });
-            card.append(remove);
+            actions.append(retry, remove);
+            card.append(actions);
           }
           list.append(card);
         });
@@ -338,8 +411,26 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
           submit.disabled = true;
           const values = new FormData(announcementForm);
           try {
-            await dbSdk.addDoc(dbSdk.collection(db, "announcements"), { title: String(values.get("title") || "").trim(), body: String(values.get("body") || "").trim(), createdAt: dbSdk.serverTimestamp(), createdBy: user.uid });
+            const title = String(values.get("title") || "").trim();
+            const body = String(values.get("body") || "").trim();
+            const itemRef = await dbSdk.addDoc(dbSdk.collection(db, "announcements"), {
+              title,
+              body,
+              createdAt: dbSdk.serverTimestamp(),
+              createdBy: user.uid,
+              updatedAt: dbSdk.serverTimestamp(),
+              syncStatus: "pending",
+              syncError: "",
+              discordMessageId: "",
+              discordChannelId: "",
+            });
             announcementForm.reset();
+            try {
+              await publishAnnouncementToDiscord({ id: itemRef.id, ref: itemRef }, { title, body });
+              setStatus("Announcement published to the portal and Discord.", "success");
+            } catch (syncError) {
+              setStatus(`Announcement saved, but Discord sync needs attention: ${String(syncError?.message || "Unknown error")}`, "error");
+            }
             await renderAnnouncements();
           } catch (error) {
             setStatus(friendlyError(error), "error");
