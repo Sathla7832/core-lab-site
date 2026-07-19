@@ -201,7 +201,7 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
           eyebrow: "Collaboration",
           title: "Lab Meetings",
           description: "View upcoming meetings and add a meeting invitation with the topic, location, and participants.",
-          mode: "AGENDA",
+          mode: "MONTH",
           action: "Add meeting",
           eventTitle: "[Meeting] Topic",
           eventDetails: "Organizer:\nLocation or Google Meet:\nParticipants:\nAgenda:",
