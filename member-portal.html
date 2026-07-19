@@ -22,7 +22,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/styles.css?v=b84a138024cf" />
+  <link rel="stylesheet" href="assets/styles.css?v=2c3000f0888b" />
 </head>
 <body>
   <a class="skip-link" href="#main-content">Skip to main content</a>
@@ -113,8 +113,20 @@
           </div>
           <section class="member-approval-section">
             <h3>Member approvals</h3>
-            <p class="muted">New accounts remain inactive until approved here.</p>
+            <p class="muted">Pre-approve a Gmail address so the student or internal member becomes active automatically after their first Google sign-in.</p>
+            <form class="member-invite-form" data-member-invite-form>
+              <label>Display name<input name="displayName" type="text" maxlength="160" autocomplete="name" placeholder="Student or member name"></label>
+              <label>Gmail address<input name="email" type="email" inputmode="email" maxlength="320" autocomplete="off" spellcheck="false" placeholder="student@gmail.com" pattern="[A-Za-z0-9._%+\-]+@gmail\.com" required></label>
+              <button class="btn btn-primary" type="submit">Add approved member</button>
+            </form>
+            <div class="member-approval-group">
+              <h4>Pre-approved members</h4>
+              <div class="member-approval-list" data-member-invite-list><p class="muted">Loading pre-approved members...</p></div>
+            </div>
+            <div class="member-approval-group">
+              <h4>Signed-in accounts</h4>
             <div class="member-approval-list" data-member-list><p class="muted">Loading members...</p></div>
+            </div>
           </section>
         </section>
       </div>
@@ -133,7 +145,7 @@
 
     </div>
   </footer>
-  <script src="assets/main.js?v=b84a138024cf"></script>
-  <script src="assets/firebase-config.js?v=f56b9ddbfcfa"></script><script type="module" src="assets/member.js?v=f56b9ddbfcfa"></script>
+  <script src="assets/main.js?v=2c3000f0888b"></script>
+  <script src="assets/firebase-config.js?v=2c3000f0888b"></script><script type="module" src="assets/member.js?v=2c3000f0888b"></script>
 </body>
 </html>
