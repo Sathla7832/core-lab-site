@@ -327,6 +327,12 @@ input:focus, textarea:focus { outline: 3px solid rgba(23,81,140,.18); border-col
 .member-form .member-checkbox { display: flex; align-items: center; gap: 10px; }
 .member-form .member-checkbox input { width: auto; flex: 0 0 auto; }
 .member-approval-section { margin-top: 22px; padding: 26px; }
+.member-invite-form { display: grid; grid-template-columns: minmax(180px, .8fr) minmax(260px, 1.2fr) auto; gap: 14px; align-items: end; margin-top: 20px; padding: 18px; border: 1px solid var(--line); border-radius: 8px; background: var(--paper); }
+.member-invite-form label { display: grid; gap: 7px; color: var(--brand-dark); font-weight: 700; }
+.member-invite-form input { width: 100%; min-height: 46px; border: 1px solid #a7b5c1; border-radius: 6px; padding: 10px 12px; background: #fff; color: var(--ink); font: inherit; }
+.member-invite-form input:focus { border-color: var(--brand); outline: 3px solid rgba(23,81,140,.18); outline-offset: 1px; }
+.member-approval-group { margin-top: 24px; }
+.member-approval-group h4 { margin-bottom: 0; color: var(--brand-dark); font-size: 1.05rem; }
 .member-approval-list { display: grid; gap: 10px; margin-top: 18px; }
 .member-approval-row { display: flex; justify-content: space-between; gap: 20px; align-items: center; padding: 14px 0; border-top: 1px solid var(--line); }
 .member-approval-row strong, .member-approval-row span { display: block; }
@@ -354,6 +360,7 @@ input:focus, textarea:focus { outline: 3px solid rgba(23,81,140,.18); border-col
   .member-auth-layout, .member-admin-grid { grid-template-columns: 1fr; }
   .member-card-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .member-portal-head, .member-approval-row, .member-calendar-card-head { align-items: stretch; flex-direction: column; }
+  .member-invite-form { grid-template-columns: 1fr; }
   .member-calendar-actions { justify-content: flex-start; }
   .member-calendar-frame { min-height: 500px; }
   .member-resource { grid-template-columns: 1fr; }

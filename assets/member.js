@@ -127,6 +127,9 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
         }
       };
 
+      const normalizeEmail = (value) => String(value || "").trim().toLowerCase();
+      const gmailAddressPattern = /^[A-Za-z0-9._%+\-]+@gmail\.com$/;
+
       const callSyncApi = async (announcementId, method, payload = {}) => {
         if (!syncApiUrl) throw new Error("The Discord synchronization service is not configured.");
         const token = await auth.currentUser?.getIdToken();
@@ -364,6 +367,45 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
         });
       };
 
+      const renderInvites = async () => {
+        const list = document.querySelector("[data-member-invite-list]");
+        if (!list || !currentIsAdmin) return;
+        const snapshot = await dbSdk.getDocs(dbSdk.collection(db, "memberInvites"));
+        const invites = snapshot.docs
+          .map((item) => ({ id: item.id, ref: item.ref, ...item.data() }))
+          .sort((a, b) => String(a.email || "").localeCompare(String(b.email || "")));
+        list.replaceChildren();
+        if (!invites.length) {
+          list.append(createText("p", "No Gmail addresses are awaiting their first sign-in.", "muted"));
+          return;
+        }
+        invites.forEach((invite) => {
+          const row = document.createElement("article");
+          row.className = "member-approval-row";
+          const identity = document.createElement("div");
+          identity.append(
+            createText("strong", invite.displayName || invite.email || "Pre-approved member"),
+            createText("span", `${invite.email || ""} - activates automatically on first sign-in`, "muted"),
+          );
+          const remove = createText("button", "Remove approval", "btn btn-secondary");
+          remove.type = "button";
+          remove.addEventListener("click", async () => {
+            if (!window.confirm(`Remove pre-approval for ${invite.email || "this account"}?`)) return;
+            remove.disabled = true;
+            try {
+              await dbSdk.deleteDoc(invite.ref);
+              await renderInvites();
+              setStatus("Pre-approved Gmail address removed.", "success");
+            } catch (error) {
+              setStatus(friendlyError(error), "error");
+              remove.disabled = false;
+            }
+          });
+          row.append(identity, remove);
+          list.append(row);
+        });
+      };
+
       const renderMembers = async () => {
         const list = document.querySelector("[data-member-list]");
         if (!list || !currentIsAdmin) return;
@@ -397,8 +439,16 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
           toggle.disabled = isCurrentAccount;
           toggle.addEventListener("click", async () => {
             toggle.disabled = true;
-            await dbSdk.updateDoc(member.ref, { active: !member.active, role: role.value, updatedAt: dbSdk.serverTimestamp() });
-            await renderMembers();
+            try {
+              await dbSdk.updateDoc(member.ref, { active: !member.active, role: role.value, updatedAt: dbSdk.serverTimestamp() });
+              if (member.active && member.email) {
+                await dbSdk.deleteDoc(dbSdk.doc(db, "memberInvites", normalizeEmail(member.email)));
+              }
+              await Promise.all([renderMembers(), renderInvites()]);
+            } catch (error) {
+              setStatus(friendlyError(error), "error");
+              toggle.disabled = false;
+            }
           });
           role.addEventListener("change", async () => {
             role.disabled = true;
@@ -412,6 +462,38 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
       };
 
       const bindAdminForms = (user) => {
+        const inviteForm = document.querySelector("[data-member-invite-form]");
+        inviteForm?.addEventListener("submit", async (event) => {
+          event.preventDefault();
+          const submit = inviteForm.querySelector('button[type="submit"]');
+          submit.disabled = true;
+          const values = new FormData(inviteForm);
+          const email = normalizeEmail(values.get("email"));
+          const displayName = String(values.get("displayName") || "").trim();
+          try {
+            if (!gmailAddressPattern.test(email)) throw new Error("invalid-gmail");
+            const inviteRef = dbSdk.doc(db, "memberInvites", email);
+            if ((await dbSdk.getDoc(inviteRef)).exists()) throw new Error("existing-invite");
+            await dbSdk.setDoc(inviteRef, {
+              email,
+              displayName,
+              active: true,
+              role: "member",
+              createdAt: dbSdk.serverTimestamp(),
+              createdBy: user.uid,
+            });
+            inviteForm.reset();
+            await renderInvites();
+            setStatus(`${email} is pre-approved for member access.`, "success");
+          } catch (error) {
+            if (error?.message === "invalid-gmail") setStatus("Enter a valid @gmail.com address.", "error");
+            else if (error?.message === "existing-invite") setStatus("That Gmail address is already pre-approved.", "warning");
+            else setStatus(friendlyError(error), "error");
+          } finally {
+            submit.disabled = false;
+          }
+        });
+
         const announcementForm = document.querySelector("[data-announcement-form]");
         announcementForm?.addEventListener("submit", async (event) => {
           event.preventDefault();
@@ -510,10 +592,25 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
         if (name) name.textContent = user.displayName || user.email || "Signed-in member";
         const memberRef = dbSdk.doc(db, "members", user.uid);
         try {
+          const email = normalizeEmail(user.email);
+          const inviteRef = email ? dbSdk.doc(db, "memberInvites", email) : null;
+          const inviteSnapshot = inviteRef ? await dbSdk.getDoc(inviteRef) : null;
+          const hasInvite = Boolean(
+            inviteSnapshot?.exists()
+            && inviteSnapshot.data()?.active === true
+            && normalizeEmail(inviteSnapshot.data()?.email) === email
+            && inviteSnapshot.data()?.role === "member"
+          );
           let memberSnapshot = await dbSdk.getDoc(memberRef);
           if (!memberSnapshot.exists()) {
-            await dbSdk.setDoc(memberRef, { email: user.email || "", displayName: user.displayName || "", active: false, role: "member", createdAt: dbSdk.serverTimestamp() });
+            await dbSdk.setDoc(memberRef, { email: user.email || "", displayName: user.displayName || "", active: hasInvite, role: "member", createdAt: dbSdk.serverTimestamp() });
             memberSnapshot = await dbSdk.getDoc(memberRef);
+          } else if (memberSnapshot.data()?.active !== true && hasInvite) {
+            await dbSdk.updateDoc(memberRef, { active: true, updatedAt: dbSdk.serverTimestamp() });
+            memberSnapshot = await dbSdk.getDoc(memberRef);
+          }
+          if (hasInvite && inviteRef && memberSnapshot.data()?.active === true) {
+            await dbSdk.deleteDoc(inviteRef);
           }
           const member = memberSnapshot.exists() ? memberSnapshot.data() : {};
           if (member.active !== true) {
@@ -528,7 +625,13 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
           activatePortalTab("calendars");
           setStatus(currentIsAdmin ? "Administrator access verified." : "Member access verified.", "success");
           if (currentIsAdmin) bindAdminForms(user);
-          await Promise.all([renderCalendars(), renderAnnouncements(), renderResources(), currentIsAdmin ? renderMembers() : Promise.resolve()]);
+          await Promise.all([
+            renderCalendars(),
+            renderAnnouncements(),
+            renderResources(),
+            currentIsAdmin ? renderMembers() : Promise.resolve(),
+            currentIsAdmin ? renderInvites() : Promise.resolve(),
+          ]);
         } catch (error) {
           setStatus(friendlyError(error), "error");
         }
