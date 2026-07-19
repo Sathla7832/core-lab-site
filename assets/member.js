@@ -1,7 +1,19 @@
 const loginPage = document.querySelector("[data-member-login]");
 const portalPage = document.querySelector("[data-member-portal]");
+const memberPageIsFramed = (loginPage || portalPage) && window.top !== window.self;
 
-if (loginPage || portalPage) {
+if (memberPageIsFramed) {
+  // GitHub Pages cannot emit frame-ancestors/X-Frame-Options response headers.
+  // Hide the authenticated UI before attempting to escape a hostile frame.
+  document.documentElement.style.display = "none";
+  try {
+    window.top.location.replace(window.self.location.href);
+  } catch (_error) {
+    // Sandboxed cross-origin frames can block top navigation; the page stays hidden.
+  }
+}
+
+if ((loginPage || portalPage) && !memberPageIsFramed) {
   const statusElement = document.querySelector("[data-member-status]");
   const config = window.CORE_LAB_FIREBASE_CONFIG || {};
   const configured = Boolean(config.apiKey && config.apiKey !== "PENDING_FIREBASE_SETUP" && config.authDomain && config.projectId && config.appId);
@@ -69,6 +81,15 @@ if (loginPage || portalPage) {
         node.textContent = text;
         if (className) node.className = className;
         return node;
+      };
+
+      const secureHttpsUrl = (value) => {
+        try {
+          const url = new URL(String(value || ""));
+          return url.protocol === "https:" ? url.href : "";
+        } catch (_error) {
+          return "";
+        }
       };
 
       const calendarIdPattern = /^[A-Za-z0-9._%+-]+@group\.calendar\.google\.com$/;
@@ -202,9 +223,16 @@ if (loginPage || portalPage) {
           const actions = document.createElement("div");
           actions.className = "member-resource-actions";
           const link = createText("a", "Open resource", "btn btn-primary");
-          link.href = data.url || "#";
-          link.target = "_blank";
-          link.rel = "noopener noreferrer";
+          const resourceUrl = secureHttpsUrl(data.url);
+          if (resourceUrl) {
+            link.href = resourceUrl;
+            link.target = "_blank";
+            link.rel = "noopener noreferrer";
+          } else {
+            link.textContent = "Unavailable resource";
+            link.classList.add("is-disabled");
+            link.setAttribute("aria-disabled", "true");
+          }
           actions.append(link);
           if (currentIsAdmin) {
             const remove = createText("button", "Delete", "member-delete");
