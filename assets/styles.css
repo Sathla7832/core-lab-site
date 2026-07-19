@@ -111,6 +111,7 @@ h3 { font-size: 21px; }
 .recruitment-panel h2 { margin-bottom: 0; color: var(--brand-dark); }
 .recruitment-panel p { margin-top: 0; }
 .recruitment-panel > div:last-child p { text-align: justify; text-align-last: left; text-justify: inter-word; hyphens: auto; }
+.recruitment-panel .recruitment-highlight { color: var(--accent); }
 .academic-activity-section { padding-top: 18px; }
 .activity-head { display: flex; align-items: center; justify-content: space-between; gap: 18px; }
 .activity-head h2 { margin-bottom: 0; }
