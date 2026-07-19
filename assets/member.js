@@ -622,7 +622,7 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
           document.querySelector("[data-member-content]")?.removeAttribute("hidden");
           const adminTab = document.querySelector("[data-member-admin-tab]");
           if (adminTab) adminTab.hidden = !currentIsAdmin;
-          activatePortalTab("announcements");
+          activatePortalTab("calendars");
           setStatus(currentIsAdmin ? "Administrator access verified." : "Member access verified.", "success");
           if (currentIsAdmin) bindAdminForms(user);
           await Promise.all([

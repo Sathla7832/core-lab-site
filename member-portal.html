@@ -22,7 +22,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/styles.css?v=9dc2c12dc843" />
+  <link rel="stylesheet" href="assets/styles.css?v=f9bfa256f6d7" />
 </head>
 <body>
   <a class="skip-link" href="#main-content">Skip to main content</a>
@@ -63,20 +63,22 @@
       </section>
 
       <div class="member-portal-content" data-member-content hidden>
+        <section class="member-announcements-dashboard" data-member-announcements-dashboard aria-labelledby="member-announcements-heading">
+          <div class="member-section-head">
+            <div><p class="eyebrow">Updates</p><h2 id="member-announcements-heading">Announcements</h2><p class="member-section-description">Announcements are official lab-wide notices published by portal administrators. Check this page for meeting changes, deadlines, instrument maintenance, safety notices, and other time-sensitive updates. Approved members can read announcements; administrators create or remove them in Manage Portal.</p></div>
+          </div>
+          <div class="member-card-grid" data-announcement-list><p class="muted">Loading announcements...</p></div>
+        </section>
+
         <nav class="member-portal-tabs" role="tablist" aria-label="Member portal sections">
-          <button id="member-tab-announcements" class="member-portal-tab" type="button" role="tab" aria-selected="true" aria-controls="member-panel-announcements" data-member-tab-target="announcements">Announcements</button>
-          <button id="member-tab-calendars" class="member-portal-tab" type="button" role="tab" aria-selected="false" aria-controls="member-panel-calendars" data-member-tab-target="calendars" tabindex="-1">Calendars</button>
+          <button id="member-tab-calendars" class="member-portal-tab" type="button" role="tab" aria-selected="true" aria-controls="member-panel-calendars" data-member-tab-target="calendars">Calendars</button>
           <button id="member-tab-resources" class="member-portal-tab" type="button" role="tab" aria-selected="false" aria-controls="member-panel-resources" data-member-tab-target="resources" tabindex="-1">Laboratory Resources</button>
           <button id="member-tab-manage" class="member-portal-tab" type="button" role="tab" aria-selected="false" aria-controls="member-panel-manage" data-member-tab-target="manage" data-member-admin-tab tabindex="-1" hidden>Manage Portal</button>
         </nav>
 
-        <section id="member-panel-announcements" class="member-content-section member-portal-panel" role="tabpanel" aria-labelledby="member-tab-announcements" data-member-panel="announcements">
-          <div class="member-section-head"><div><p class="eyebrow">Updates</p><h2>Announcements</h2><p class="member-section-description">Announcements are official lab-wide notices published by portal administrators. Check this page for meeting changes, deadlines, instrument maintenance, safety notices, and other time-sensitive updates. Approved members can read announcements; administrators create or remove them in Manage Portal.</p></div></div>
-          <div class="member-card-grid" data-announcement-list><p class="muted">Loading announcements...</p></div>
-        </section>
-        <section id="member-panel-calendars" class="member-content-section member-calendar-section member-portal-panel" role="tabpanel" aria-labelledby="member-tab-calendars" data-member-panel="calendars" hidden>
+        <section id="member-panel-calendars" class="member-content-section member-calendar-section member-portal-panel" role="tabpanel" aria-labelledby="member-tab-calendars" data-member-panel="calendars">
           <div class="member-section-head member-calendar-intro">
-            <div><p class="eyebrow">Google Calendar</p><h2>Laboratory Scheduling</h2><p>All approved members use the same three scheduling interfaces. Changes made through the portal, Discord Bot, or Notion are synchronized across all three systems, normally within two minutes. Calendar settings are loaded only after Firestore verifies access.</p></div>
+            <div><p class="eyebrow">Google Calendar</p><h2>Laboratory Scheduling</h2><p class="member-section-description">All approved members use the same three scheduling interfaces. Changes made through the portal, Discord Bot, or Notion are synchronized across all three systems, normally within two minutes. Calendar settings are loaded only after Firestore verifies access.</p></div>
           </div>
           <div class="member-calendar-grid" data-calendar-list><p class="muted">Loading protected calendar settings...</p></div>
         </section>
@@ -145,7 +147,7 @@
 
     </div>
   </footer>
-  <script src="assets/main.js?v=9dc2c12dc843"></script>
-  <script src="assets/firebase-config.js?v=9dc2c12dc843"></script><script type="module" src="assets/member.js?v=9dc2c12dc843"></script>
+  <script src="assets/main.js?v=f9bfa256f6d7"></script>
+  <script src="assets/firebase-config.js?v=f9bfa256f6d7"></script><script type="module" src="assets/member.js?v=f9bfa256f6d7"></script>
 </body>
 </html>
