@@ -181,9 +181,7 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
       const calendarPresentation = Object.freeze({
         instrument: {
           order: 2,
-          eyebrow: "Equipment",
           title: "Instrument Reservation",
-          description: "Check existing reservations, then create a booking with the instrument name and operator in the event title.",
           mode: "WEEK",
           action: "Create instrument booking",
           eventTitle: "[Instrument] Instrument name - Member name",
@@ -191,9 +189,7 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
         },
         leave: {
           order: 3,
-          eyebrow: "Attendance",
           title: "Leave Schedule",
-          description: "Review laboratory availability and submit leave dates with your name and leave type in the event title.",
           mode: "MONTH",
           action: "Submit leave schedule",
           eventTitle: "[Leave] Member name - Leave type",
@@ -201,9 +197,7 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
         },
         meeting: {
           order: 1,
-          eyebrow: "Collaboration",
           title: "Lab Meetings",
-          description: "View upcoming meetings and add a meeting invitation with the topic, location, and participants.",
           mode: "MONTH",
           account: "corelabfcu@gmail.com",
           action: "Add meeting",
@@ -239,7 +233,7 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
           const header = document.createElement("header");
           header.className = "member-calendar-card-head";
           const copy = document.createElement("div");
-          copy.append(createText("p", presentation.eyebrow, "eyebrow"), createText("h3", presentation.title), createText("p", presentation.description));
+          copy.append(createText("h3", presentation.title));
           const actions = document.createElement("div");
           actions.className = "member-calendar-actions";
           const createLink = createText("a", presentation.action, "btn btn-primary");
