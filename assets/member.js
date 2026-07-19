@@ -33,6 +33,40 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
     return "The portal could not complete that request. Please try again or contact the administrator.";
   };
 
+  const portalTabs = Array.from(document.querySelectorAll("[data-member-tab-target]"));
+  const portalPanels = Array.from(document.querySelectorAll("[data-member-panel]"));
+  const availablePortalTabs = () => portalTabs.filter((tab) => !tab.hidden);
+  const activatePortalTab = (target, moveFocus = false) => {
+    const selectedTab = portalTabs.find((tab) => tab.dataset.memberTabTarget === target && !tab.hidden);
+    if (!selectedTab) return;
+    portalTabs.forEach((tab) => {
+      const selected = tab === selectedTab;
+      tab.setAttribute("aria-selected", String(selected));
+      tab.tabIndex = selected ? 0 : -1;
+    });
+    portalPanels.forEach((panel) => {
+      panel.hidden = panel.dataset.memberPanel !== target;
+    });
+    if (moveFocus) selectedTab.focus();
+  };
+
+  portalTabs.forEach((tab) => {
+    tab.addEventListener("click", () => activatePortalTab(tab.dataset.memberTabTarget));
+    tab.addEventListener("keydown", (event) => {
+      if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+      const tabs = availablePortalTabs();
+      const currentIndex = tabs.indexOf(tab);
+      if (currentIndex < 0) return;
+      event.preventDefault();
+      let nextIndex = currentIndex;
+      if (event.key === "Home") nextIndex = 0;
+      if (event.key === "End") nextIndex = tabs.length - 1;
+      if (event.key === "ArrowLeft") nextIndex = (currentIndex - 1 + tabs.length) % tabs.length;
+      if (event.key === "ArrowRight") nextIndex = (currentIndex + 1) % tabs.length;
+      activatePortalTab(tabs[nextIndex].dataset.memberTabTarget, true);
+    });
+  });
+
   if (!configured) {
     setStatus("Member access is being configured. Please contact the laboratory administrator.", "error");
     document.querySelector("[data-member-sign-in]")?.setAttribute("disabled", "");
@@ -95,7 +129,7 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
       const calendarIdPattern = /^[A-Za-z0-9._%+-]+@group\.calendar\.google\.com$/;
       const calendarPresentation = Object.freeze({
         instrument: {
-          order: 1,
+          order: 2,
           eyebrow: "Equipment",
           title: "Instrument Reservation",
           description: "Check existing reservations, then create a booking with the instrument name and operator in the event title.",
@@ -105,7 +139,7 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
           eventDetails: "Instrument:\nMember:\nSample or project:\nNotes:",
         },
         leave: {
-          order: 2,
+          order: 3,
           eyebrow: "Attendance",
           title: "Leave Schedule",
           description: "Review laboratory availability and submit leave dates with your name and leave type in the event title.",
@@ -115,7 +149,7 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
           eventDetails: "Member:\nLeave type:\nReason or handover note:\nEmergency contact if needed:",
         },
         meeting: {
-          order: 3,
+          order: 1,
           eyebrow: "Collaboration",
           title: "Lab Meetings",
           description: "View upcoming meetings and add a meeting invitation with the topic, location, and participants.",
@@ -390,7 +424,9 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
           }
           currentIsAdmin = member.role === "admin";
           document.querySelector("[data-member-content]")?.removeAttribute("hidden");
-          if (currentIsAdmin) document.querySelector("[data-member-admin]")?.removeAttribute("hidden");
+          const adminTab = document.querySelector("[data-member-admin-tab]");
+          if (adminTab) adminTab.hidden = !currentIsAdmin;
+          activatePortalTab("calendars");
           setStatus(currentIsAdmin ? "Administrator access verified." : "Member access verified.", "success");
           if (currentIsAdmin) bindAdminForms(user);
           await Promise.all([renderCalendars(), renderAnnouncements(), renderResources(), currentIsAdmin ? renderMembers() : Promise.resolve()]);
