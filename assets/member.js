@@ -212,6 +212,168 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
         return url.href;
       };
 
+      const calendarDateKey = (date) => [
+        date.getFullYear(),
+        String(date.getMonth() + 1).padStart(2, "0"),
+        String(date.getDate()).padStart(2, "0"),
+      ].join("-");
+
+      const localCalendarDate = (value) => {
+        const text = String(value || "");
+        const dateOnly = /^(\d{4})-(\d{2})-(\d{2})$/.exec(text);
+        if (dateOnly) return new Date(Number(dateOnly[1]), Number(dateOnly[2]) - 1, Number(dateOnly[3]));
+        const parsed = new Date(text);
+        return Number.isNaN(parsed.getTime()) ? null : parsed;
+      };
+
+      const startOfCalendarWeek = (value) => {
+        const start = new Date(value.getFullYear(), value.getMonth(), value.getDate());
+        start.setDate(start.getDate() - ((start.getDay() + 6) % 7));
+        return start;
+      };
+
+      const calendarRange = (anchor, mode) => {
+        if (mode === "WEEK") {
+          const start = startOfCalendarWeek(anchor);
+          const end = new Date(start);
+          end.setDate(end.getDate() + 7);
+          return { start, end, cells: 7 };
+        }
+        const monthStart = new Date(anchor.getFullYear(), anchor.getMonth(), 1);
+        const start = startOfCalendarWeek(monthStart);
+        const end = new Date(start);
+        end.setDate(end.getDate() + 42);
+        return { start, end, cells: 42 };
+      };
+
+      const fetchCalendarEvents = async (kind, start, end) => {
+        if (!syncApiUrl) throw new Error("The calendar service is not configured.");
+        const token = await auth.currentUser?.getIdToken();
+        if (!token) throw new Error("Please sign in again to load calendar events.");
+        const url = new URL(`${syncApiUrl}/api/calendars/events`);
+        url.searchParams.set("kind", kind);
+        url.searchParams.set("start", start.toISOString());
+        url.searchParams.set("end", end.toISOString());
+        const response = await fetch(url, {
+          method: "GET",
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(String(data.error || "Calendar events could not be loaded."));
+        return Array.isArray(data.events) ? data.events : [];
+      };
+
+      const calendarEventNode = (event) => {
+        const item = document.createElement("div");
+        item.className = "member-calendar-event";
+        const start = localCalendarDate(event.start);
+        const time = event.allDay || !start
+          ? "All day"
+          : new Intl.DateTimeFormat("en", { hour: "numeric", minute: "2-digit" }).format(start);
+        item.append(createText("span", time, "member-calendar-event-time"));
+        item.append(createText("span", String(event.title || "Untitled event"), "member-calendar-event-title"));
+        if (event.location) item.title = `${event.title} - ${event.location}`;
+        return item;
+      };
+
+      const eventOccursOn = (event, day) => {
+        const start = localCalendarDate(event.start);
+        const end = localCalendarDate(event.end);
+        if (!start) return false;
+        const dayStart = new Date(day.getFullYear(), day.getMonth(), day.getDate());
+        const dayEnd = new Date(dayStart);
+        dayEnd.setDate(dayEnd.getDate() + 1);
+        const eventEnd = end && end > start ? end : new Date(start.getTime() + 60 * 60 * 1000);
+        return start < dayEnd && eventEnd > dayStart;
+      };
+
+      const renderCalendarGrid = (surface, presentation, anchor, range, events) => {
+        surface.replaceChildren();
+        const weekdays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+        const grid = document.createElement("div");
+        grid.className = `member-native-calendar-grid is-${presentation.mode.toLowerCase()}`;
+        grid.setAttribute("role", "grid");
+        weekdays.forEach((weekday) => grid.append(createText("div", weekday, "member-calendar-weekday")));
+        const todayKey = calendarDateKey(new Date());
+        for (let offset = 0; offset < range.cells; offset += 1) {
+          const day = new Date(range.start);
+          day.setDate(day.getDate() + offset);
+          const cell = document.createElement("section");
+          cell.className = "member-calendar-day";
+          cell.setAttribute("role", "gridcell");
+          if (presentation.mode === "MONTH" && day.getMonth() !== anchor.getMonth()) cell.classList.add("is-outside");
+          if (calendarDateKey(day) === todayKey) cell.classList.add("is-today");
+          const heading = document.createElement("div");
+          heading.className = "member-calendar-day-heading";
+          heading.append(createText("span", new Intl.DateTimeFormat("en", { month: "short", day: "numeric" }).format(day)));
+          cell.append(heading);
+          const dayEvents = events.filter((event) => eventOccursOn(event, day));
+          const eventList = document.createElement("div");
+          eventList.className = "member-calendar-day-events";
+          dayEvents.forEach((event) => eventList.append(calendarEventNode(event)));
+          if (!dayEvents.length) eventList.append(createText("span", "No events", "member-calendar-empty-day"));
+          cell.append(eventList);
+          grid.append(cell);
+        }
+        surface.append(grid);
+      };
+
+      const mountCalendarSurface = (card, kind, presentation) => {
+        const calendar = document.createElement("div");
+        calendar.className = "member-native-calendar";
+        const toolbar = document.createElement("div");
+        toolbar.className = "member-calendar-toolbar";
+        const navigation = document.createElement("div");
+        navigation.className = "member-calendar-navigation";
+        const previous = createText("button", "Previous", "btn btn-secondary member-calendar-nav");
+        const today = createText("button", "Today", "btn btn-secondary member-calendar-nav");
+        const next = createText("button", "Next", "btn btn-secondary member-calendar-nav");
+        [previous, today, next].forEach((button) => { button.type = "button"; });
+        const period = createText("strong", "", "member-calendar-period");
+        navigation.append(previous, today, next, period);
+        const state = createText("p", "Loading events...", "member-calendar-state");
+        state.setAttribute("aria-live", "polite");
+        toolbar.append(navigation, state);
+        const surface = document.createElement("div");
+        surface.className = "member-calendar-surface";
+        calendar.append(toolbar, surface);
+        card.append(calendar);
+
+        let anchor = new Date();
+        const load = async () => {
+          const range = calendarRange(anchor, presentation.mode);
+          period.textContent = presentation.mode === "WEEK"
+            ? `${new Intl.DateTimeFormat("en", { month: "short", day: "numeric" }).format(range.start)} - ${new Intl.DateTimeFormat("en", { month: "short", day: "numeric", year: "numeric" }).format(new Date(range.end.getTime() - 86400000))}`
+            : new Intl.DateTimeFormat("en", { month: "long", year: "numeric" }).format(anchor);
+          state.textContent = "Loading events...";
+          surface.replaceChildren(createText("p", "Loading calendar...", "member-calendar-loading"));
+          try {
+            const events = await fetchCalendarEvents(kind, range.start, range.end);
+            renderCalendarGrid(surface, presentation, anchor, range, events);
+            state.textContent = `${events.length} event${events.length === 1 ? "" : "s"}`;
+            state.dataset.tone = "success";
+          } catch (error) {
+            surface.replaceChildren(createText("p", String(error?.message || "Calendar events could not be loaded."), "member-calendar-error"));
+            state.textContent = "Unable to load events";
+            state.dataset.tone = "error";
+          }
+        };
+        previous.addEventListener("click", () => {
+          anchor = presentation.mode === "WEEK"
+            ? new Date(anchor.getFullYear(), anchor.getMonth(), anchor.getDate() - 7)
+            : new Date(anchor.getFullYear(), anchor.getMonth() - 1, 1);
+          load();
+        });
+        today.addEventListener("click", () => { anchor = new Date(); load(); });
+        next.addEventListener("click", () => {
+          anchor = presentation.mode === "WEEK"
+            ? new Date(anchor.getFullYear(), anchor.getMonth(), anchor.getDate() + 7)
+            : new Date(anchor.getFullYear(), anchor.getMonth() + 1, 1);
+          load();
+        });
+        return load();
+      };
+
       const renderCalendars = async () => {
         const list = document.querySelector("[data-calendar-list]");
         if (!list) return;
@@ -225,6 +387,7 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
           list.append(createText("p", "No protected calendars are configured yet. An administrator can add them below.", "muted"));
           return;
         }
+        const calendarLoads = [];
         calendars.forEach((calendar) => {
           const presentation = calendarPresentation[calendar.key];
           const calendarId = String(calendar.calendarId);
@@ -253,15 +416,11 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
           openLink.rel = "noopener noreferrer";
           actions.append(createLink, openLink);
           header.append(copy, actions);
-          const frame = document.createElement("iframe");
-          frame.className = "member-calendar-frame";
-          frame.title = `${presentation.title} Google Calendar`;
-          frame.src = calendarUrl("https://calendar.google.com/calendar/embed", { src: calendarId, ctz: "Asia/Taipei", mode: presentation.mode, authuser: calendarAccount, showTitle: "0", showPrint: "0", showTabs: "0", showCalendars: "0", showTz: "0" });
-          frame.loading = "lazy";
-          frame.referrerPolicy = "strict-origin-when-cross-origin";
-          card.append(header, frame);
+          card.append(header);
           list.append(card);
+          calendarLoads.push(mountCalendarSurface(card, calendar.key, presentation));
         });
+        await Promise.allSettled(calendarLoads);
       };
 
       const renderAnnouncements = async () => {
