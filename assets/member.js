@@ -108,29 +108,25 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
           }
           const html = await response.text();
           const blobUrl = URL.createObjectURL(new Blob([html], { type: "text/html;charset=utf-8" }));
+          const handleRoadmapHeight = (event) => {
+            if (event.source !== frame.contentWindow || event.data?.type !== "core-lab-roadmap-height") return;
+            const height = Number(event.data.height);
+            if (!Number.isFinite(height) || height < 400 || height > 10000) return;
+            frame.style.height = `${Math.ceil(height) + 32}px`;
+          };
+          window.addEventListener("message", handleRoadmapHeight);
           frame.addEventListener("load", () => {
-            const resizeFrame = () => {
-              try {
-                const documentElement = frame.contentDocument?.documentElement;
-                const body = frame.contentDocument?.body;
-                if (!documentElement || !body) return;
-                frame.style.height = `${Math.max(1200, documentElement.scrollHeight, body.scrollHeight) + 32}px`;
-              } catch (_error) {
-                frame.style.height = "1800px";
-              }
-            };
-            resizeFrame();
-            if ("ResizeObserver" in window && frame.contentDocument?.documentElement) {
-              const observer = new ResizeObserver(resizeFrame);
-              observer.observe(frame.contentDocument.documentElement);
-            }
+            frame.style.height = frame.style.height || "1800px";
             frame.hidden = false;
             if (state) state.hidden = true;
             frame.dataset.loaded = "true";
             frame.dataset.loading = "false";
           }, { once: true });
           frame.setAttribute("src", blobUrl);
-          window.addEventListener("beforeunload", () => URL.revokeObjectURL(blobUrl), { once: true });
+          window.addEventListener("beforeunload", () => {
+            window.removeEventListener("message", handleRoadmapHeight);
+            URL.revokeObjectURL(blobUrl);
+          }, { once: true });
         } catch (error) {
           frame.dataset.loading = "false";
           if (state) state.textContent = friendlyError(error);
