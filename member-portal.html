@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.gstatic.com; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://lab-bot-production-70d6.up.railway.app; frame-src https://calendar.google.com https://accounts.google.com https://core-lab-member-portal.firebaseapp.com; img-src 'self' data: https://*.googleusercontent.com; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.gstatic.com; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://lab-bot-production-70d6.up.railway.app; frame-src 'self' blob: https://calendar.google.com https://accounts.google.com https://core-lab-member-portal.firebaseapp.com; img-src 'self' data: https://*.googleusercontent.com; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Member Portal | CORE Lab</title>
   <meta name="description" content="Private scheduling and resource portal for approved CORE Lab members." />
@@ -22,7 +22,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/styles.css?v=c5275e31cc1a" />
+  <link rel="stylesheet" href="assets/styles.css?v=de9dbd396960" />
 </head>
 <body>
   <a class="skip-link" href="#main-content">Skip to main content</a>
@@ -71,6 +71,7 @@
 
         <nav class="member-portal-tabs" role="tablist" aria-label="Member portal sections">
           <button id="member-tab-calendars" class="member-portal-tab" type="button" role="tab" aria-selected="true" aria-controls="member-panel-calendars" data-member-tab-target="calendars">Calendars</button>
+          <button id="member-tab-roadmap" class="member-portal-tab" type="button" role="tab" aria-selected="false" aria-controls="member-panel-roadmap" data-member-tab-target="roadmap" tabindex="-1">Student Roadmap</button>
           <button id="member-tab-resources" class="member-portal-tab" type="button" role="tab" aria-selected="false" aria-controls="member-panel-resources" data-member-tab-target="resources" tabindex="-1">Laboratory Resources</button>
           <button id="member-tab-manage" class="member-portal-tab" type="button" role="tab" aria-selected="false" aria-controls="member-panel-manage" data-member-tab-target="manage" data-member-admin-tab tabindex="-1" hidden>Manage Portal</button>
         </nav>
@@ -80,6 +81,10 @@
             <div><h2>Laboratory Scheduling</h2></div>
           </div>
           <div class="member-calendar-grid" data-calendar-list><p class="muted">Loading protected calendar settings...</p></div>
+        </section>
+        <section id="member-panel-roadmap" class="member-content-section member-portal-panel member-roadmap-panel" role="tabpanel" aria-labelledby="member-tab-roadmap" data-member-panel="roadmap" hidden>
+          <p class="member-roadmap-state muted" data-member-roadmap-state>Open this tab to load the protected roadmap.</p>
+          <iframe class="member-roadmap-frame" title="Undergraduate research and graduate admission roadmap" data-member-roadmap-frame hidden></iframe>
         </section>
         <section id="member-panel-resources" class="member-content-section member-portal-panel" role="tabpanel" aria-labelledby="member-tab-resources" data-member-panel="resources" hidden>
           <div class="member-section-head"><div><h2>Laboratory Resources</h2></div></div>
@@ -146,7 +151,7 @@
 
     </div>
   </footer>
-  <script src="assets/main.js?v=c5275e31cc1a"></script>
-  <script src="assets/firebase-config.js?v=c5275e31cc1a"></script><script type="module" src="assets/member.js?v=c5275e31cc1a"></script>
+  <script src="assets/main.js?v=de9dbd396960"></script>
+  <script src="assets/firebase-config.js?v=de9dbd396960"></script><script type="module" src="assets/member.js?v=de9dbd396960"></script>
 </body>
 </html>

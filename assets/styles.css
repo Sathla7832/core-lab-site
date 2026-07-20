@@ -293,6 +293,8 @@ input:focus, textarea:focus { outline: 3px solid rgba(23,81,140,.18); border-col
 .member-portal-tab:focus-visible { outline: 3px solid rgba(23,81,140,.22); outline-offset: -3px; }
 .member-portal-panel { padding: 40px 0 52px; border-bottom: 0; }
 .member-portal-panel[hidden] { display: none; }
+.member-roadmap-panel { padding-top: 20px; }
+.member-roadmap-frame { display: block; width: 100%; min-height: 1200px; border: 0; background: #eceef1; }
 .member-section-head { display: flex; width: 100%; justify-content: space-between; gap: 20px; align-items: end; margin-bottom: 24px; }
 .member-section-head > div { width: 100%; }
 .member-section-head h2 { color: var(--brand-dark); margin: 0; }
