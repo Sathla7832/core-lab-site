@@ -178,6 +178,7 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
       };
 
       const calendarIdPattern = /^[A-Za-z0-9._%+-]+@group\.calendar\.google\.com$/;
+      const calendarAccount = "corelabfcu@gmail.com";
       const calendarPresentation = Object.freeze({
         instrument: {
           order: 2,
@@ -199,7 +200,6 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
           order: 1,
           title: "Lab Meetings",
           mode: "MONTH",
-          account: "corelabfcu@gmail.com",
           action: "Add meeting",
           eventTitle: "[Meeting] Topic",
           eventDetails: "Organizer:\nLocation or Google Meet:\nParticipants:\nAgenda:",
@@ -243,12 +243,12 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
             details: presentation.eventDetails,
             add: calendarId,
             ctz: "Asia/Taipei",
-            ...(presentation.account ? { authuser: presentation.account } : {}),
+            authuser: calendarAccount,
           });
           createLink.target = "_blank";
           createLink.rel = "noopener noreferrer";
           const openLink = createText("a", "Open in Google Calendar", "btn btn-secondary");
-          openLink.href = calendarUrl("https://calendar.google.com/calendar/u/1/r", { cid: calendarId });
+          openLink.href = calendarUrl("https://calendar.google.com/calendar/r", { cid: calendarId, authuser: calendarAccount });
           openLink.target = "_blank";
           openLink.rel = "noopener noreferrer";
           actions.append(createLink, openLink);
@@ -256,7 +256,7 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
           const frame = document.createElement("iframe");
           frame.className = "member-calendar-frame";
           frame.title = `${presentation.title} Google Calendar`;
-          frame.src = calendarUrl("https://calendar.google.com/calendar/embed", { src: calendarId, ctz: "Asia/Taipei", mode: presentation.mode, showTitle: "0", showPrint: "0", showTabs: "0", showCalendars: "0", showTz: "0" });
+          frame.src = calendarUrl("https://calendar.google.com/calendar/embed", { src: calendarId, ctz: "Asia/Taipei", mode: presentation.mode, authuser: calendarAccount, showTitle: "0", showPrint: "0", showTabs: "0", showCalendars: "0", showTz: "0" });
           frame.loading = "lazy";
           frame.referrerPolicy = "strict-origin-when-cross-origin";
           card.append(header, frame);
