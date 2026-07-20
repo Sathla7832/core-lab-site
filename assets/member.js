@@ -114,7 +114,7 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
                 const documentElement = frame.contentDocument?.documentElement;
                 const body = frame.contentDocument?.body;
                 if (!documentElement || !body) return;
-                frame.style.height = `${Math.max(1200, documentElement.scrollHeight, body.scrollHeight)}px`;
+                frame.style.height = `${Math.max(1200, documentElement.scrollHeight, body.scrollHeight) + 32}px`;
               } catch (_error) {
                 frame.style.height = "1800px";
               }
