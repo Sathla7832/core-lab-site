@@ -37,6 +37,7 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
   const portalTabs = Array.from(document.querySelectorAll("[data-member-tab-target]"));
   const portalPanels = Array.from(document.querySelectorAll("[data-member-panel]"));
   const availablePortalTabs = () => portalTabs.filter((tab) => !tab.hidden);
+  let loadMemberRoadmap = () => {};
   const activatePortalTab = (target, moveFocus = false) => {
     const selectedTab = portalTabs.find((tab) => tab.dataset.memberTabTarget === target && !tab.hidden);
     if (!selectedTab) return;
@@ -48,6 +49,7 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
     portalPanels.forEach((panel) => {
       panel.hidden = panel.dataset.memberPanel !== target;
     });
+    if (target === "roadmap") loadMemberRoadmap();
     if (moveFocus) selectedTab.focus();
   };
 
@@ -85,6 +87,55 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
       const provider = new authSdk.GoogleAuthProvider();
       provider.setCustomParameters({ prompt: "select_account" });
       let currentIsAdmin = false;
+
+      loadMemberRoadmap = async () => {
+        const frame = document.querySelector("[data-member-roadmap-frame]");
+        const state = document.querySelector("[data-member-roadmap-state]");
+        if (!frame || frame.dataset.loaded === "true" || frame.dataset.loading === "true") return;
+        frame.dataset.loading = "true";
+        if (state) state.textContent = "Loading protected student roadmap...";
+        try {
+          if (!syncApiUrl) throw new Error("The member content service is not configured.");
+          const token = await auth.currentUser?.getIdToken();
+          if (!token) throw new Error("Please sign in again to load the student roadmap.");
+          const response = await fetch(`${syncApiUrl}/api/resources/student-roadmap`, {
+            method: "GET",
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          if (!response.ok) {
+            const data = await response.json().catch(() => ({}));
+            throw new Error(String(data.error || "The student roadmap could not be loaded."));
+          }
+          const html = await response.text();
+          const blobUrl = URL.createObjectURL(new Blob([html], { type: "text/html;charset=utf-8" }));
+          frame.addEventListener("load", () => {
+            const resizeFrame = () => {
+              try {
+                const documentElement = frame.contentDocument?.documentElement;
+                const body = frame.contentDocument?.body;
+                if (!documentElement || !body) return;
+                frame.style.height = `${Math.max(1200, documentElement.scrollHeight, body.scrollHeight)}px`;
+              } catch (_error) {
+                frame.style.height = "1800px";
+              }
+            };
+            resizeFrame();
+            if ("ResizeObserver" in window && frame.contentDocument?.documentElement) {
+              const observer = new ResizeObserver(resizeFrame);
+              observer.observe(frame.contentDocument.documentElement);
+            }
+            frame.hidden = false;
+            if (state) state.hidden = true;
+            frame.dataset.loaded = "true";
+            frame.dataset.loading = "false";
+          }, { once: true });
+          frame.setAttribute("src", blobUrl);
+          window.addEventListener("beforeunload", () => URL.revokeObjectURL(blobUrl), { once: true });
+        } catch (error) {
+          frame.dataset.loading = "false";
+          if (state) state.textContent = friendlyError(error);
+        }
+      };
 
       const signInButton = document.querySelector("[data-member-sign-in]");
       signInButton?.addEventListener("click", async () => {
