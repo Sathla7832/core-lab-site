@@ -182,6 +182,7 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
       const calendarPresentation = Object.freeze({
         instrument: {
           order: 2,
+          apiKind: "booking",
           title: "Instrument Reservation",
           mode: "WEEK",
           action: "Create instrument booking",
@@ -348,7 +349,7 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
           state.textContent = "Loading events...";
           surface.replaceChildren(createText("p", "Loading calendar...", "member-calendar-loading"));
           try {
-            const events = await fetchCalendarEvents(kind, range.start, range.end);
+            const events = await fetchCalendarEvents(presentation.apiKind || kind, range.start, range.end);
             renderCalendarGrid(surface, presentation, anchor, range, events);
             state.textContent = `${events.length} event${events.length === 1 ? "" : "s"}`;
             state.dataset.tone = "success";
