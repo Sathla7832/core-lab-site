@@ -108,15 +108,7 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
           }
           const html = await response.text();
           const blobUrl = URL.createObjectURL(new Blob([html], { type: "text/html;charset=utf-8" }));
-          const handleRoadmapHeight = (event) => {
-            if (event.source !== frame.contentWindow || event.data?.type !== "core-lab-roadmap-height") return;
-            const height = Number(event.data.height);
-            if (!Number.isFinite(height) || height < 400 || height > 10000) return;
-            frame.style.height = `${Math.ceil(height) + 32}px`;
-          };
-          window.addEventListener("message", handleRoadmapHeight);
           frame.addEventListener("load", () => {
-            frame.style.height = frame.style.height || "1800px";
             frame.hidden = false;
             if (state) state.hidden = true;
             frame.dataset.loaded = "true";
@@ -124,7 +116,6 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
           }, { once: true });
           frame.setAttribute("src", blobUrl);
           window.addEventListener("beforeunload", () => {
-            window.removeEventListener("message", handleRoadmapHeight);
             URL.revokeObjectURL(blobUrl);
           }, { once: true });
         } catch (error) {

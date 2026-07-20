@@ -294,7 +294,7 @@ input:focus, textarea:focus { outline: 3px solid rgba(23,81,140,.18); border-col
 .member-portal-panel { padding: 40px 0 52px; border-bottom: 0; }
 .member-portal-panel[hidden] { display: none; }
 .member-roadmap-panel { padding-top: 20px; }
-.member-roadmap-frame { display: block; width: 100%; min-height: 1200px; border: 0; background: #eceef1; }
+.member-roadmap-frame { display: block; width: 100%; height: 3050px; border: 0; background: #eceef1; }
 .member-section-head { display: flex; width: 100%; justify-content: space-between; gap: 20px; align-items: end; margin-bottom: 24px; }
 .member-section-head > div { width: 100%; }
 .member-section-head h2 { color: var(--brand-dark); margin: 0; }
@@ -391,6 +391,7 @@ input:focus, textarea:focus { outline: 3px solid rgba(23,81,140,.18); border-col
   .nav-links.open { display: flex; }
   .member-auth-layout, .member-admin-grid { grid-template-columns: 1fr; }
   .member-card-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .member-roadmap-frame { height: 3900px; }
   .member-portal-head, .member-approval-row, .member-calendar-card-head { align-items: stretch; flex-direction: column; }
   .member-invite-form { grid-template-columns: 1fr; }
   .member-calendar-actions { justify-content: flex-start; }
@@ -464,6 +465,7 @@ input:focus, textarea:focus { outline: 3px solid rgba(23,81,140,.18); border-col
   .metric-grid { grid-template-columns: 1fr; }
   .metric-card:nth-child(odd) { border-right: 0; }
   .member-card-grid { grid-template-columns: 1fr; }
+  .member-roadmap-frame { height: 4600px; }
   .member-auth-copy, .member-security-note, .member-form, .member-approval-section, .member-card, .member-resource { padding: 18px; }
   .chart-canvas { height: 250px !important; }
   .pub-text h3 { font-size: 20px; overflow-wrap: anywhere; }
