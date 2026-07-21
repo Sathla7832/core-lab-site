@@ -26,6 +26,8 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
   };
 
   const friendlyError = (error) => {
+    // Keep the real error in the console; the returned text is intentionally generic.
+    console.error("[member-portal]", error);
     const code = String(error?.code || "");
     if (code.includes("popup-closed-by-user")) return "Sign-in was cancelled.";
     if (code.includes("unauthorized-domain")) return "This website domain has not been authorized for sign-in.";
