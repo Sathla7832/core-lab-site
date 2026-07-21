@@ -350,6 +350,14 @@ input:focus, textarea:focus { outline: 3px solid rgba(23,81,140,.18); border-col
 .member-resource { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 24px; align-items: center; padding: 22px 24px; }
 .member-resource p { margin: 5px 0 0; color: var(--muted); }
 .member-resource-actions, .member-approval-controls { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.member-group-reminder { margin: 0 0 16px; padding: 12px 14px; border: 1px solid var(--line); border-left: 3px solid var(--accent); border-radius: 6px; background: var(--soft); font-size: 15px; }
+.member-experiment-filters { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 18px; }
+.member-experiment-filters label { display: flex; flex-direction: column; gap: 5px; font-weight: 700; font-size: 14px; }
+.member-experiment-filters input { min-height: 42px; padding: 8px 12px; border: 1px solid var(--line); border-radius: 6px; font: inherit; font-weight: 400; }
+.member-experiment-list { display: flex; flex-direction: column; gap: 12px; }
+.member-experiment-row { display: flex; gap: 18px; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 18px 20px; }
+.member-experiment-row h3 { font-size: 17px; margin: 4px 0; word-break: break-word; }
+.member-experiment-row > div:first-child { flex: 1 1 320px; min-width: 0; }
 .member-delete { border: 0; background: transparent; color: #a33224; font: inherit; font-weight: 800; cursor: pointer; padding: 8px; }
 .member-admin { border-bottom: 0; }
 .member-admin-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }

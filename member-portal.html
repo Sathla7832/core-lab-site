@@ -22,7 +22,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/styles.css?v=e0fd5d9fb2c5" />
+  <link rel="stylesheet" href="assets/styles.css?v=7cf323e879ea" />
 </head>
 <body>
   <a class="skip-link" href="#main-content">Skip to main content</a>
@@ -73,6 +73,7 @@
           <button id="member-tab-report-schedule" class="member-portal-tab" type="button" role="tab" aria-selected="true" aria-controls="member-panel-report-schedule" data-member-tab-target="report-schedule">報告行程表</button>
           <button id="member-tab-calendars" class="member-portal-tab" type="button" role="tab" aria-selected="false" aria-controls="member-panel-calendars" data-member-tab-target="calendars" tabindex="-1">Calendars</button>
           <button id="member-tab-roadmap" class="member-portal-tab" type="button" role="tab" aria-selected="false" aria-controls="member-panel-roadmap" data-member-tab-target="roadmap" tabindex="-1">Student Roadmap</button>
+          <button id="member-tab-experiments" class="member-portal-tab" type="button" role="tab" aria-selected="false" aria-controls="member-panel-experiments" data-member-tab-target="experiments" tabindex="-1">Experiment Data</button>
           <button id="member-tab-resources" class="member-portal-tab" type="button" role="tab" aria-selected="false" aria-controls="member-panel-resources" data-member-tab-target="resources" tabindex="-1">Laboratory Resources</button>
           <button id="member-tab-manage" class="member-portal-tab" type="button" role="tab" aria-selected="false" aria-controls="member-panel-manage" data-member-tab-target="manage" data-member-admin-tab tabindex="-1" hidden>Manage Portal</button>
         </nav>
@@ -92,6 +93,15 @@
           <p class="member-roadmap-state muted" data-member-roadmap-state>Open this tab to load the protected roadmap.</p>
           <iframe class="member-roadmap-frame" title="Undergraduate research and graduate admission roadmap" data-member-roadmap-frame sandbox scrolling="no" hidden></iframe>
         </section>
+        <section id="member-panel-experiments" class="member-content-section member-portal-panel" role="tabpanel" aria-labelledby="member-tab-experiments" data-member-panel="experiments" hidden>
+          <div class="member-section-head"><div><h2>Experiment Data</h2><p>Records created automatically when a member uploads through the Discord bot. Notion remains the source of record, so this list is always current.</p></div></div>
+          <div class="member-experiment-filters">
+            <label>Instrument<input type="search" data-experiment-filter="instrument" placeholder="XAS, XPS, EC-CV..." autocomplete="off"></label>
+            <label>Sample<input type="search" data-experiment-filter="sample" placeholder="FeNC-001" autocomplete="off"></label>
+          </div>
+          <div class="member-experiment-list" data-experiment-list><p class="muted">Loading experiment records...</p></div>
+        </section>
+
         <section id="member-panel-resources" class="member-content-section member-portal-panel" role="tabpanel" aria-labelledby="member-tab-resources" data-member-panel="resources" hidden>
           <div class="member-section-head"><div><h2>Laboratory Resources</h2></div></div>
           <div class="member-resource-list" data-resource-list><p class="muted">Loading resources...</p></div>
@@ -126,6 +136,7 @@
           <section class="member-approval-section">
             <h3>Member approvals</h3>
             <p class="muted">Pre-approve a Google account address so the student or internal member becomes active automatically after their first Google sign-in. Allowed domains: gmail.com, nycu.edu.tw.</p>
+            <p class="member-group-reminder"><strong>Also update the laboratory Google Group.</strong> Portal approval controls this website only. Drive files and calendars are governed by the Google Group, so add the same address there when approving, and remove it there when deactivating.</p>
             <form class="member-invite-form" data-member-invite-form>
               <label>Display name<input name="displayName" type="text" maxlength="160" autocomplete="name" placeholder="Student or member name"></label>
               <label>Google account address<input name="email" type="email" inputmode="email" maxlength="320" autocomplete="off" spellcheck="false" placeholder="student@gmail.com" pattern="[A-Za-z0-9._%+\-]+@(gmail\.com|nycu\.edu\.tw)" required></label>
@@ -157,7 +168,7 @@
 
     </div>
   </footer>
-  <script src="assets/main.js?v=e0fd5d9fb2c5"></script>
-  <script src="assets/firebase-config.js?v=e0fd5d9fb2c5"></script><script type="module" src="assets/member.js?v=e0fd5d9fb2c5"></script>
+  <script src="assets/main.js?v=7cf323e879ea"></script>
+  <script src="assets/firebase-config.js?v=7cf323e879ea"></script><script type="module" src="assets/member.js?v=7cf323e879ea"></script>
 </body>
 </html>

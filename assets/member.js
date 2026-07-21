@@ -554,6 +554,79 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
         });
       };
 
+      // Experiment records are read live from Notion through the sync API, so
+      // the portal never holds a second copy that could drift.
+      let experimentRecords = [];
+
+      const experimentRow = (record) => {
+        const row = document.createElement("article");
+        row.className = "member-experiment-row";
+        const main = document.createElement("div");
+        main.append(
+          createText("p", [record.date, record.instrument].filter(Boolean).join(" - ") || "Experiment", "member-card-meta"),
+          createText("h3", record.filename || "Untitled record"),
+        );
+        const detail = [record.sample ? `Sample: ${record.sample}` : "", record.uploader ? `Uploaded by ${record.uploader}` : ""].filter(Boolean).join(" | ");
+        if (detail) main.append(createText("p", detail, "muted"));
+        if (record.description) main.append(createText("p", record.description));
+        row.append(main);
+        if (record.driveUrl) {
+          const actions = document.createElement("div");
+          actions.className = "member-resource-actions";
+          const link = createText("a", "Open in Drive", "btn btn-secondary");
+          link.href = record.driveUrl;
+          link.target = "_blank";
+          link.rel = "noopener noreferrer";
+          actions.append(link);
+          row.append(actions);
+        }
+        return row;
+      };
+
+      const paintExperiments = () => {
+        const list = document.querySelector("[data-experiment-list]");
+        if (!list) return;
+        const filters = Array.from(document.querySelectorAll("[data-experiment-filter]"));
+        const terms = {};
+        filters.forEach((input) => { terms[input.dataset.experimentFilter] = input.value.trim().toLowerCase(); });
+        const matches = experimentRecords.filter((record) => {
+          const instrument = String(record.instrument || "").toLowerCase();
+          const sample = String(record.sample || "").toLowerCase();
+          return (!terms.instrument || instrument.includes(terms.instrument))
+            && (!terms.sample || sample.includes(terms.sample));
+        });
+        list.replaceChildren();
+        if (!matches.length) {
+          list.append(createText("p", experimentRecords.length ? "No records match those filters." : "No experiment records have been uploaded yet.", "muted"));
+          return;
+        }
+        matches.forEach((record) => list.append(experimentRow(record)));
+      };
+
+      const renderExperiments = async () => {
+        const list = document.querySelector("[data-experiment-list]");
+        if (!list) return;
+        try {
+          if (!syncApiUrl) throw new Error("The experiment record service is not configured.");
+          const token = await auth.currentUser?.getIdToken();
+          if (!token) throw new Error("Please sign in again to load experiment records.");
+          const response = await fetch(`${syncApiUrl}/api/experiments`, {
+            method: "GET",
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          const data = await response.json().catch(() => ({}));
+          if (!response.ok) throw new Error(String(data.error || "Experiment records could not be loaded."));
+          experimentRecords = Array.isArray(data.experiments) ? data.experiments : [];
+          paintExperiments();
+        } catch (error) {
+          list.replaceChildren(createText("p", friendlyError(error), "muted"));
+        }
+      };
+
+      document.querySelectorAll("[data-experiment-filter]").forEach((input) => {
+        input.addEventListener("input", paintExperiments);
+      });
+
       const renderResources = async () => {
         const list = document.querySelector("[data-resource-list]");
         if (!list) return;
@@ -859,6 +932,7 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
           await Promise.all([
             renderCalendars(),
             renderAnnouncements(),
+            renderExperiments(),
             renderResources(),
             currentIsAdmin ? renderMembers() : Promise.resolve(),
             currentIsAdmin ? renderInvites() : Promise.resolve(),
