@@ -132,9 +132,10 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
       // stylesheet. No iframe, so the member page CSP never applies to it.
       const scheduleColumns = [
         { key: "date", label: "Date", className: "member-schedule-date" },
-        { key: "graduate", label: "Graduate", people: true },
-        { key: "undergraduate", label: "Undergraduate", people: true },
-        { key: "literature", label: "Literature" },
+        { key: "graduate", label: "Graduate Student", people: true },
+        { key: "graduate", label: "Presentation", presentation: true },
+        { key: "undergraduate", label: "Undergraduate Student", people: true },
+        { key: "undergraduate", label: "Presentation", presentation: true },
       ];
 
       // Presenter cells show the English name with the Chinese name beneath it,
@@ -156,6 +157,26 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
         return cell;
       };
 
+      const schedulePresentationCell = (people) => {
+        const cell = document.createElement("td");
+        const links = people
+          .map((person) => person.presentation || {})
+          .filter((presentation) => presentation.url);
+        if (!links.length) {
+          cell.className = "member-schedule-empty";
+          cell.textContent = "-";
+          return cell;
+        }
+        links.forEach((presentation) => {
+          const link = createText("a", presentation.label || "Open paper", "member-schedule-paper-link");
+          link.href = presentation.url;
+          link.target = "_blank";
+          link.rel = "noopener noreferrer";
+          cell.append(link);
+        });
+        return cell;
+      };
+
       const renderScheduleTable = (host, rows) => {
         const table = document.createElement("table");
         table.className = "member-schedule-table";
@@ -173,6 +194,10 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
           scheduleColumns.forEach((column) => {
             if (column.people) {
               line.append(scheduleNameCell(Array.isArray(row[column.key]) ? row[column.key] : []));
+              return;
+            }
+            if (column.presentation) {
+              line.append(schedulePresentationCell(Array.isArray(row[column.key]) ? row[column.key] : []));
               return;
             }
             const value = String(row[column.key] || "").trim();
