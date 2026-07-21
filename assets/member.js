@@ -17,6 +17,7 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
   const statusElement = document.querySelector("[data-member-status]");
   const config = window.CORE_LAB_FIREBASE_CONFIG || {};
   const syncApiUrl = String(window.CORE_LAB_SYNC_API_URL || "").replace(/\/$/, "");
+  const resourceApiUrl = String(window.CORE_LAB_RESOURCE_API_URL || syncApiUrl).replace(/\/$/, "");
   const configured = Boolean(config.apiKey && config.apiKey !== "PENDING_FIREBASE_SETUP" && config.authDomain && config.projectId && config.appId);
 
   const setStatus = (message, tone = "") => {
@@ -99,10 +100,10 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
         frame.dataset.loading = "true";
         if (state) state.textContent = "Loading protected student roadmap...";
         try {
-          if (!syncApiUrl) throw new Error("The member content service is not configured.");
+          if (!resourceApiUrl) throw new Error("The member resource service is not configured.");
           const token = await auth.currentUser?.getIdToken();
           if (!token) throw new Error("Please sign in again to load the student roadmap.");
-          const response = await fetch(`${syncApiUrl}/api/resources/student-roadmap`, {
+          const response = await fetch(`${resourceApiUrl}/api/resources/student-roadmap`, {
             method: "GET",
             headers: { Authorization: `Bearer ${token}` },
           });
@@ -140,6 +141,13 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
 
       // Presenter cells show the English name with the Chinese name beneath it,
       // because members recognize each other by the Chinese name.
+      const scheduleChemistryText = (value) => String(value || "")
+        .replace(/M1\/PNb12O40/g, "M\u2081/PNb\u2081\u2082O\u2084\u2080")
+        .replace(/Fe3O4/g, "Fe\u2083O\u2084")
+        .replace(/MoSe2/g, "MoSe\u2082")
+        .replace(/CO2/g, "CO\u2082")
+        .replace(/CoPx/g, "CoP\u2093");
+
       const scheduleNameCell = (people) => {
         const cell = document.createElement("td");
         if (!people.length) {
@@ -168,7 +176,7 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
           return cell;
         }
         links.forEach((presentation) => {
-          const link = createText("a", presentation.label || "Open paper", "member-schedule-paper-link");
+          const link = createText("a", scheduleChemistryText(presentation.label || "Open paper"), "member-schedule-paper-link");
           link.href = presentation.url;
           link.target = "_blank";
           link.rel = "noopener noreferrer";
@@ -217,10 +225,10 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
         host.dataset.loading = "true";
         if (state) state.textContent = "Loading the presentation schedule...";
         try {
-          if (!syncApiUrl) throw new Error("The member content service is not configured.");
+          if (!resourceApiUrl) throw new Error("The member resource service is not configured.");
           const token = await auth.currentUser?.getIdToken();
           if (!token) throw new Error("Please sign in again to load the presentation schedule.");
-          const response = await fetch(`${syncApiUrl}/api/resources/report-schedule`, {
+          const response = await fetch(`${resourceApiUrl}/api/resources/report-schedule`, {
             method: "GET",
             headers: { Authorization: `Bearer ${token}` },
           });
