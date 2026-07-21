@@ -168,7 +168,8 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
       };
 
       const normalizeEmail = (value) => String(value || "").trim().toLowerCase();
-      const gmailAddressPattern = /^[A-Za-z0-9._%+\-]+@gmail\.com$/;
+      // Domains allowed for pre-approval. To add one, append it inside the parentheses.
+      const approvedAddressPattern = /^[A-Za-z0-9._%+\-]+@(gmail\.com|nycu\.edu\.tw)$/;
 
       const callSyncApi = async (announcementId, method, payload = {}) => {
         if (!syncApiUrl) throw new Error("The Discord synchronization service is not configured.");
@@ -570,7 +571,7 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
           .sort((a, b) => String(a.email || "").localeCompare(String(b.email || "")));
         list.replaceChildren();
         if (!invites.length) {
-          list.append(createText("p", "No Gmail addresses are awaiting their first sign-in.", "muted"));
+          list.append(createText("p", "No addresses are awaiting their first sign-in.", "muted"));
           return;
         }
         invites.forEach((invite) => {
@@ -589,7 +590,7 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
             try {
               await dbSdk.deleteDoc(invite.ref);
               await renderInvites();
-              setStatus("Pre-approved Gmail address removed.", "success");
+              setStatus("Pre-approved address removed.", "success");
             } catch (error) {
               setStatus(friendlyError(error), "error");
               remove.disabled = false;
@@ -665,7 +666,7 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
           const email = normalizeEmail(values.get("email"));
           const displayName = String(values.get("displayName") || "").trim();
           try {
-            if (!gmailAddressPattern.test(email)) throw new Error("invalid-gmail");
+            if (!approvedAddressPattern.test(email)) throw new Error("invalid-address");
             const inviteRef = dbSdk.doc(db, "memberInvites", email);
             if ((await dbSdk.getDoc(inviteRef)).exists()) throw new Error("existing-invite");
             await dbSdk.setDoc(inviteRef, {
@@ -680,8 +681,8 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
             await renderInvites();
             setStatus(`${email} is pre-approved for member access.`, "success");
           } catch (error) {
-            if (error?.message === "invalid-gmail") setStatus("Enter a valid @gmail.com address.", "error");
-            else if (error?.message === "existing-invite") setStatus("That Gmail address is already pre-approved.", "warning");
+            if (error?.message === "invalid-address") setStatus("Enter a valid @gmail.com or @nycu.edu.tw address.", "error");
+            else if (error?.message === "existing-invite") setStatus("That address is already pre-approved.", "warning");
             else setStatus(friendlyError(error), "error");
           } finally {
             submit.disabled = false;

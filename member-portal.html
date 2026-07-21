@@ -22,7 +22,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/styles.css?v=1eff59473ff4" />
+  <link rel="stylesheet" href="assets/styles.css?v=e101c86a43f5" />
 </head>
 <body>
   <a class="skip-link" href="#main-content">Skip to main content</a>
@@ -119,10 +119,10 @@
           </div>
           <section class="member-approval-section">
             <h3>Member approvals</h3>
-            <p class="muted">Pre-approve a Gmail address so the student or internal member becomes active automatically after their first Google sign-in.</p>
+            <p class="muted">Pre-approve a Google account address so the student or internal member becomes active automatically after their first Google sign-in. Allowed domains: gmail.com, nycu.edu.tw.</p>
             <form class="member-invite-form" data-member-invite-form>
               <label>Display name<input name="displayName" type="text" maxlength="160" autocomplete="name" placeholder="Student or member name"></label>
-              <label>Gmail address<input name="email" type="email" inputmode="email" maxlength="320" autocomplete="off" spellcheck="false" placeholder="student@gmail.com" pattern="[A-Za-z0-9._%+\-]+@gmail\.com" required></label>
+              <label>Google account address<input name="email" type="email" inputmode="email" maxlength="320" autocomplete="off" spellcheck="false" placeholder="student@gmail.com" pattern="[A-Za-z0-9._%+\-]+@(gmail\.com|nycu\.edu\.tw)" required></label>
               <button class="btn btn-primary" type="submit">Add approved member</button>
             </form>
             <div class="member-approval-group">
@@ -151,7 +151,7 @@
 
     </div>
   </footer>
-  <script src="assets/main.js?v=1eff59473ff4"></script>
-  <script src="assets/firebase-config.js?v=1eff59473ff4"></script><script type="module" src="assets/member.js?v=1eff59473ff4"></script>
+  <script src="assets/main.js?v=e101c86a43f5"></script>
+  <script src="assets/firebase-config.js?v=e101c86a43f5"></script><script type="module" src="assets/member.js?v=e101c86a43f5"></script>
 </body>
 </html>
