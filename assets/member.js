@@ -128,36 +128,91 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
         }
       };
 
+      // The schedule arrives as data and is rendered with the portal's own
+      // stylesheet. No iframe, so the member page CSP never applies to it.
+      const scheduleColumns = [
+        { key: "date", label: "Date", className: "member-schedule-date" },
+        { key: "graduate", label: "Graduate", people: true },
+        { key: "undergraduate", label: "Undergraduate", people: true },
+        { key: "literature", label: "Literature" },
+      ];
+
+      // Presenter cells show the English name with the Chinese name beneath it,
+      // because members recognize each other by the Chinese name.
+      const scheduleNameCell = (people) => {
+        const cell = document.createElement("td");
+        if (!people.length) {
+          cell.className = "member-schedule-empty";
+          cell.textContent = "-";
+          return cell;
+        }
+        people.forEach((person) => {
+          const block = document.createElement("div");
+          block.className = "member-schedule-person";
+          if (person.en) block.append(createText("span", person.en, "member-schedule-name-en"));
+          if (person.zh) block.append(createText("span", person.zh, "member-schedule-name-zh"));
+          cell.append(block);
+        });
+        return cell;
+      };
+
+      const renderScheduleTable = (host, rows) => {
+        const table = document.createElement("table");
+        table.className = "member-schedule-table";
+        const head = document.createElement("thead");
+        const headRow = document.createElement("tr");
+        scheduleColumns.forEach((column) => {
+          const cell = createText("th", column.label);
+          cell.scope = "col";
+          headRow.append(cell);
+        });
+        head.append(headRow);
+        const body = document.createElement("tbody");
+        rows.forEach((row) => {
+          const line = document.createElement("tr");
+          scheduleColumns.forEach((column) => {
+            if (column.people) {
+              line.append(scheduleNameCell(Array.isArray(row[column.key]) ? row[column.key] : []));
+              return;
+            }
+            const value = String(row[column.key] || "").trim();
+            const cell = createText("td", value || "-", value ? (column.className || "") : "member-schedule-empty");
+            line.append(cell);
+          });
+          body.append(line);
+        });
+        table.append(head, body);
+        host.replaceChildren(table);
+      };
+
       loadMemberReportSchedule = async () => {
-        const frame = document.querySelector("[data-member-report-schedule-frame]");
+        const host = document.querySelector("[data-member-report-schedule-table]");
         const state = document.querySelector("[data-member-report-schedule-state]");
-        if (!frame || frame.dataset.loaded === "true" || frame.dataset.loading === "true") return;
-        frame.dataset.loading = "true";
-        if (state) state.textContent = "Loading protected report schedule...";
+        if (!host || host.dataset.loaded === "true" || host.dataset.loading === "true") return;
+        host.dataset.loading = "true";
+        if (state) state.textContent = "Loading the presentation schedule...";
         try {
           if (!syncApiUrl) throw new Error("The member content service is not configured.");
           const token = await auth.currentUser?.getIdToken();
-          if (!token) throw new Error("Please sign in again to load the report schedule.");
+          if (!token) throw new Error("Please sign in again to load the presentation schedule.");
           const response = await fetch(`${syncApiUrl}/api/resources/report-schedule`, {
             method: "GET",
             headers: { Authorization: `Bearer ${token}` },
           });
-          if (!response.ok) {
-            const data = await response.json().catch(() => ({}));
-            throw new Error(String(data.error || "The report schedule could not be loaded."));
+          const data = await response.json().catch(() => ({}));
+          if (!response.ok) throw new Error(String(data.error || "The presentation schedule could not be loaded."));
+          const rows = Array.isArray(data.rows) ? data.rows : [];
+          if (!rows.length) {
+            host.replaceChildren(createText("p", "No presentations are scheduled yet.", "muted"));
+          } else {
+            renderScheduleTable(host, rows);
           }
-          const html = await response.text();
-          const blobUrl = URL.createObjectURL(new Blob([html], { type: "text/html;charset=utf-8" }));
-          frame.addEventListener("load", () => {
-            frame.hidden = false;
-            if (state) state.hidden = true;
-            frame.dataset.loaded = "true";
-            frame.dataset.loading = "false";
-          }, { once: true });
-          frame.setAttribute("src", blobUrl);
-          window.addEventListener("beforeunload", () => URL.revokeObjectURL(blobUrl), { once: true });
+          host.hidden = false;
+          if (state) state.hidden = true;
+          host.dataset.loaded = "true";
+          host.dataset.loading = "false";
         } catch (error) {
-          frame.dataset.loading = "false";
+          host.dataset.loading = "false";
           if (state) state.textContent = friendlyError(error);
         }
       };
