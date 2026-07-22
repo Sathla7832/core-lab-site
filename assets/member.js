@@ -706,6 +706,14 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
         return item;
       };
 
+      const experimentStudentName = (record) => {
+        const raw = String(record.studentName || record.student || record.uploader || "Unknown student").trim();
+        return raw
+          .replace(/\s*[\(\uFF08][^\)\uFF09]{1,16}[\)\uFF09]\s*$/, "")
+          .replace(/#\d{4,6}$/, "")
+          .trim() || "Unknown student";
+      };
+
       const renderMemberResourceTreeNodes = () => {
         const host = document.querySelector("[data-member-resource-tree]");
         if (!host) return;
@@ -722,7 +730,7 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
 
         const experimentGroups = new Map();
         experimentRecords.forEach((record) => {
-          const student = String(record.studentName || record.student || record.uploader || "Unknown student").trim() || "Unknown student";
+          const student = experimentStudentName(record);
           if (!experimentGroups.has(student)) experimentGroups.set(student, []);
           const meta = [record.date, record.instrument, record.sample].filter(Boolean).join(" \\u00b7 ");
           experimentGroups.get(student).push(renderTreeLeaf(record.filename || "Untitled experiment", meta, record.driveUrl));
