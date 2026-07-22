@@ -42,6 +42,7 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
   const availablePortalTabs = () => portalTabs.filter((tab) => !tab.hidden);
       let loadMemberRoadmap = () => {};
       let loadMemberReportSchedule = () => {};
+      let loadMemberResourceTree = () => {};
   const activatePortalTab = (target, moveFocus = false) => {
     const selectedTab = portalTabs.find((tab) => tab.dataset.memberTabTarget === target && !tab.hidden);
     if (!selectedTab) return;
@@ -53,7 +54,7 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
     portalPanels.forEach((panel) => {
       panel.hidden = panel.dataset.memberPanel !== target;
     });
-    if (target === "roadmap") loadMemberRoadmap();
+    if (target === "resources") loadMemberResourceTree();
     if (target === "report-schedule") loadMemberReportSchedule();
     if (moveFocus) selectedTab.focus();
   };
@@ -646,117 +647,146 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
       // the portal never holds a second copy that could drift.
       let experimentRecords = [];
 
-      const experimentRow = (record) => {
-        const row = document.createElement("article");
-        row.className = "member-experiment-row";
-        const main = document.createElement("div");
-        main.append(
-          createText("p", [record.date, record.instrument].filter(Boolean).join(" - ") || "Experiment", "member-card-meta"),
-          createText("h3", record.filename || "Untitled record"),
-        );
-        const detail = [record.sample ? `Sample: ${record.sample}` : "", record.uploader ? `Uploaded by ${record.uploader}` : ""].filter(Boolean).join(" | ");
-        if (detail) main.append(createText("p", detail, "muted"));
-        if (record.description) main.append(createText("p", record.description));
-        row.append(main);
-        if (record.driveUrl) {
-          const actions = document.createElement("div");
-          actions.className = "member-resource-actions";
-          const link = createText("a", "Open in Drive", "btn btn-secondary");
-          link.href = record.driveUrl;
-          link.target = "_blank";
-          link.rel = "noopener noreferrer";
-          actions.append(link);
-          row.append(actions);
-        }
-        return row;
+      let resourceRecords = [];
+      let resourceTreeLoaded = false;
+
+      const fetchExperimentRecords = async () => {
+        if (!syncApiUrl) throw new Error("The experiment record service is not configured.");
+        const token = await auth.currentUser?.getIdToken();
+        if (!token) throw new Error("Please sign in again to load experiment records.");
+        const response = await fetch(`${syncApiUrl}/api/experiments`, {
+          method: "GET",
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(String(data.error || "Experiment records could not be loaded."));
+        return Array.isArray(data.experiments) ? data.experiments : [];
       };
 
-      const paintExperiments = () => {
-        const list = document.querySelector("[data-experiment-list]");
-        if (!list) return;
-        const filters = Array.from(document.querySelectorAll("[data-experiment-filter]"));
-        const terms = {};
-        filters.forEach((input) => { terms[input.dataset.experimentFilter] = input.value.trim().toLowerCase(); });
-        const matches = experimentRecords.filter((record) => {
-          const instrument = String(record.instrument || "").toLowerCase();
-          const sample = String(record.sample || "").toLowerCase();
-          return (!terms.instrument || instrument.includes(terms.instrument))
-            && (!terms.sample || sample.includes(terms.sample));
-        });
-        list.replaceChildren();
-        if (!matches.length) {
-          list.append(createText("p", experimentRecords.length ? "No records match those filters." : "No experiment records have been uploaded yet.", "muted"));
-          return;
-        }
-        matches.forEach((record) => list.append(experimentRow(record)));
+      const fetchResourceRecords = async () => {
+        const snapshot = await dbSdk.getDocs(dbSdk.query(dbSdk.collection(db, "resources"), dbSdk.orderBy("createdAt", "desc"), dbSdk.limit(100)));
+        return snapshot.docs.map((item) => ({ id: item.id, ref: item.ref, ...item.data() }));
       };
+
+      const renderTreeLeaf = (label, meta = "", url = "") => {
+        const item = document.createElement("li");
+        item.className = "member-tree-leaf";
+        item.setAttribute("role", "treeitem");
+        const safeUrl = secureHttpsUrl(url);
+        const content = safeUrl ? createText("a", label, "member-tree-leaf-link") : createText("span", label, "member-tree-leaf-label");
+        if (safeUrl) {
+          content.href = safeUrl;
+          content.target = "_blank";
+          content.rel = "noopener noreferrer";
+        }
+        item.append(content);
+        if (meta) item.append(createText("span", meta, "member-tree-meta"));
+        return item;
+      };
+
+      const renderTreeFolder = (label, children, expanded = true) => {
+        const item = document.createElement("li");
+        item.className = "member-tree-folder";
+        item.setAttribute("role", "treeitem");
+        const toggle = createText("button", `${expanded ? "\\u25be" : "\\u25b8"} ${label}`, "member-tree-toggle");
+        toggle.type = "button";
+        toggle.setAttribute("aria-expanded", String(expanded));
+        const group = document.createElement("ul");
+        group.className = "member-tree-children";
+        group.setAttribute("role", "group");
+        group.hidden = !expanded;
+        children.forEach((child) => group.append(child));
+        toggle.addEventListener("click", () => {
+          const open = toggle.getAttribute("aria-expanded") !== "true";
+          toggle.setAttribute("aria-expanded", String(open));
+          toggle.textContent = `${open ? "\\u25be" : "\\u25b8"} ${label}`;
+          group.hidden = !open;
+        });
+        item.append(toggle, group);
+        return item;
+      };
+
+      const renderMemberResourceTreeNodes = () => {
+        const host = document.querySelector("[data-member-resource-tree]");
+        if (!host) return;
+        const roadmapItem = document.createElement("li");
+        roadmapItem.className = "member-tree-leaf";
+        roadmapItem.setAttribute("role", "treeitem");
+        const roadmapButton = createText("button", "Open protected roadmap", "member-tree-leaf-button");
+        roadmapButton.type = "button";
+        roadmapButton.addEventListener("click", () => {
+          document.querySelector("[data-member-roadmap-container]")?.removeAttribute("hidden");
+          loadMemberRoadmap();
+        });
+        roadmapItem.append(roadmapButton, createText("span", "Undergraduate research and graduate admission planning", "member-tree-meta"));
+
+        const experimentGroups = new Map();
+        experimentRecords.forEach((record) => {
+          const student = String(record.studentName || record.student || record.uploader || "Unknown student").trim() || "Unknown student";
+          if (!experimentGroups.has(student)) experimentGroups.set(student, []);
+          const meta = [record.date, record.instrument, record.sample].filter(Boolean).join(" \\u00b7 ");
+          experimentGroups.get(student).push(renderTreeLeaf(record.filename || "Untitled experiment", meta, record.driveUrl));
+        });
+        const experimentNodes = Array.from(experimentGroups.entries())
+          .sort(([a], [b]) => a.localeCompare(b))
+          .map(([student, children]) => renderTreeFolder(student, children));
+        if (!experimentNodes.length) experimentNodes.push(renderTreeLeaf("No experiment records have been uploaded yet."));
+
+        const resourceGroups = new Map();
+        resourceRecords.forEach((record) => {
+          const category = String(record.category || "General").trim() || "General";
+          if (!resourceGroups.has(category)) resourceGroups.set(category, []);
+          resourceGroups.get(category).push(renderTreeLeaf(record.title || "Laboratory resource", record.description || "", record.url));
+        });
+        const resourceNodes = Array.from(resourceGroups.entries())
+          .sort(([a], [b]) => a.localeCompare(b))
+          .map(([category, children]) => renderTreeFolder(category, children));
+        if (!resourceNodes.length) resourceNodes.push(renderTreeLeaf("No laboratory resources have been added yet."));
+
+        host.replaceChildren(
+          renderTreeFolder("Student Roadmap", [roadmapItem]),
+          renderTreeFolder("Experiment Data", experimentNodes),
+          renderTreeFolder("Laboratory Resources", resourceNodes),
+        );
+      };
+
+      const renderMemberResourceTree = async () => {
+        const host = document.querySelector("[data-member-resource-tree]");
+        const state = document.querySelector("[data-member-resource-tree-state]");
+        if (!host || host.dataset.loading === "true") return;
+        host.dataset.loading = "true";
+        if (state) state.textContent = "Loading member resources...";
+        try {
+          [experimentRecords, resourceRecords] = await Promise.all([fetchExperimentRecords(), fetchResourceRecords()]);
+          renderMemberResourceTreeNodes();
+          resourceTreeLoaded = true;
+          host.hidden = false;
+          host.dataset.loaded = "true";
+          if (state) state.hidden = true;
+        } catch (error) {
+          if (state) state.textContent = friendlyError(error);
+        } finally {
+          host.dataset.loading = "false";
+        }
+      };
+      loadMemberResourceTree = renderMemberResourceTree;
 
       const renderExperiments = async () => {
-        const list = document.querySelector("[data-experiment-list]");
-        if (!list) return;
         try {
-          if (!syncApiUrl) throw new Error("The experiment record service is not configured.");
-          const token = await auth.currentUser?.getIdToken();
-          if (!token) throw new Error("Please sign in again to load experiment records.");
-          const response = await fetch(`${syncApiUrl}/api/experiments`, {
-            method: "GET",
-            headers: { Authorization: `Bearer ${token}` },
-          });
-          const data = await response.json().catch(() => ({}));
-          if (!response.ok) throw new Error(String(data.error || "Experiment records could not be loaded."));
-          experimentRecords = Array.isArray(data.experiments) ? data.experiments : [];
-          paintExperiments();
+          experimentRecords = await fetchExperimentRecords();
+          if (resourceTreeLoaded) renderMemberResourceTreeNodes();
         } catch (error) {
-          list.replaceChildren(createText("p", friendlyError(error), "muted"));
+          console.error("[member-portal] experiment records", error);
         }
       };
 
-      document.querySelectorAll("[data-experiment-filter]").forEach((input) => {
-        input.addEventListener("input", paintExperiments);
-      });
-
       const renderResources = async () => {
-        const list = document.querySelector("[data-resource-list]");
-        if (!list) return;
-        const snapshot = await dbSdk.getDocs(dbSdk.query(dbSdk.collection(db, "resources"), dbSdk.orderBy("createdAt", "desc"), dbSdk.limit(100)));
-        list.replaceChildren();
-        if (snapshot.empty) {
-          list.append(createText("p", "No resources have been added yet.", "muted"));
-          return;
+        try {
+          resourceRecords = await fetchResourceRecords();
+          if (resourceTreeLoaded) renderMemberResourceTreeNodes();
+        } catch (error) {
+          console.error("[member-portal] resources", error);
         }
-        snapshot.forEach((item) => {
-          const data = item.data();
-          const card = document.createElement("article");
-          card.className = "member-resource";
-          const copy = document.createElement("div");
-          copy.append(createText("p", data.category || "Resource", "member-card-meta"), createText("h3", data.title || "Laboratory resource"), createText("p", data.description || ""));
-          const actions = document.createElement("div");
-          actions.className = "member-resource-actions";
-          const link = createText("a", "Open resource", "btn btn-primary");
-          const resourceUrl = secureHttpsUrl(data.url);
-          if (resourceUrl) {
-            link.href = resourceUrl;
-            link.target = "_blank";
-            link.rel = "noopener noreferrer";
-          } else {
-            link.textContent = "Unavailable resource";
-            link.classList.add("is-disabled");
-            link.setAttribute("aria-disabled", "true");
-          }
-          actions.append(link);
-          if (currentIsAdmin) {
-            const remove = createText("button", "Delete", "member-delete");
-            remove.type = "button";
-            remove.addEventListener("click", async () => {
-              if (!window.confirm("Delete this resource link?")) return;
-              await dbSdk.deleteDoc(item.ref);
-              await renderResources();
-            });
-            actions.append(remove);
-          }
-          card.append(copy, actions);
-          list.append(card);
-        });
       };
 
       const renderInvites = async () => {

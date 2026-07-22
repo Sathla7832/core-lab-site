@@ -22,7 +22,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/styles.css?v=642ee51e199e" />
+  <link rel="stylesheet" href="assets/styles.css?v=59d1ebe16233" />
 </head>
 <body>
   <a class="skip-link" href="#main-content">Skip to main content</a>
@@ -72,9 +72,7 @@
         <nav class="member-portal-tabs" role="tablist" aria-label="Member portal sections">
           <button id="member-tab-report-schedule" class="member-portal-tab" type="button" role="tab" aria-selected="true" aria-controls="member-panel-report-schedule" data-member-tab-target="report-schedule">Presentation Schedule</button>
           <button id="member-tab-calendars" class="member-portal-tab" type="button" role="tab" aria-selected="false" aria-controls="member-panel-calendars" data-member-tab-target="calendars" tabindex="-1">Calendars</button>
-          <button id="member-tab-roadmap" class="member-portal-tab" type="button" role="tab" aria-selected="false" aria-controls="member-panel-roadmap" data-member-tab-target="roadmap" tabindex="-1">Student Roadmap</button>
-          <button id="member-tab-experiments" class="member-portal-tab" type="button" role="tab" aria-selected="false" aria-controls="member-panel-experiments" data-member-tab-target="experiments" tabindex="-1">Experiment Data</button>
-          <button id="member-tab-resources" class="member-portal-tab" type="button" role="tab" aria-selected="false" aria-controls="member-panel-resources" data-member-tab-target="resources" tabindex="-1">Laboratory Resources</button>
+          <button id="member-tab-resources" class="member-portal-tab" type="button" role="tab" aria-selected="false" aria-controls="member-panel-resources" data-member-tab-target="resources" tabindex="-1">Member Resources</button>
           <button id="member-tab-manage" class="member-portal-tab" type="button" role="tab" aria-selected="false" aria-controls="member-panel-manage" data-member-tab-target="manage" data-member-admin-tab tabindex="-1" hidden>Manage Portal</button>
         </nav>
 
@@ -89,22 +87,14 @@
           </div>
           <div class="member-calendar-grid" data-calendar-list><p class="muted">Loading protected calendar settings...</p></div>
         </section>
-        <section id="member-panel-roadmap" class="member-content-section member-portal-panel member-roadmap-panel" role="tabpanel" aria-labelledby="member-tab-roadmap" data-member-panel="roadmap" hidden>
-          <p class="member-roadmap-state muted" data-member-roadmap-state>Open this tab to load the protected roadmap.</p>
-          <iframe class="member-roadmap-frame" title="Undergraduate research and graduate admission roadmap" data-member-roadmap-frame sandbox scrolling="no" hidden></iframe>
-        </section>
-        <section id="member-panel-experiments" class="member-content-section member-portal-panel" role="tabpanel" aria-labelledby="member-tab-experiments" data-member-panel="experiments" hidden>
-          <div class="member-section-head"><div><h2>Experiment Data</h2><p>Records created automatically when a member uploads through the Discord bot. Notion remains the source of record, so this list is always current.</p></div></div>
-          <div class="member-experiment-filters">
-            <label>Instrument<input type="search" data-experiment-filter="instrument" placeholder="XAS, XPS, EC-CV..." autocomplete="off"></label>
-            <label>Sample<input type="search" data-experiment-filter="sample" placeholder="FeNC-001" autocomplete="off"></label>
+        <section id="member-panel-resources" class="member-content-section member-portal-panel member-resources-panel" role="tabpanel" aria-labelledby="member-tab-resources" data-member-panel="resources" hidden>
+          <div class="member-section-head"><div><h2>Member Resources</h2><p>Student Roadmap, experiment records, and laboratory links are managed from one protected database view.</p></div></div>
+          <p class="member-resource-tree-state muted" data-member-resource-tree-state>Open this tab to load member resources.</p>
+          <div class="member-resource-tree" data-member-resource-tree role="tree" aria-label="Member resources" hidden></div>
+          <div class="member-resource-tree-roadmap" data-member-roadmap-container hidden>
+            <p class="member-roadmap-state muted" data-member-roadmap-state>Choose Student Roadmap to load the protected roadmap.</p>
+            <iframe class="member-roadmap-frame" title="Undergraduate research and graduate admission roadmap" data-member-roadmap-frame sandbox scrolling="no" hidden></iframe>
           </div>
-          <div class="member-experiment-list" data-experiment-list><p class="muted">Loading experiment records...</p></div>
-        </section>
-
-        <section id="member-panel-resources" class="member-content-section member-portal-panel" role="tabpanel" aria-labelledby="member-tab-resources" data-member-panel="resources" hidden>
-          <div class="member-section-head"><div><h2>Laboratory Resources</h2></div></div>
-          <div class="member-resource-list" data-resource-list><p class="muted">Loading resources...</p></div>
         </section>
 
         <section id="member-panel-manage" class="member-admin member-portal-panel" role="tabpanel" aria-labelledby="member-tab-manage" data-member-panel="manage" data-member-admin hidden>
@@ -168,7 +158,7 @@
 
     </div>
   </footer>
-  <script src="assets/main.js?v=642ee51e199e"></script>
-  <script src="assets/firebase-config.js?v=642ee51e199e"></script><script type="module" src="assets/member.js?v=642ee51e199e"></script>
+  <script src="assets/main.js?v=59d1ebe16233"></script>
+  <script src="assets/firebase-config.js?v=59d1ebe16233"></script><script type="module" src="assets/member.js?v=59d1ebe16233"></script>
 </body>
 </html>
