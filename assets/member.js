@@ -717,7 +717,8 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
       const isCoreLabUpload = (record, student) => {
         const value = `${student} ${String(record.uploader || "")}`.toLowerCase();
         return /(^|\s)(core\s*lab|corelab|yc|yu[- ]?chung\s+chang)(\s|$)/i.test(value)
-          || value.includes("corelabfcu@gmail.com");
+          || value.includes("corelabfcu@gmail.com")
+          || value.includes(".sathla");
       };
 
       const renderFolderFile = (label, meta = "", url = "") => {
