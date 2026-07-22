@@ -73,7 +73,7 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
     const tree = document.querySelector("[data-member-resource-tree]");
     if (tree) {
       Array.from(tree.children).forEach((item) => {
-        item.hidden = item.dataset.resourceTreeSection !== target;
+        item.hidden = item.dataset.resourceFolderSection !== target;
       });
     }
     const roadmap = document.querySelector("[data-member-roadmap-container]");
@@ -706,48 +706,6 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
         return snapshot.docs.map((item) => ({ id: item.id, ref: item.ref, ...item.data() }));
       };
 
-      const renderTreeLeaf = (label, meta = "", url = "") => {
-        const item = document.createElement("li");
-        item.className = "member-tree-leaf";
-        item.setAttribute("role", "treeitem");
-        const safeUrl = secureHttpsUrl(url);
-        const content = safeUrl ? createText("a", label, "member-tree-leaf-link") : createText("span", label, "member-tree-leaf-label");
-        if (safeUrl) {
-          content.href = safeUrl;
-          content.target = "_blank";
-          content.rel = "noopener noreferrer";
-        }
-        item.append(content);
-        if (meta) item.append(createText("span", meta, "member-tree-meta"));
-        return item;
-      };
-
-      const renderTreeFolder = (label, children, expanded = true, section = "") => {
-        const item = document.createElement("li");
-        item.className = "member-tree-folder";
-        item.setAttribute("role", "treeitem");
-        if (section) {
-          item.dataset.resourceTreeSection = section;
-          item.id = `member-resource-view-${section}`;
-        }
-        const toggle = createText("button", `${expanded ? "\u25be" : "\u25b8"} ${label}`, "member-tree-toggle");
-        toggle.type = "button";
-        toggle.setAttribute("aria-expanded", String(expanded));
-        const group = document.createElement("ul");
-        group.className = "member-tree-children";
-        group.setAttribute("role", "group");
-        group.hidden = !expanded;
-        children.forEach((child) => group.append(child));
-        toggle.addEventListener("click", () => {
-          const open = toggle.getAttribute("aria-expanded") !== "true";
-          toggle.setAttribute("aria-expanded", String(open));
-          toggle.textContent = `${open ? "\u25be" : "\u25b8"} ${label}`;
-          group.hidden = !open;
-        });
-        item.append(toggle, group);
-        return item;
-      };
-
       const experimentStudentName = (record) => {
         const raw = String(record.studentName || record.student || record.uploader || "Unknown student").trim();
         return raw
@@ -762,48 +720,87 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
           || value.includes("corelabfcu@gmail.com");
       };
 
-      const renderMemberResourceTreeNodes = () => {
+      const renderFolderFile = (label, meta = "", url = "") => {
+        const item = document.createElement("article");
+        item.className = "member-folder-file";
+        const safeUrl = secureHttpsUrl(url);
+        const content = safeUrl ? createText("a", label, "member-folder-file-link") : createText("strong", label, "member-folder-file-label");
+        if (safeUrl) {
+          content.href = safeUrl;
+          content.target = "_blank";
+          content.rel = "noopener noreferrer";
+        }
+        item.append(content);
+        if (meta) item.append(createText("span", meta, "member-folder-file-meta"));
+        return item;
+      };
+
+      const renderFolderView = (section, title, entries, emptyMessage) => {
+        const view = document.createElement("section");
+        view.className = "member-folder-section";
+        view.dataset.resourceFolderSection = section;
+        view.id = `member-resource-view-${section}`;
+        view.setAttribute("aria-label", title);
+        const grid = document.createElement("div");
+        grid.className = "member-folder-grid";
+        const contents = document.createElement("section");
+        contents.className = "member-folder-contents";
+        contents.hidden = true;
+        const renderContents = (folderTitle, files) => {
+          contents.replaceChildren(createText("h3", folderTitle));
+          const fileList = document.createElement("div");
+          fileList.className = "member-folder-file-list";
+          if (!files.length) fileList.append(createText("p", emptyMessage, "muted"));
+          files.forEach((file) => fileList.append(file));
+          contents.append(fileList);
+          contents.hidden = false;
+        };
+        entries.forEach((entry) => {
+          const card = document.createElement("article");
+          card.className = "member-folder-card";
+          const button = createText("button", entry.label, "member-folder-button");
+          button.type = "button";
+          button.addEventListener("click", () => renderContents(entry.label, entry.files));
+          card.append(button, createText("span", `${entry.files.length} item${entry.files.length === 1 ? "" : "s"}`, "member-folder-count"));
+          grid.append(card);
+        });
+        if (!entries.length) grid.append(createText("p", emptyMessage, "muted"));
+        view.append(grid, contents);
+        return view;
+      };
+
+      const renderMemberResourceFolderViews = () => {
         const host = document.querySelector("[data-member-resource-tree]");
         if (!host) return;
-        const roadmapItem = document.createElement("li");
-        roadmapItem.className = "member-tree-leaf";
-        roadmapItem.setAttribute("role", "treeitem");
-        const roadmapButton = createText("button", "Open protected roadmap", "member-tree-leaf-button");
-        roadmapButton.type = "button";
-        roadmapButton.addEventListener("click", () => {
-          document.querySelector("[data-member-roadmap-container]")?.removeAttribute("hidden");
-          loadMemberRoadmap();
-        });
-        roadmapItem.append(roadmapButton, createText("span", "Undergraduate research and graduate admission planning", "member-tree-meta"));
-
         const experimentGroups = new Map();
         experimentRecords.forEach((record) => {
           const student = experimentStudentName(record);
           const folder = isCoreLabUpload(record, student) ? "CORE LAB" : student;
           if (!experimentGroups.has(folder)) experimentGroups.set(folder, []);
           const meta = [record.date, record.instrument, record.sample].filter(Boolean).join(" \u00b7 ");
-          experimentGroups.get(folder).push(renderTreeLeaf(record.filename || "Untitled experiment", meta, record.driveUrl));
+          experimentGroups.get(folder).push(renderFolderFile(record.filename || "Untitled experiment", meta, record.driveUrl));
         });
-        const experimentNodes = Array.from(experimentGroups.entries())
-          .sort(([a], [b]) => a.localeCompare(b))
-          .map(([student, children]) => renderTreeFolder(student, children));
-        if (!experimentNodes.length) experimentNodes.push(renderTreeLeaf("No experiment records have been uploaded yet."));
+        const experimentEntries = Array.from(experimentGroups.entries())
+          .sort(([a], [b]) => a === "CORE LAB" ? -1 : b === "CORE LAB" ? 1 : a.localeCompare(b))
+          .map(([label, files]) => ({ label, files }));
 
         const resourceGroups = new Map();
         resourceRecords.forEach((record) => {
           const category = String(record.category || "General").trim() || "General";
           if (!resourceGroups.has(category)) resourceGroups.set(category, []);
-          resourceGroups.get(category).push(renderTreeLeaf(record.title || "Laboratory resource", record.description || "", record.url));
+          resourceGroups.get(category).push(renderFolderFile(record.title || "Laboratory resource", record.description || "", record.url));
         });
-        const resourceNodes = Array.from(resourceGroups.entries())
+        const resourceEntries = Array.from(resourceGroups.entries())
           .sort(([a], [b]) => a.localeCompare(b))
-          .map(([category, children]) => renderTreeFolder(category, children));
-        if (!resourceNodes.length) resourceNodes.push(renderTreeLeaf("No laboratory resources have been added yet."));
+          .map(([label, files]) => ({ label, files }));
 
         host.replaceChildren(
-          renderTreeFolder("Student Roadmap", [roadmapItem], true, "roadmap"),
-          renderTreeFolder("Experiment Data", experimentNodes, true, "experiments"),
-          renderTreeFolder("Laboratory Resources", resourceNodes, true, "links"),
+          renderFolderView("experiments", "Experiment Data", experimentEntries, "No experiment records have been uploaded yet."),
+          renderFolderView("links", "Laboratory Resources", resourceEntries, "No laboratory resources have been added yet."),
+          renderFolderView("roadmap", "Student Roadmap", [{
+            label: "Student Roadmap",
+            files: [renderFolderFile("Open protected roadmap", "Undergraduate research and graduate admission planning")],
+          }], "The student roadmap is not available yet."),
         );
         activateResourceSubtab(activeResourceSubtab);
       };
@@ -816,7 +813,7 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
         if (state) state.textContent = "Loading member resources...";
         try {
           [experimentRecords, resourceRecords] = await Promise.all([fetchExperimentRecords(), fetchResourceRecords()]);
-          renderMemberResourceTreeNodes();
+          renderMemberResourceFolderViews();
           resourceTreeLoaded = true;
           host.hidden = false;
           host.dataset.loaded = "true";
@@ -832,7 +829,7 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
       const renderExperiments = async () => {
         try {
           experimentRecords = await fetchExperimentRecords();
-          if (resourceTreeLoaded) renderMemberResourceTreeNodes();
+          if (resourceTreeLoaded) renderMemberResourceFolderViews();
         } catch (error) {
           console.error("[member-portal] experiment records", error);
         }
@@ -841,7 +838,7 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
       const renderResources = async () => {
         try {
           resourceRecords = await fetchResourceRecords();
-          if (resourceTreeLoaded) renderMemberResourceTreeNodes();
+          if (resourceTreeLoaded) renderMemberResourceFolderViews();
         } catch (error) {
           console.error("[member-portal] resources", error);
         }

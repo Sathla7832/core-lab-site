@@ -374,16 +374,22 @@ input:focus, textarea:focus { outline: 3px solid rgba(23,81,140,.18); border-col
 .member-resource-tab { border: 0; border-bottom: 3px solid transparent; background: transparent; color: var(--muted); cursor: pointer; font: inherit; font-weight: 800; padding: 12px 18px; }
 .member-resource-tab[aria-selected="true"] { border-bottom-color: var(--brand); color: var(--brand-dark); background: var(--soft); }
 .member-resource-tab:hover, .member-resource-tab:focus-visible { color: var(--brand-dark); outline: 2px solid var(--brand); outline-offset: -2px; }
-.member-resource-tree { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px 22px; }
-.member-resource-tree ul, .member-resource-tree li { list-style: none !important; margin: 0; padding: 0; }
-.member-tree-children { margin: 4px 0 8px 22px !important; padding-left: 16px !important; border-left: 1px solid var(--line); }
-.member-tree-toggle, .member-tree-leaf-button { display: block; width: 100%; border: 0; background: transparent; color: var(--brand-dark); text-align: left; font: inherit; font-weight: 800; cursor: pointer; padding: 10px 8px; border-radius: 6px; }
-.member-tree-toggle:hover, .member-tree-toggle:focus-visible, .member-tree-leaf-button:hover, .member-tree-leaf-button:focus-visible { background: var(--soft); outline: 2px solid var(--brand); outline-offset: 1px; }
-.member-tree-leaf { display: grid; gap: 3px; padding: 8px; }
-.member-tree-leaf-link, .member-tree-leaf-label { color: var(--ink); font-weight: 700; overflow-wrap: anywhere; }
-.member-tree-leaf-link { text-decoration: none; }
-.member-tree-leaf-link:hover, .member-tree-leaf-link:focus-visible { color: var(--brand); text-decoration: underline; }
-.member-tree-meta { color: var(--muted); font-size: 14px; font-weight: 400; overflow-wrap: anywhere; }
+.member-folder-view { display: grid; gap: 18px; }
+.member-folder-section { display: grid; gap: 18px; }
+.member-folder-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 14px; }
+.member-folder-card { display: grid; gap: 8px; min-height: 112px; padding: 18px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 2px 8px rgba(23,33,43,.04); }
+.member-folder-button { border: 0; background: transparent; color: var(--brand-dark); cursor: pointer; font: inherit; font-weight: 800; text-align: left; overflow-wrap: anywhere; padding: 0; }
+.member-folder-button::before { content: "Folder"; display: block; margin-bottom: 8px; color: var(--accent); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; }
+.member-folder-button:hover, .member-folder-button:focus-visible { color: var(--brand); outline: 2px solid var(--brand); outline-offset: 3px; }
+.member-folder-count { color: var(--muted); font-size: 14px; }
+.member-folder-contents { padding: 20px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+.member-folder-contents h3 { margin-bottom: 14px; color: var(--brand-dark); }
+.member-folder-file-list { display: grid; gap: 10px; }
+.member-folder-file { display: grid; gap: 4px; padding: 13px 14px; border: 1px solid var(--line); border-radius: 7px; background: var(--paper); }
+.member-folder-file-link, .member-folder-file-label { color: var(--brand-dark); font-weight: 800; overflow-wrap: anywhere; }
+.member-folder-file-link { text-decoration: none; }
+.member-folder-file-link:hover, .member-folder-file-link:focus-visible { color: var(--brand); text-decoration: underline; }
+.member-folder-file-meta { color: var(--muted); font-size: 14px; overflow-wrap: anywhere; }
 .member-resource-tree-roadmap { margin-top: 18px; }
 .member-resource-tree-roadmap .member-roadmap-frame { width: 100%; min-height: 720px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
 .member-group-reminder { margin: 0 0 16px; padding: 12px 14px; border: 1px solid var(--line); border-left: 3px solid var(--accent); border-radius: 6px; background: var(--soft); font-size: 15px; }
