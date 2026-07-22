@@ -40,6 +40,8 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
       const portalTabs = Array.from(document.querySelectorAll("[data-member-tab-target]"));
   const portalPanels = Array.from(document.querySelectorAll("[data-member-panel]"));
   const availablePortalTabs = () => portalTabs.filter((tab) => !tab.hidden);
+      const resourceSubtabs = Array.from(document.querySelectorAll("[data-member-resource-subtab]"));
+      let activeResourceSubtab = "experiments";
       let loadMemberRoadmap = () => {};
       let loadMemberReportSchedule = () => {};
       let loadMemberResourceTree = () => {};
@@ -59,6 +61,27 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
     if (moveFocus) selectedTab.focus();
   };
 
+  const activateResourceSubtab = (target, moveFocus = false) => {
+    const selected = resourceSubtabs.find((tab) => tab.dataset.memberResourceSubtab === target);
+    if (!selected) return;
+    activeResourceSubtab = target;
+    resourceSubtabs.forEach((tab) => {
+      const isSelected = tab === selected;
+      tab.setAttribute("aria-selected", String(isSelected));
+      tab.tabIndex = isSelected ? 0 : -1;
+    });
+    const tree = document.querySelector("[data-member-resource-tree]");
+    if (tree) {
+      Array.from(tree.children).forEach((item) => {
+        item.hidden = item.dataset.resourceTreeSection !== target;
+      });
+    }
+    const roadmap = document.querySelector("[data-member-roadmap-container]");
+    if (roadmap) roadmap.hidden = target !== "roadmap";
+    if (target === "roadmap") loadMemberRoadmap();
+    if (moveFocus) selected.focus();
+  };
+
   portalTabs.forEach((tab) => {
     tab.addEventListener("click", () => activatePortalTab(tab.dataset.memberTabTarget));
     tab.addEventListener("keydown", (event) => {
@@ -73,6 +96,21 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
       if (event.key === "ArrowLeft") nextIndex = (currentIndex - 1 + tabs.length) % tabs.length;
       if (event.key === "ArrowRight") nextIndex = (currentIndex + 1) % tabs.length;
       activatePortalTab(tabs[nextIndex].dataset.memberTabTarget, true);
+    });
+  });
+  resourceSubtabs.forEach((tab) => {
+    tab.addEventListener("click", () => activateResourceSubtab(tab.dataset.memberResourceSubtab));
+    tab.addEventListener("keydown", (event) => {
+      if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+      const currentIndex = resourceSubtabs.indexOf(tab);
+      if (currentIndex < 0) return;
+      event.preventDefault();
+      let nextIndex = currentIndex;
+      if (event.key === "Home") nextIndex = 0;
+      if (event.key === "End") nextIndex = resourceSubtabs.length - 1;
+      if (event.key === "ArrowLeft") nextIndex = (currentIndex - 1 + resourceSubtabs.length) % resourceSubtabs.length;
+      if (event.key === "ArrowRight") nextIndex = (currentIndex + 1) % resourceSubtabs.length;
+      activateResourceSubtab(resourceSubtabs[nextIndex].dataset.memberResourceSubtab, true);
     });
   });
 
@@ -684,10 +722,14 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
         return item;
       };
 
-      const renderTreeFolder = (label, children, expanded = true) => {
+      const renderTreeFolder = (label, children, expanded = true, section = "") => {
         const item = document.createElement("li");
         item.className = "member-tree-folder";
         item.setAttribute("role", "treeitem");
+        if (section) {
+          item.dataset.resourceTreeSection = section;
+          item.id = `member-resource-view-${section}`;
+        }
         const toggle = createText("button", `${expanded ? "\\u25be" : "\\u25b8"} ${label}`, "member-tree-toggle");
         toggle.type = "button";
         toggle.setAttribute("aria-expanded", String(expanded));
@@ -752,10 +794,11 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
         if (!resourceNodes.length) resourceNodes.push(renderTreeLeaf("No laboratory resources have been added yet."));
 
         host.replaceChildren(
-          renderTreeFolder("Student Roadmap", [roadmapItem]),
-          renderTreeFolder("Experiment Data", experimentNodes),
-          renderTreeFolder("Laboratory Resources", resourceNodes),
+          renderTreeFolder("Student Roadmap", [roadmapItem], true, "roadmap"),
+          renderTreeFolder("Experiment Data", experimentNodes, true, "experiments"),
+          renderTreeFolder("Laboratory Resources", resourceNodes, true, "links"),
         );
+        activateResourceSubtab(activeResourceSubtab);
       };
 
       const renderMemberResourceTree = async () => {

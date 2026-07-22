@@ -22,7 +22,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/styles.css?v=94352f64d1c6" />
+  <link rel="stylesheet" href="assets/styles.css?v=4c8b57cbcbe2" />
 </head>
 <body>
   <a class="skip-link" href="#main-content">Skip to main content</a>
@@ -72,7 +72,7 @@
         <nav class="member-portal-tabs" role="tablist" aria-label="Member portal sections">
           <button id="member-tab-report-schedule" class="member-portal-tab" type="button" role="tab" aria-selected="true" aria-controls="member-panel-report-schedule" data-member-tab-target="report-schedule">Presentation Schedule</button>
           <button id="member-tab-calendars" class="member-portal-tab" type="button" role="tab" aria-selected="false" aria-controls="member-panel-calendars" data-member-tab-target="calendars" tabindex="-1">Calendars</button>
-          <button id="member-tab-resources" class="member-portal-tab" type="button" role="tab" aria-selected="false" aria-controls="member-panel-resources" data-member-tab-target="resources" tabindex="-1">Member Resources</button>
+          <button id="member-tab-resources" class="member-portal-tab" type="button" role="tab" aria-selected="false" aria-controls="member-panel-resources" data-member-tab-target="resources" tabindex="-1">Resources</button>
           <button id="member-tab-manage" class="member-portal-tab" type="button" role="tab" aria-selected="false" aria-controls="member-panel-manage" data-member-tab-target="manage" data-member-admin-tab tabindex="-1" hidden>Manage Portal</button>
         </nav>
 
@@ -88,7 +88,12 @@
           <div class="member-calendar-grid" data-calendar-list><p class="muted">Loading protected calendar settings...</p></div>
         </section>
         <section id="member-panel-resources" class="member-content-section member-portal-panel member-resources-panel" role="tabpanel" aria-labelledby="member-tab-resources" data-member-panel="resources" hidden>
-          <div class="member-section-head"><div><h2>Member Resources</h2><p>Student Roadmap, experiment records, and laboratory links are managed from one protected database view.</p></div></div>
+          <div class="member-section-head"><div><h2>Resources</h2><p>Protected laboratory data and links are organized by category and student.</p></div></div>
+          <nav class="member-resource-tabs" role="tablist" aria-label="Resource sections">
+            <button id="member-resource-tab-experiments" class="member-resource-tab" type="button" role="tab" aria-selected="true" aria-controls="member-resource-view-experiments" data-member-resource-subtab="experiments">Experiment Data</button>
+            <button id="member-resource-tab-links" class="member-resource-tab" type="button" role="tab" aria-selected="false" aria-controls="member-resource-view-links" data-member-resource-subtab="links" tabindex="-1">Laboratory Resources</button>
+            <button id="member-resource-tab-roadmap" class="member-resource-tab" type="button" role="tab" aria-selected="false" aria-controls="member-resource-view-roadmap" data-member-resource-subtab="roadmap" tabindex="-1">Student Roadmap</button>
+          </nav>
           <p class="member-resource-tree-state muted" data-member-resource-tree-state>Open this tab to load member resources.</p>
           <div class="member-resource-tree" data-member-resource-tree role="tree" aria-label="Member resources" hidden></div>
           <div class="member-resource-tree-roadmap" data-member-roadmap-container hidden>
@@ -158,7 +163,7 @@
 
     </div>
   </footer>
-  <script src="assets/main.js?v=94352f64d1c6"></script>
-  <script src="assets/firebase-config.js?v=94352f64d1c6"></script><script type="module" src="assets/member.js?v=94352f64d1c6"></script>
+  <script src="assets/main.js?v=4c8b57cbcbe2"></script>
+  <script src="assets/firebase-config.js?v=4c8b57cbcbe2"></script><script type="module" src="assets/member.js?v=4c8b57cbcbe2"></script>
 </body>
 </html>
