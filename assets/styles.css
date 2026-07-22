@@ -45,6 +45,9 @@ section { padding: 56px 0; }
 .publication-hero .lead { margin-top: 0; }
 .publication-hero .hero-actions { margin-top: 16px; justify-content: flex-start; }
 .publication-hero .spectrum { display: none; }
+.collaborator-hero .hero-grid { grid-template-columns: 1fr; }
+.collaborator-hero .hero-copy { width: 100%; max-width: none; }
+.collaborator-hero .lead { max-width: none; white-space: nowrap; }
 .hero-grid { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(320px, .8fr); gap: 56px; align-items: start; }
 .eyebrow { margin: 0 0 12px; color: var(--brand); font-size: 12px; font-weight: 800; letter-spacing: .18em; text-transform: uppercase; }
 h1, h2, h3 { font-family: var(--sans); line-height: 1.22; margin: 0; letter-spacing: 0; }
@@ -87,7 +90,7 @@ h3 { font-size: 21px; }
 .profile-honors { margin: 0; padding-left: 24px; }
 .profile-info a, .profile-info a:visited, .profile-info a:hover, .profile-info a:active { color: inherit; text-decoration: none; }
 .profile .hero-actions { margin-top: 26px; }
-@media (max-width: 760px) { .profile-card { grid-template-columns: 1fr; gap: 22px; } .profile-photo { max-width: 320px; } .profile-role, .profile-line, .profile-honors { font-size: 15px; } .profile-single-line { white-space: normal; } }
+@media (max-width: 760px) { .profile-card { grid-template-columns: 1fr; gap: 22px; } .profile-photo { max-width: 320px; } .profile-role, .profile-line, .profile-honors { font-size: 15px; } .profile-single-line { white-space: normal; } .collaborator-hero .lead { white-space: normal; } }
 .section-soft { background: var(--soft); }
 .collaborator-section { padding: 0 0 72px; }
 .collaborator-container { max-width: 1440px; }

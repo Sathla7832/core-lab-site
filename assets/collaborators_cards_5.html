@@ -6,13 +6,13 @@
 <title>研究合作者一覽</title>
 <style>
   :root{
-    --ink:#1a2432;
-    --muted:#7b838e;
-    --rule:#e2e6ea;
-    --accent:#1f5fa9;      /* 研究領域標題藍 */
+    --ink:#17212b;
+    --muted:#5c7184;
+    --rule:#d5dee5;
+    --accent:#17518c;      /* CORE Lab brand blue */
     --diamond:#8c2f24;     /* ◆ 深紅 */
     --paper:#ffffff;
-    --wash:#f6f7f9;
+    --wash:#eaf1f4;
   }
   *{box-sizing:border-box;}
   body{
@@ -38,6 +38,8 @@
   .howto code{background:var(--wash);padding:1px 5px;border-radius:3px;font-size:12.5px;}
 
   .grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:16px;}
+  .card:nth-child(5){order:6;}
+  .card:nth-child(6){order:5;}
   @media(max-width:1120px){.grid{grid-template-columns:repeat(4,minmax(0,1fr));}}
   @media(max-width:900px){.grid{grid-template-columns:repeat(3,minmax(0,1fr));}}
   @media(max-width:620px){.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;}}
@@ -48,6 +50,7 @@
     border:1px solid var(--rule);
     padding:16px 14px 18px;
     position:relative;
+    display:flex;flex-direction:column;
     break-inside:avoid;
   }
   .idx{
@@ -72,13 +75,13 @@
   .photo .ph span{display:block;font-size:11px;color:#b9c1c9;}
 
   .name{font-size:16px;font-weight:700;letter-spacing:.01em;margin:0;}
-  .name .en{font-weight:400;color:#4a5764;font-size:14px;}
+  .name .en{display:block;font-weight:400;color:#4a5764;font-size:14px;}
   .affil{color:var(--muted);font-size:12px;margin:6px 0 0;}
   .role{color:var(--muted);font-size:12px;margin:2px 0 0;}
 
   .fieldlabel{
     color:var(--accent);font-weight:700;font-size:12px;
-    margin:14px 0 6px;padding-top:10px;border-top:1px solid var(--rule);
+    margin: auto 0 6px;padding-top:10px;border-top:1px solid var(--rule);
   }
   ul.fields{list-style:none;margin:0;padding:0;}
   ul.fields li{
@@ -116,18 +119,7 @@
 </head>
 <body>
 <div class="wrap">
-
-  <header class="page">
-    <h1>研究合作者一覽</h1>
-    <p>依既有編號排序 ‧ 共 19 位 ‧ 資料查證日 2026/07/22</p>
-  </header>
-
-  <div class="howto">
-    <b>照片放法：</b>在本檔案同一層建立資料夾 <code>photos</code>，把照片命名為 <code>01.jpg</code>～<code>19.jpg</code>（對應卡片編號）放進去，重新開啟即自動帶入；沒有放的仍顯示虛線預留框。建議尺寸 600×720 px（直式 5:6），臉部置中。<br>
-    <b>列印：</b>Ctrl/Cmd + P，版面為 A4 直式、每頁 3 欄，虛線框在列印時也會保留位置。
-  </div>
-
-  <div class="grid">
+<div class="grid">
 
     <!-- 01 -->
     <article class="card">
@@ -294,7 +286,7 @@
     <article class="card">
       <div class="idx">11</div>
       <div class="photo"><img src="images/collaborators/collaborator-02.webp" alt="" onerror="this.outerHTML='&lt;div class=\'ph\'&gt;照 片&lt;span&gt;photos/11.jpg&lt;/span&gt;&lt;/div&gt;'"></div>
-      <p class="name">黃信智 <span class="en">Hsin-Chih Huang</span></p>
+      <p class="name"><a class="collaborator-name-link" href="https://mse.nfu.edu.tw/zh_tw/department/Full_time/Hsin-Chih-Huang-57548255" target="_blank" rel="noopener noreferrer">黃信智 <span class="en">Hsin-Chih Huang</span></a></p>
       <p class="affil">國立虎尾科技大學<br>材料科學與工程系</p>
       <p class="role">助理教授</p>
       <div class="fieldlabel">研究領域</div>
@@ -343,7 +335,7 @@
     <article class="card">
       <div class="idx">14</div>
       <div class="photo"><img src="photos/14.jpg" alt="" onerror="this.outerHTML='&lt;div class=\'ph\'&gt;照 片&lt;span&gt;photos/14.jpg&lt;/span&gt;&lt;/div&gt;'"></div>
-      <p class="name">張羅嶽 <span class="en">Lo-Yueh Chang</span></p>
+      <p class="name"><a class="collaborator-name-link" href="https://www.nsrrc.org.tw/chinese/personal.aspx?ID=00289&Dept_UID=7&Type=D" target="_blank" rel="noopener noreferrer">張羅嶽 <span class="en">Lo-Yueh Chang</span></a></p>
       <p class="affil">國家同步輻射研究中心</p>
       <p class="role">TPS 35A 光束線經理、助理研究員</p>
       <div class="fieldlabel">研究領域</div>
@@ -359,7 +351,7 @@
     <article class="card">
       <div class="idx">15</div>
       <div class="photo"><img src="photos/15.jpg" alt="" onerror="this.outerHTML='&lt;div class=\'ph\'&gt;照 片&lt;span&gt;photos/15.jpg&lt;/span&gt;&lt;/div&gt;'"></div>
-      <p class="name">盧英睿 <span class="en">Ying-Rui Lu</span></p>
+      <p class="name"><a class="collaborator-name-link" href="https://www.nsrrc.org.tw/chinese/personal.aspx?ID=00285&Dept_UID=56&Type=D" target="_blank" rel="noopener noreferrer">盧英睿 <span class="en">Ying-Rui Lu</span></a></p>
       <p class="affil">國家同步輻射研究中心</p>
       <p class="role">TPS 32A 光束線經理、助理研究員</p>
       <div class="fieldlabel">研究領域</div>
@@ -373,8 +365,8 @@
     <!-- 16 -->
     <article class="card">
       <div class="idx">16</div>
-      <div class="photo"><img src="photos/16.jpg" alt="" onerror="this.outerHTML='&lt;div class=\'ph\'&gt;照 片&lt;span&gt;photos/16.jpg&lt;/span&gt;&lt;/div&gt;'"></div>
-      <p class="name">林佑錩 <span class="en">Yu-Chang Lin</span></p>
+      <div class="photo"><img src="images/collaborators/collaborator-14.webp" alt="" onerror="this.outerHTML='&lt;div class=\'ph\'&gt;照 片&lt;span&gt;photos/16.jpg&lt;/span&gt;&lt;/div&gt;'"></div>
+      <p class="name"><a class="collaborator-name-link" href="https://www.nsrrc.org.tw/Chinese/personal.aspx?ID=00327&Dept_UID=56&Type=D" target="_blank" rel="noopener noreferrer">林佑錩 <span class="en">Yu-Chang Lin</span></a></p>
       <p class="affil">國家同步輻射研究中心</p>
       <p class="role">TPS 38A 光束線經理、助理研究員</p>
       <div class="fieldlabel">研究領域</div>
@@ -388,7 +380,7 @@
     <article class="card">
       <div class="idx">17</div>
       <div class="photo"><img src="images/collaborators/collaborator-03.webp" alt="" onerror="this.outerHTML='&lt;div class=\'ph\'&gt;照 片&lt;span&gt;photos/17.jpg&lt;/span&gt;&lt;/div&gt;'"></div>
-      <p class="name">黃偉翔 <span class="en">Wei-Hsiang Huang</span></p>
+      <p class="name"><a class="collaborator-name-link" href="https://www.nsrrc.org.tw/chinese/personal.aspx?ID=00328&Dept_UID=56&Type=D" target="_blank" rel="noopener noreferrer">黃偉翔 <span class="en">Wei-Hsiang Huang</span></a></p>
       <p class="affil">國家同步輻射研究中心</p>
       <p class="role">TPS 44A 光束線經理、助理研究員</p>
       <div class="fieldlabel">研究領域</div>
@@ -417,8 +409,8 @@
     <article class="card">
       <div class="idx">19</div>
       <div class="photo"><img src="photos/19.jpg" alt="" onerror="this.outerHTML='&lt;div class=\'ph\'&gt;照 片&lt;span&gt;photos/19.jpg&lt;/span&gt;&lt;/div&gt;'"></div>
-      <p class="name">胡志偉 <span class="en">Zhiwei Hu</span></p>
-      <p class="affil">馬克斯普朗克固體化學物理研究所<br>（MPI CPfS，德國德勒斯登）<br>X 光光譜研究群</p>
+      <p class="name"><a class="collaborator-name-link" href="https://www2.cpfs.mpg.de/~hu/" target="_blank" rel="noopener noreferrer">胡志偉 <span class="en">Zhiwei Hu</span></a></p>
+      <p class="affil">馬克斯普朗克固體化學物理研究所<br>X 光光譜研究群</p>
       <p class="role">研究群主持人 Group Leader</p>
       <div class="fieldlabel">研究領域</div>
       <ul class="fields">
@@ -429,11 +421,6 @@
     </article>
 
   </div>
-
-  <footer class="page">
-    資料查證日 2026/07/22。正式送件前建議再向各單位確認正式列銜。
-  </footer>
-
 </div>
 </body>
 </html>
