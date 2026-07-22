@@ -89,6 +89,9 @@ h3 { font-size: 21px; }
 .profile .hero-actions { margin-top: 26px; }
 @media (max-width: 760px) { .profile-card { grid-template-columns: 1fr; gap: 22px; } .profile-photo { max-width: 320px; } .profile-role, .profile-line, .profile-honors { font-size: 15px; } .profile-single-line { white-space: normal; } }
 .section-soft { background: var(--soft); }
+.collaborator-section { padding: 0 0 72px; }
+.collaborator-container { max-width: 1440px; }
+.collaborator-embed { display: block; width: 100%; height: 6400px; border: 0; background: var(--soft); }
 .stats { display: grid; grid-template-columns: repeat(4, 1fr); border: 1px solid var(--line); background: var(--surface); }
 .stat { padding: 30px 16px; text-align: center; border-right: 1px solid var(--line); }
 .stat:last-child { border-right: 0; }
@@ -505,6 +508,7 @@ input:focus, textarea:focus { outline: 3px solid rgba(23,81,140,.18); border-col
   .profile { padding-top: 40px; }
   .profile-photo { width: min(100%, 320px); }
   .profile-info h1 { font-size: clamp(30px, 9vw, 38px); }
+  .collaborator-embed { height: 10600px; }
   .metric-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .publication-filter-row { grid-template-columns: 1fr; }
   .publication-year > summary { padding-top: 22px; }

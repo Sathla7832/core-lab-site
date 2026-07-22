@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>研究合作者一覽</title>
+<style>
+  :root{
+    --ink:#1a2432;
+    --muted:#7b838e;
+    --rule:#e2e6ea;
+    --accent:#1f5fa9;      /* 研究領域標題藍 */
+    --diamond:#8c2f24;     /* ◆ 深紅 */
+    --paper:#ffffff;
+    --wash:#f6f7f9;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--wash);
+    color:var(--ink);
+    font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei","Heiti TC",sans-serif;
+    line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1180px;margin:0 auto;padding:48px 28px 72px;}
+
+  header.page{border-bottom:2px solid var(--ink);padding-bottom:18px;margin-bottom:14px;}
+  header.page h1{font-size:26px;letter-spacing:.04em;margin:0 0 6px;font-weight:700;}
+  header.page p{margin:0;color:var(--muted);font-size:13.5px;}
+
+  .howto{
+    background:var(--paper);border:1px solid var(--rule);border-left:3px solid var(--accent);
+    padding:14px 18px;margin:22px 0 34px;font-size:13px;color:#41505f;
+  }
+  .howto b{color:var(--ink);}
+  .howto code{background:var(--wash);padding:1px 5px;border-radius:3px;font-size:12.5px;}
+
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:26px;}
+  @media(max-width:980px){.grid{grid-template-columns:repeat(2,1fr);}}
+  @media(max-width:620px){.grid{grid-template-columns:1fr;}}
+
+  .card{
+    background:var(--paper);
+    border:1px solid var(--rule);
+    padding:22px 22px 24px;
+    position:relative;
+    break-inside:avoid;
+  }
+  .idx{
+    position:absolute;top:0;left:0;
+    background:var(--ink);color:#fff;
+    font-size:11px;letter-spacing:.12em;
+    padding:3px 9px;font-variant-numeric:tabular-nums;
+  }
+
+  /* 照片：把照片放進同層的 photos/ 資料夾，命名 01.jpg ~ 14.jpg 即自動帶入 */
+  .photo{
+    width:100%;aspect-ratio:3/3.6;margin:14px 0 18px;
+    background:var(--wash);
+    border:1px dashed #c3cad2;
+    display:flex;align-items:center;justify-content:center;
+    overflow:hidden;position:relative;
+  }
+  .photo img{width:100%;height:100%;object-fit:cover;display:block;}
+  .photo .ph{
+    text-align:center;color:#a2abb5;font-size:12px;letter-spacing:.08em;line-height:2;
+  }
+  .photo .ph span{display:block;font-size:11px;color:#b9c1c9;}
+
+  .name{font-size:19px;font-weight:700;letter-spacing:.01em;margin:0;}
+  .name .en{font-weight:400;color:#4a5764;font-size:16px;}
+  .affil{color:var(--muted);font-size:13px;margin:7px 0 0;}
+  .role{color:var(--muted);font-size:13px;margin:2px 0 0;}
+
+  .fieldlabel{
+    color:var(--accent);font-weight:700;font-size:14px;
+    margin:18px 0 8px;padding-top:14px;border-top:1px solid var(--rule);
+  }
+  ul.fields{list-style:none;margin:0;padding:0;}
+  ul.fields li{
+    font-size:13.5px;color:var(--accent);padding-left:17px;position:relative;margin-bottom:3px;
+  }
+  ul.fields li::before{
+    content:"\25C6";color:var(--diamond);position:absolute;left:0;top:0;font-size:10px;line-height:1.85;
+  }
+
+  .meta{
+    margin:10px 0 0;font-size:12.5px;color:#5c6773;line-height:1.9;
+  }
+  .meta span{color:#95a0ab;display:inline-block;min-width:4.6em;}
+
+  .todo{
+    display:inline-block;font-size:11px;letter-spacing:.06em;
+    color:#9a6a00;background:#fdf5e2;border:1px solid #ecd9a8;
+    padding:1px 6px;margin-left:6px;vertical-align:2px;
+  }
+  .blank{color:#b3bbc4;font-style:normal;}
+
+  footer.page{margin-top:46px;padding-top:16px;border-top:1px solid var(--rule);color:var(--muted);font-size:12px;}
+
+  @media print{
+    body{background:#fff;}
+    .wrap{padding:0;max-width:none;}
+    .howto{display:none;}
+    .grid{grid-template-columns:repeat(3,1fr);gap:14px;}
+    .card{border:1px solid #d7dce1;padding:14px;}
+    .photo{margin:10px 0 12px;}
+    @page{size:A4 portrait;margin:12mm;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="page">
+    <h1>研究合作者一覽</h1>
+    <p>依既有編號排序 ‧ 共 19 位 ‧ 資料查證日 2026/07/22</p>
+  </header>
+
+  <div class="howto">
+    <b>照片放法：</b>在本檔案同一層建立資料夾 <code>photos</code>，把照片命名為 <code>01.jpg</code>～<code>19.jpg</code>（對應卡片編號）放進去，重新開啟即自動帶入；沒有放的仍顯示虛線預留框。建議尺寸 600×720 px（直式 5:6），臉部置中。<br>
+    <b>列印：</b>Ctrl/Cmd + P，版面為 A4 直式、每頁 3 欄，虛線框在列印時也會保留位置。
+  </div>
+
+  <div class="grid">
+
+    <!-- 01 -->
+    <article class="card">
+      <div class="idx">01</div>
+      <div class="photo"><img src="photos/01.jpg" alt="" onerror="this.outerHTML='&lt;div class=\'ph\'&gt;照 片&lt;span&gt;photos/01.jpg&lt;/span&gt;&lt;/div&gt;'"></div>
+      <p class="name">王丞浩 <span class="en">Chen-Hao Wang</span></p>
+      <p class="affil">國立臺灣科技大學<br>材料科學與工程系</p>
+      <p class="role">教授（系主任、工程學院副院長）</p>
+      <div class="fieldlabel">研究領域</div>
+      <ul class="fields">
+        <li>氫能和燃料電池</li>
+        <li>液流電池</li>
+        <li>超級電容</li>
+        <li>電鍍和無電鍍製程</li>
+        <li>電化學科技</li>
+      </ul>
+    </article>
+
+    <!-- 02 -->
+    <article class="card">
+      <div class="idx">02</div>
+      <div class="photo"><img src="photos/02.jpg" alt="" onerror="this.outerHTML='&lt;div class=\'ph\'&gt;照 片&lt;span&gt;photos/02.jpg&lt;/span&gt;&lt;/div&gt;'"></div>
+      <p class="name">林麗瓊 <span class="en">Li-Chyong Chen</span></p>
+      <p class="affil">國立臺灣大學<br>凝態科學研究中心／物理系</p>
+      <p class="role">特聘研究員、教授；中央研究院院士</p>
+      <div class="fieldlabel">研究領域</div>
+      <ul class="fields">
+        <li>低維度奈米材料與二維材料</li>
+        <li>光催化與人工光合作用</li>
+        <li>燃料電池與太陽能燃料</li>
+        <li>半導體與光電材料</li>
+        <li>熱電材料</li>
+      </ul>
+    </article>
+
+    <!-- 03 -->
+    <article class="card">
+      <div class="idx">03</div>
+      <div class="photo"><img src="photos/03.jpg" alt="" onerror="this.outerHTML='&lt;div class=\'ph\'&gt;照 片&lt;span&gt;photos/03.jpg&lt;/span&gt;&lt;/div&gt;'"></div>
+      <p class="name">陳貴賢 <span class="en">Kuei-Hsien Chen</span></p>
+      <p class="affil">中央研究院<br>原子與分子科學研究所</p>
+      <p class="role">特聘研究員（合聘臺大凝態科學研究中心）</p>
+      <div class="fieldlabel">研究領域</div>
+      <ul class="fields">
+        <li>尖端材料之合成、檢測與應用</li>
+        <li>人工光合作用</li>
+        <li>燃料電池觸媒與傳輸</li>
+        <li>熱電材料</li>
+        <li>奈米材料與奈米科技</li>
+      </ul>
+    </article>
+
+    <!-- 04 -->
+    <article class="card">
+      <div class="idx">04</div>
+      <div class="photo"><img src="photos/04.jpg" alt="" onerror="this.outerHTML='&lt;div class=\'ph\'&gt;照 片&lt;span&gt;photos/04.jpg&lt;/span&gt;&lt;/div&gt;'"></div>
+      <p class="name">包志文 <span class="en">Chih-Wen Pao</span></p>
+      <p class="affil">國家同步輻射研究中心</p>
+      <p class="role">TPS 44A 發言人、副研究員</p>
+      <div class="fieldlabel">研究領域</div>
+      <ul class="fields">
+        <li>X 光吸收光譜（XAS／XAFS）</li>
+        <li>時間解析與快速掃描 XAS</li>
+        <li>能源材料臨場分析</li>
+      </ul>
+    </article>
+
+    <!-- 05 -->
+    <article class="card">
+      <div class="idx">05</div>
+      <div class="photo"><img src="photos/05.jpg" alt="" onerror="this.outerHTML='&lt;div class=\'ph\'&gt;照 片&lt;span&gt;photos/05.jpg&lt;/span&gt;&lt;/div&gt;'"></div>
+      <p class="name">陳政龍 <span class="en">Jeng-Lung Chen</span></p>
+      <p class="affil">國家同步輻射研究中心</p>
+      <p class="role">TPS 44A 光束線經理、副研究員</p>
+      <div class="fieldlabel">研究領域</div>
+      <ul class="fields">
+        <li>X 光吸收光譜（XAS／XAFS）</li>
+        <li>能源與催化材料臨場分析</li>
+      </ul>
+    </article>
+
+    <!-- 06 -->
+    <article class="card">
+      <div class="idx">06</div>
+      <div class="photo"><img src="photos/06.jpg" alt="" onerror="this.outerHTML='&lt;div class=\'ph\'&gt;照 片&lt;span&gt;photos/06.jpg&lt;/span&gt;&lt;/div&gt;'"></div>
+      <p class="name">郭俊宏 <span class="en">Chun-Hong Kuo</span></p>
+      <p class="affil">國立陽明交通大學<br>應用化學系</p>
+      <p class="role">副教授</p>
+      <div class="fieldlabel">研究領域</div>
+      <ul class="fields">
+        <li>奈米結構工程（Nanoarchitectonics）</li>
+        <li>異相催化</li>
+        <li>電催化</li>
+        <li>同步輻射分析</li>
+        <li>奈米與能源化學</li>
+      </ul>
+    </article>
+
+    <!-- 07 -->
+    <article class="card">
+      <div class="idx">07</div>
+      <div class="photo"><img src="photos/07.jpg" alt="" onerror="this.outerHTML='&lt;div class=\'ph\'&gt;照 片&lt;span&gt;photos/07.jpg&lt;/span&gt;&lt;/div&gt;'"></div>
+      <p class="name">鍾博文 <span class="en">Cedric Po-Wen Chung</span></p>
+      <p class="affil">中央研究院<br>化學研究所</p>
+      <p class="role">副研究員</p>
+      <div class="fieldlabel">研究領域</div>
+      <ul class="fields">
+        <li>物理無機化學與無機材料</li>
+        <li>生質物衍生物催化轉化</li>
+        <li>原子級分散金屬觸媒</li>
+        <li>碳基觸媒</li>
+        <li>永續化學</li>
+      </ul>
+    </article>
+
+    <!-- 08 -->
+    <article class="card">
+      <div class="idx">08</div>
+      <div class="photo"><img src="photos/08.jpg" alt="" onerror="this.outerHTML='&lt;div class=\'ph\'&gt;照 片&lt;span&gt;photos/08.jpg&lt;/span&gt;&lt;/div&gt;'"></div>
+      <p class="name">涂熊林 <span class="en">Hsiung-Lin Tu</span></p>
+      <p class="affil">中央研究院<br>化學研究所</p>
+      <p class="role">副研究員</p>
+      <div class="fieldlabel">研究領域</div>
+      <ul class="fields">
+        <li>微流體生物感測</li>
+        <li>單細胞分析</li>
+        <li>DNA 張力探針與細胞力學</li>
+        <li>奈米界面材料</li>
+        <li>化學與系統生物</li>
+      </ul>
+    </article>
+
+    <!-- 09 -->
+    <article class="card">
+      <div class="idx">09</div>
+      <div class="photo"><img src="photos/09.jpg" alt="" onerror="this.outerHTML='&lt;div class=\'ph\'&gt;照 片&lt;span&gt;photos/09.jpg&lt;/span&gt;&lt;/div&gt;'"></div>
+      <p class="name">張孫堂 <span class="en">Sun-Tang Chang</span></p>
+      <p class="affil">國立臺灣科技大學<br>全球發展工程學士學位學程</p>
+      <p class="role">專案助理教授</p>
+      <div class="fieldlabel">研究領域</div>
+      <ul class="fields">
+        <li>太陽能電池</li>
+        <li>燃料電池</li>
+        <li>能源材料</li>
+      </ul>
+    </article>
+
+    <!-- 10 -->
+    <article class="card">
+      <div class="idx">10</div>
+      <div class="photo"><img src="photos/10.jpg" alt="" onerror="this.outerHTML='&lt;div class=\'ph\'&gt;照 片&lt;span&gt;photos/10.jpg&lt;/span&gt;&lt;/div&gt;'"></div>
+      <p class="name">呂煉明 <span class="en">Lian-Ming Lyu</span></p>
+      <p class="affil">國立高雄大學<br>應用化學系</p>
+      <p class="role">助理教授</p>
+      <div class="fieldlabel">研究領域</div>
+      <ul class="fields">
+        <li>光增益催化</li>
+        <li>奈米材料結構設計</li>
+        <li>材料分析</li>
+      </ul>
+    </article>
+
+    <!-- 11 -->
+    <article class="card">
+      <div class="idx">11</div>
+      <div class="photo"><img src="photos/11.jpg" alt="" onerror="this.outerHTML='&lt;div class=\'ph\'&gt;照 片&lt;span&gt;photos/11.jpg&lt;/span&gt;&lt;/div&gt;'"></div>
+      <p class="name">黃信智</p>
+      <p class="affil">國立虎尾科技大學<br>材料科學與工程系</p>
+      <p class="role">助理教授</p>
+      <div class="fieldlabel">研究領域</div>
+      <ul class="fields">
+        <li>能源材料</li>
+        <li>電化學觸媒</li>
+        <li>氫能和燃料電池</li>
+      </ul>
+    </article>
+
+    <!-- 12 -->
+    <article class="card">
+      <div class="idx">12</div>
+      <div class="photo"><img src="photos/12.jpg" alt="" onerror="this.outerHTML='&lt;div class=\'ph\'&gt;照 片&lt;span&gt;photos/12.jpg&lt;/span&gt;&lt;/div&gt;'"></div>
+      <p class="name">楊詠荍</p>
+      <p class="affil">國立臺北科技大學<br>材料及資源工程系／資源工程研究所</p>
+      <p class="role">助理教授</p>
+      <div class="fieldlabel">研究領域</div>
+      <ul class="fields">
+        <li>功能陶瓷薄膜</li>
+        <li>表面處理</li>
+        <li>電化學</li>
+        <li>孔洞材料</li>
+        <li>電漿電解氧化合成</li>
+      </ul>
+    </article>
+
+    <!-- 13 -->
+    <article class="card">
+      <div class="idx">13</div>
+      <div class="photo"><img src="photos/13.jpg" alt="" onerror="this.outerHTML='&lt;div class=\'ph\'&gt;照 片&lt;span&gt;photos/13.jpg&lt;/span&gt;&lt;/div&gt;'"></div>
+      <p class="name">張哲瑋 <span class="en">Je-Wei Chang</span></p>
+      <p class="affil">國立聯合大學<br>化學工程學系</p>
+      <p class="role">助理教授</p>
+      <div class="fieldlabel">研究領域</div>
+      <ul class="fields">
+        <li>小／廣角度 X 光散射</li>
+        <li>中孔洞材料</li>
+        <li>材料結構分析</li>
+        <li>光催化產氫</li>
+        <li>同步輻射應用</li>
+      </ul>
+    </article>
+
+    <!-- 14 -->
+    <article class="card">
+      <div class="idx">14</div>
+      <div class="photo"><img src="photos/14.jpg" alt="" onerror="this.outerHTML='&lt;div class=\'ph\'&gt;照 片&lt;span&gt;photos/14.jpg&lt;/span&gt;&lt;/div&gt;'"></div>
+      <p class="name">張羅嶽 <span class="en">Lo-Yueh Chang</span></p>
+      <p class="affil">國家同步輻射研究中心</p>
+      <p class="role">TPS 35A 光束線經理、助理研究員</p>
+      <div class="fieldlabel">研究領域</div>
+      <ul class="fields">
+        <li>軟 X 光光譜與光電子能譜</li>
+        <li>表面與界面電子結構</li>
+        <li>二維材料</li>
+        <li>電池與催化材料 XAS 分析</li>
+      </ul>
+    </article>
+
+    <!-- 15 -->
+    <article class="card">
+      <div class="idx">15</div>
+      <div class="photo"><img src="photos/15.jpg" alt="" onerror="this.outerHTML='&lt;div class=\'ph\'&gt;照 片&lt;span&gt;photos/15.jpg&lt;/span&gt;&lt;/div&gt;'"></div>
+      <p class="name">盧英睿 <span class="en">Ying-Rui Lu</span></p>
+      <p class="affil">國家同步輻射研究中心</p>
+      <p class="role">TPS 32A 光束線經理、助理研究員</p>
+      <div class="fieldlabel">研究領域</div>
+      <ul class="fields">
+        <li>同步輻射 X 光光譜</li>
+        <li>奈米結構材料</li>
+        <li>能源相關材料</li>
+      </ul>
+    </article>
+
+    <!-- 16 -->
+    <article class="card">
+      <div class="idx">16</div>
+      <div class="photo"><img src="photos/16.jpg" alt="" onerror="this.outerHTML='&lt;div class=\'ph\'&gt;照 片&lt;span&gt;photos/16.jpg&lt;/span&gt;&lt;/div&gt;'"></div>
+      <p class="name">林佑錩 <span class="en">Yu-Chang Lin</span></p>
+      <p class="affil">國家同步輻射研究中心</p>
+      <p class="role">TPS 38A 光束線經理、助理研究員</p>
+      <div class="fieldlabel">研究領域</div>
+      <ul class="fields">
+        <li>X 光能譜學</li>
+        <li>臨場 X 光技術分析</li>
+      </ul>
+    </article>
+
+    <!-- 17 -->
+    <article class="card">
+      <div class="idx">17</div>
+      <div class="photo"><img src="photos/17.jpg" alt="" onerror="this.outerHTML='&lt;div class=\'ph\'&gt;照 片&lt;span&gt;photos/17.jpg&lt;/span&gt;&lt;/div&gt;'"></div>
+      <p class="name">黃偉翔 <span class="en">Wei-Hsiang Huang</span></p>
+      <p class="affil">國家同步輻射研究中心</p>
+      <p class="role">TPS 44A 光束線經理、助理研究員</p>
+      <div class="fieldlabel">研究領域</div>
+      <ul class="fields">
+        <li>X 光吸收光譜（XAS／XAFS）</li>
+        <li>時間解析 XAS</li>
+        <li>電催化與電池材料臨場分析</li>
+      </ul>
+    </article>
+
+    <!-- 18 -->
+    <article class="card">
+      <div class="idx">18</div>
+      <div class="photo"><img src="photos/18.jpg" alt="" onerror="this.outerHTML='&lt;div class=\'ph\'&gt;照 片&lt;span&gt;photos/18.jpg&lt;/span&gt;&lt;/div&gt;'"></div>
+      <p class="name">張嘉哲</p>
+      <p class="affil">臺北醫學大學<br>奈米醫學工程研究所</p>
+      <p class="role">助理教授</p>
+      <div class="fieldlabel">研究領域</div>
+      <ul class="fields">
+        <li>超分子催化系統</li>
+        <li>水膠醫學應用</li>
+      </ul>
+    </article>
+
+    <!-- 19 -->
+    <article class="card">
+      <div class="idx">19</div>
+      <div class="photo"><img src="photos/19.jpg" alt="" onerror="this.outerHTML='&lt;div class=\'ph\'&gt;照 片&lt;span&gt;photos/19.jpg&lt;/span&gt;&lt;/div&gt;'"></div>
+      <p class="name">胡志偉 <span class="en">Zhiwei Hu</span></p>
+      <p class="affil">馬克斯普朗克固體化學物理研究所<br>（MPI CPfS，德國德勒斯登）<br>X 光光譜研究群</p>
+      <p class="role">研究群主持人 Group Leader</p>
+      <div class="fieldlabel">研究領域</div>
+      <ul class="fields">
+        <li>X 光光譜學</li>
+        <li>強關聯電子材料</li>
+        <li>能源材料</li>
+      </ul>
+    </article>
+
+  </div>
+
+  <footer class="page">
+    資料查證日 2026/07/22。正式送件前建議再向各單位確認正式列銜。
+  </footer>
+
+</div>
+</body>
+</html>
