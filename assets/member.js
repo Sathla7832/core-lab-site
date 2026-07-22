@@ -1071,14 +1071,17 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
         try {
           const email = normalizeEmail(user.email);
           const inviteRef = email ? dbSdk.doc(db, "memberInvites", email) : null;
-          const inviteSnapshot = inviteRef ? await dbSdk.getDoc(inviteRef) : null;
+          const [inviteSnapshot, initialMemberSnapshot] = await Promise.all([
+            inviteRef ? dbSdk.getDoc(inviteRef) : Promise.resolve(null),
+            dbSdk.getDoc(memberRef),
+          ]);
           const hasInvite = Boolean(
             inviteSnapshot?.exists()
             && inviteSnapshot.data()?.active === true
             && normalizeEmail(inviteSnapshot.data()?.email) === email
             && inviteSnapshot.data()?.role === "member"
           );
-          let memberSnapshot = await dbSdk.getDoc(memberRef);
+          let memberSnapshot = initialMemberSnapshot;
           if (!memberSnapshot.exists()) {
             await dbSdk.setDoc(memberRef, { email: user.email || "", displayName: user.displayName || "", active: hasInvite, role: "member", createdAt: dbSdk.serverTimestamp() });
             memberSnapshot = await dbSdk.getDoc(memberRef);
@@ -1105,8 +1108,6 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
           await Promise.all([
             renderCalendars(),
             renderAnnouncements(),
-            renderExperiments(),
-            renderResources(),
             currentIsAdmin ? renderMembers() : Promise.resolve(),
             currentIsAdmin ? renderInvites() : Promise.resolve(),
           ]);
