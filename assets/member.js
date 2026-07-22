@@ -477,6 +477,7 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
           : new Intl.DateTimeFormat("en", { hour: "numeric", minute: "2-digit" }).format(start);
         item.append(createText("span", time, "member-calendar-event-time"));
         item.append(createText("span", String(event.title || "Untitled event"), "member-calendar-event-title"));
+        if (event.reporter) item.append(createText("span", `Presenter: ${event.reporter}`, "member-calendar-event-reporter"));
         if (event.location) item.title = `${event.title} - ${event.location}`;
         return item;
       };
