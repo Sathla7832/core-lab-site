@@ -22,7 +22,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/styles.css?v=a190c633f83e" />
+  <link rel="stylesheet" href="assets/styles.css?v=3c8498d283e4" />
 </head>
 <body>
   <a class="skip-link" href="#main-content">Skip to main content</a>
@@ -73,6 +73,7 @@
           <button id="member-tab-report-schedule" class="member-portal-tab" type="button" role="tab" aria-selected="true" aria-controls="member-panel-report-schedule" data-member-tab-target="report-schedule">Presentation Schedule</button>
           <button id="member-tab-calendars" class="member-portal-tab" type="button" role="tab" aria-selected="false" aria-controls="member-panel-calendars" data-member-tab-target="calendars" tabindex="-1">Calendars</button>
           <button id="member-tab-resources" class="member-portal-tab" type="button" role="tab" aria-selected="false" aria-controls="member-panel-resources" data-member-tab-target="resources" tabindex="-1">Resources</button>
+          <button id="member-tab-members" class="member-portal-tab" type="button" role="tab" aria-selected="false" aria-controls="member-panel-members" data-member-tab-target="members" tabindex="-1">Members list</button>
           <button id="member-tab-manage" class="member-portal-tab" type="button" role="tab" aria-selected="false" aria-controls="member-panel-manage" data-member-tab-target="manage" data-member-admin-tab tabindex="-1" hidden>Manage Portal</button>
         </nav>
 
@@ -98,6 +99,12 @@
             <p class="member-roadmap-state muted" data-member-roadmap-state>Choose Student Roadmap to load the protected roadmap.</p>
             <iframe class="member-roadmap-frame" title="Undergraduate research and graduate admission roadmap" data-member-roadmap-frame sandbox scrolling="no" hidden></iframe>
           </div>
+        </section>
+
+        <section id="member-panel-members" class="member-content-section member-portal-panel member-members-panel" role="tabpanel" aria-labelledby="member-tab-members" data-member-panel="members" hidden>
+          <div class="member-section-head"><div><h2>Members list</h2></div></div>
+          <p class="member-directory-state muted" data-member-directory-state>Open this tab to load the protected member directory.</p>
+          <div class="member-directory-table-wrap" data-member-directory-table hidden></div>
         </section>
 
         <section id="member-panel-manage" class="member-admin member-portal-panel" role="tabpanel" aria-labelledby="member-tab-manage" data-member-panel="manage" data-member-admin hidden>
@@ -161,7 +168,7 @@
 
     </div>
   </footer>
-  <script src="assets/main.js?v=a190c633f83e"></script>
-  <script src="assets/firebase-config.js?v=a190c633f83e"></script><script type="module" src="assets/member.js?v=a190c633f83e"></script>
+  <script src="assets/main.js?v=3c8498d283e4"></script>
+  <script src="assets/firebase-config.js?v=3c8498d283e4"></script><script type="module" src="assets/member.js?v=3c8498d283e4"></script>
 </body>
 </html>

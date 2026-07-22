@@ -45,6 +45,7 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
       let loadMemberRoadmap = () => {};
       let loadMemberReportSchedule = () => {};
       let loadMemberResourceTree = () => {};
+      let loadMemberDirectory = () => {};
   const activatePortalTab = (target, moveFocus = false) => {
     const selectedTab = portalTabs.find((tab) => tab.dataset.memberTabTarget === target && !tab.hidden);
     if (!selectedTab) return;
@@ -58,6 +59,7 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
     });
     if (target === "resources") loadMemberResourceTree();
     if (target === "report-schedule") loadMemberReportSchedule();
+    if (target === "members") loadMemberDirectory();
     if (moveFocus) selectedTab.focus();
   };
 
@@ -278,6 +280,72 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
             host.replaceChildren(createText("p", "No presentations are scheduled yet.", "muted"));
           } else {
             renderScheduleTable(host, rows);
+          }
+          host.hidden = false;
+          if (state) state.hidden = true;
+          host.dataset.loaded = "true";
+          host.dataset.loading = "false";
+        } catch (error) {
+          host.dataset.loading = "false";
+          if (state) state.textContent = friendlyError(error);
+        }
+      };
+
+      const memberDirectoryColumns = [
+        { key: "fullName", label: "\u59d3\u540d (Full Name)" },
+        { key: "roleStatus", label: "\u76ee\u524d\u8eab\u4efd (Current Role/Status)" },
+        { key: "discordNumericId", label: "Discord \u6578\u5b57ID" },
+        { key: "discordUsername", label: "Discord ID" },
+        { key: "discordNickname", label: "Discord \u66b1\u7a31" },
+        { key: "email", label: "\u96fb\u5b50\u90f5\u4ef6\u5730\u5740 (Email Address)" },
+      ];
+
+      const renderMemberDirectoryTable = (host, members) => {
+        const table = document.createElement("table");
+        table.className = "member-directory-table";
+        const head = document.createElement("thead");
+        const headRow = document.createElement("tr");
+        memberDirectoryColumns.forEach((column) => {
+          const cell = createText("th", column.label);
+          cell.scope = "col";
+          headRow.append(cell);
+        });
+        head.append(headRow);
+        const body = document.createElement("tbody");
+        members.forEach((member) => {
+          const line = document.createElement("tr");
+          const row = { ...member, roleStatus: [member.role, member.status].filter(Boolean).join(" / ") };
+          memberDirectoryColumns.forEach((column) => {
+            const value = String(row[column.key] || "").trim();
+            line.append(createText("td", value || "-", value ? "" : "member-directory-empty"));
+          });
+          body.append(line);
+        });
+        table.append(head, body);
+        host.replaceChildren(table);
+      };
+
+      loadMemberDirectory = async () => {
+        const host = document.querySelector("[data-member-directory-table]");
+        const state = document.querySelector("[data-member-directory-state]");
+        if (!host || host.dataset.loaded === "true" || host.dataset.loading === "true") return;
+        host.dataset.loading = "true";
+        if (state) state.textContent = "Loading the protected member directory...";
+        try {
+          if (!resourceApiUrl) throw new Error("The member directory service is not configured.");
+          const token = await auth.currentUser?.getIdToken();
+          if (!token) throw new Error("Please sign in again to load the member directory.");
+          const response = await fetch(`${resourceApiUrl}/api/members`, {
+            method: "GET",
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          const data = await response.json().catch(() => ({}));
+          if (!response.ok) throw new Error(String(data.error || "The member directory could not be loaded."));
+          const members = Array.isArray(data.members) ? data.members : [];
+          if (!members.length) {
+            host.replaceChildren(createText("p", "No member records are available yet.", "muted"));
+          } else {
+            renderMemberDirectoryTable(host, members);
           }
           host.hidden = false;
           if (state) state.hidden = true;
