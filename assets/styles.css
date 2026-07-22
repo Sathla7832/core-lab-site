@@ -319,13 +319,14 @@ input:focus, textarea:focus { outline: 3px solid rgba(23,81,140,.18); border-col
 .member-directory-table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
 .member-directory-table { width: 100%; min-width: 980px; border-collapse: collapse; table-layout: fixed; font-size: 15px; }
 .member-directory-table th, .member-directory-table td { padding: 14px 16px; text-align: left; vertical-align: top; border-bottom: 1px solid var(--line-soft, #eef2f4); overflow-wrap: anywhere; }
-.member-directory-table th { background: var(--soft); color: var(--brand-dark); font-size: 12px; font-weight: 800; letter-spacing: .04em; }
+.member-directory-table th { background: var(--soft); color: var(--brand-dark); font-size: 12px; font-weight: 800; letter-spacing: .04em; white-space: pre-line; }
 .member-directory-table th:nth-child(1), .member-directory-table td:nth-child(1) { width: 16%; }
 .member-directory-table th:nth-child(2), .member-directory-table td:nth-child(2) { width: 23%; }
 .member-directory-table th:nth-child(3), .member-directory-table td:nth-child(3) { width: 18%; }
 .member-directory-table th:nth-child(4), .member-directory-table td:nth-child(4) { width: 14%; }
 .member-directory-table th:nth-child(5), .member-directory-table td:nth-child(5) { width: 17%; }
 .member-directory-table th:nth-child(6), .member-directory-table td:nth-child(6) { width: 20%; }
+.member-directory-table th:nth-child(3), .member-directory-table td:nth-child(3), .member-directory-table th:nth-child(4), .member-directory-table td:nth-child(4) { white-space: nowrap; }
 .member-directory-table tbody tr:last-child td { border-bottom: 0; }
 .member-directory-table tbody tr:hover { background: var(--soft); }
 .member-directory-name-en, .member-directory-name-zh { display: block; }

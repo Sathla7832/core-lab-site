@@ -292,12 +292,12 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
       };
 
       const memberDirectoryColumns = [
-        { key: "fullName", label: "\u59d3\u540d (Full Name)" },
-        { key: "roleStatus", label: "\u76ee\u524d\u8eab\u4efd (Current Role/Status)" },
-        { key: "discordNumericId", label: "Discord \u6578\u5b57ID" },
-        { key: "discordUsername", label: "Discord ID" },
-        { key: "discordNickname", label: "Discord \u66b1\u7a31" },
-        { key: "email", label: "\u96fb\u5b50\u90f5\u4ef6\u5730\u5740 (Email Address)" },
+        { key: "fullName", label: "\u59d3\u540d\n(Full Name)" },
+        { key: "roleStatus", label: "\u76ee\u524d\u8eab\u4efd\n(Current Role/Status)" },
+        { key: "discordNumericId", label: "Discord\n\u6578\u5b57ID" },
+        { key: "discordUsername", label: "Discord\nID" },
+        { key: "discordNickname", label: "Discord\n\u66b1\u7a31" },
+        { key: "email", label: "\u96fb\u5b50\u90f5\u4ef6\u5730\u5740\n(Email Address)" },
       ];
 
       const renderMemberDirectoryTable = (host, members) => {
@@ -351,7 +351,16 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
           });
           const data = await response.json().catch(() => ({}));
           if (!response.ok) throw new Error(String(data.error || "The member directory could not be loaded."));
-          const members = Array.isArray(data.members) ? data.members : [];
+          const members = (Array.isArray(data.members) ? data.members : []).slice().sort((a, b) => {
+            const rank = (member) => {
+              const role = String(member.role || "");
+              if (/\u78a9\u58eb\u751f|Master/i.test(role)) return 0;
+              if (/\u5b78\u58eb\u751f|Undergraduate/i.test(role)) return 1;
+              return 2;
+            };
+            return rank(a) - rank(b)
+              || String(a.englishName || a.fullName || "").localeCompare(String(b.englishName || b.fullName || ""));
+          });
           if (!members.length) {
             host.replaceChildren(createText("p", "No member records are available yet.", "muted"));
           } else {
