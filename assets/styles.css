@@ -328,6 +328,9 @@ input:focus, textarea:focus { outline: 3px solid rgba(23,81,140,.18); border-col
 .member-directory-table th:nth-child(6), .member-directory-table td:nth-child(6) { width: 20%; }
 .member-directory-table tbody tr:last-child td { border-bottom: 0; }
 .member-directory-table tbody tr:hover { background: var(--soft); }
+.member-directory-name-en, .member-directory-name-zh { display: block; }
+.member-directory-name-en { color: var(--brand-dark); font-weight: 800; }
+.member-directory-name-zh { margin-top: 4px; color: var(--muted); }
 .member-directory-empty { color: var(--muted); }
 .member-section-head { display: flex; width: 100%; justify-content: space-between; gap: 20px; align-items: end; margin-bottom: 24px; }
 .member-section-head > div { width: 100%; }

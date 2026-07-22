@@ -316,6 +316,16 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
           const line = document.createElement("tr");
           const row = { ...member, roleStatus: [member.role, member.status].filter(Boolean).join(" / ") };
           memberDirectoryColumns.forEach((column) => {
+            if (column.key === "fullName") {
+              const cell = document.createElement("td");
+              const englishName = String(row.englishName || "").trim();
+              const chineseName = String(row.fullName || "").trim();
+              if (englishName) cell.append(createText("strong", englishName, "member-directory-name-en"));
+              if (chineseName) cell.append(createText("span", chineseName, "member-directory-name-zh"));
+              if (!englishName && !chineseName) cell.append(createText("span", "-", "member-directory-empty"));
+              line.append(cell);
+              return;
+            }
             const value = String(row[column.key] || "").trim();
             line.append(createText("td", value || "-", value ? "" : "member-directory-empty"));
           });
