@@ -730,7 +730,7 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
           item.dataset.resourceTreeSection = section;
           item.id = `member-resource-view-${section}`;
         }
-        const toggle = createText("button", `${expanded ? "\\u25be" : "\\u25b8"} ${label}`, "member-tree-toggle");
+        const toggle = createText("button", `${expanded ? "\u25be" : "\u25b8"} ${label}`, "member-tree-toggle");
         toggle.type = "button";
         toggle.setAttribute("aria-expanded", String(expanded));
         const group = document.createElement("ul");
@@ -741,7 +741,7 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
         toggle.addEventListener("click", () => {
           const open = toggle.getAttribute("aria-expanded") !== "true";
           toggle.setAttribute("aria-expanded", String(open));
-          toggle.textContent = `${open ? "\\u25be" : "\\u25b8"} ${label}`;
+          toggle.textContent = `${open ? "\u25be" : "\u25b8"} ${label}`;
           group.hidden = !open;
         });
         item.append(toggle, group);
@@ -754,6 +754,12 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
           .replace(/\s*[\(\uFF08][^\)\uFF09]{1,16}[\)\uFF09]\s*$/, "")
           .replace(/#\d{4,6}$/, "")
           .trim() || "Unknown student";
+      };
+
+      const isCoreLabUpload = (record, student) => {
+        const value = `${student} ${String(record.uploader || "")}`.toLowerCase();
+        return /(^|\s)(core\s*lab|corelab|yc|yu[- ]?chung\s+chang)(\s|$)/i.test(value)
+          || value.includes("corelabfcu@gmail.com");
       };
 
       const renderMemberResourceTreeNodes = () => {
@@ -773,9 +779,10 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
         const experimentGroups = new Map();
         experimentRecords.forEach((record) => {
           const student = experimentStudentName(record);
-          if (!experimentGroups.has(student)) experimentGroups.set(student, []);
-          const meta = [record.date, record.instrument, record.sample].filter(Boolean).join(" \\u00b7 ");
-          experimentGroups.get(student).push(renderTreeLeaf(record.filename || "Untitled experiment", meta, record.driveUrl));
+          const folder = isCoreLabUpload(record, student) ? "CORE LAB" : student;
+          if (!experimentGroups.has(folder)) experimentGroups.set(folder, []);
+          const meta = [record.date, record.instrument, record.sample].filter(Boolean).join(" \u00b7 ");
+          experimentGroups.get(folder).push(renderTreeLeaf(record.filename || "Untitled experiment", meta, record.driveUrl));
         });
         const experimentNodes = Array.from(experimentGroups.entries())
           .sort(([a], [b]) => a.localeCompare(b))
