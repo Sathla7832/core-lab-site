@@ -508,7 +508,7 @@ input:focus, textarea:focus { outline: 3px solid rgba(23,81,140,.18); border-col
   .profile { padding-top: 40px; }
   .profile-photo { width: min(100%, 320px); }
   .profile-info h1 { font-size: clamp(30px, 9vw, 38px); }
-  .collaborator-embed { height: 10600px; }
+  .collaborator-embed { height: 14000px; }
   .metric-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .publication-filter-row { grid-template-columns: 1fr; }
   .publication-year > summary { padding-top: 22px; }
