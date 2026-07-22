@@ -46,6 +46,7 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
       let loadMemberReportSchedule = () => {};
       let loadMemberResourceTree = () => {};
       let loadMemberDirectory = () => {};
+      let loadMemberCalendars = () => {};
   const activatePortalTab = (target, moveFocus = false) => {
     const selectedTab = portalTabs.find((tab) => tab.dataset.memberTabTarget === target && !tab.hidden);
     if (!selectedTab) return;
@@ -60,6 +61,7 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
     if (target === "resources") loadMemberResourceTree();
     if (target === "report-schedule") loadMemberReportSchedule();
     if (target === "members") loadMemberDirectory();
+    if (target === "calendars") loadMemberCalendars();
     if (moveFocus) selectedTab.focus();
   };
 
@@ -667,9 +669,11 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
         return load();
       };
 
-      const renderCalendars = async () => {
+      let calendarsLoaded = false;
+      const renderCalendars = async (force = false) => {
         const list = document.querySelector("[data-calendar-list]");
         if (!list) return;
+        if (calendarsLoaded && !force) return;
         const snapshot = await dbSdk.getDocs(dbSdk.collection(db, "calendars"));
         const calendars = snapshot.docs
           .map((item) => ({ key: item.id, ...item.data() }))
@@ -714,7 +718,9 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
           calendarLoads.push(mountCalendarSurface(card, calendar.key, presentation));
         });
         await Promise.allSettled(calendarLoads);
+        calendarsLoaded = true;
       };
+      loadMemberCalendars = renderCalendars;
 
       const renderAnnouncements = async () => {
         const list = document.querySelector("[data-announcement-list]");
@@ -1133,7 +1139,7 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
             });
             calendarForm.reset();
             calendarForm.querySelector('[name="active"]').checked = true;
-            await renderCalendars();
+            await renderCalendars(true);
             setStatus("Protected calendar setting saved.", "success");
           } catch (error) {
             setStatus(error?.message === "invalid-calendar" ? "Enter a valid Google group calendar ID." : friendlyError(error), "error");
@@ -1195,7 +1201,6 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
           setStatus(currentIsAdmin ? "Administrator access verified." : "Member access verified.", "success");
           if (currentIsAdmin) bindAdminForms(user);
           await Promise.all([
-            renderCalendars(),
             renderAnnouncements(),
             currentIsAdmin ? renderMembers() : Promise.resolve(),
             currentIsAdmin ? renderInvites() : Promise.resolve(),
