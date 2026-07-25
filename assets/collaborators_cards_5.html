@@ -449,7 +449,7 @@
   (() => {
     const categories = {
       'Chen-Hao Wang': 'university',
-      'Li-Chyong Chen': 'university',
+      'Li-Chyong Chen': ['university', 'academia-sinica'],
       'Kuei-Hsien Chen': 'academia-sinica',
       'Chih-Wen Pao': 'nsrrc',
       'Chun-Hong Kuo': 'university',
@@ -472,7 +472,8 @@
     const cards = [...document.querySelectorAll('.card')];
     cards.forEach((card) => {
       const name = card.querySelector('.name .en')?.textContent.trim();
-      card.dataset.category = categories[name] || 'other';
+      const category = categories[name] || 'other';
+      card.dataset.category = Array.isArray(category) ? category.join(' ') : category;
     });
     const resizeEmbed = () => {
       window.parent.postMessage({ type: 'core-lab-collaborators-resize', height: document.documentElement.scrollHeight }, window.location.origin);
@@ -480,7 +481,7 @@
     document.querySelectorAll('[data-filter]').forEach((button) => {
       button.addEventListener('click', () => {
         const filter = button.dataset.filter;
-        cards.forEach((card) => { card.hidden = filter !== 'all' && card.dataset.category !== filter; });
+        cards.forEach((card) => { card.hidden = filter !== 'all' && !card.dataset.category.split(' ').includes(filter); });
         document.querySelectorAll('[data-filter]').forEach((item) => {
           const active = item === button;
           item.classList.toggle('is-active', active);
