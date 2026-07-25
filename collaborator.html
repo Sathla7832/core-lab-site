@@ -81,6 +81,15 @@
   </footer>
   <script defer src="https://vercount.one/js"></script>
   <script defer src="assets/main.js?v=66fec99e0c56"></script>
+  <script>
+    window.addEventListener('message', (event) => {
+      if (event.origin !== window.location.origin || event.data?.type !== 'core-lab-collaborators-resize') return;
+      const height = Number(event.data.height);
+      if (Number.isFinite(height) && height > 0) {
+        document.querySelector('.collaborator-embed').style.height = `${height}px`;
+      }
+    });
+  </script>
   
 </body>
 </html>
