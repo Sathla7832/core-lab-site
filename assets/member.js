@@ -296,18 +296,19 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
       const memberDirectoryColumns = [
         { key: "fullName", label: "\u59d3\u540d\n(Full Name)" },
         { key: "roleStatus", label: "\u76ee\u524d\u8eab\u4efd\n(Current Role/Status)" },
-        { key: "discordNumericId", label: "Discord\n\u6578\u5b57ID" },
-        { key: "discordUsername", label: "Discord\nID" },
+        { key: "discordNumericId", label: "Discord\n\u6578\u5b57ID", adminOnly: true },
+        { key: "discordUsername", label: "Discord\nID", adminOnly: true },
         { key: "discordNickname", label: "Discord\n\u66b1\u7a31" },
-        { key: "email", label: "\u96fb\u5b50\u90f5\u4ef6\u5730\u5740\n(Email Address)" },
+        { key: "email", label: "\u96fb\u5b50\u90f5\u4ef6\u5730\u5740\n(Email Address)", adminOnly: true },
       ];
 
       const renderMemberDirectoryTable = (host, members) => {
+        const visibleColumns = memberDirectoryColumns.filter((column) => !column.adminOnly || currentIsAdmin);
         const table = document.createElement("table");
-        table.className = "member-directory-table";
+        table.className = `member-directory-table ${currentIsAdmin ? "is-admin" : "is-member"}`;
         const head = document.createElement("thead");
         const headRow = document.createElement("tr");
-        memberDirectoryColumns.forEach((column) => {
+        visibleColumns.forEach((column) => {
           const cell = createText("th", column.label);
           cell.scope = "col";
           headRow.append(cell);
@@ -317,7 +318,7 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
         members.forEach((member) => {
           const line = document.createElement("tr");
           const row = { ...member, roleStatus: [member.role, member.status].filter(Boolean).join(" / ") };
-          memberDirectoryColumns.forEach((column) => {
+          visibleColumns.forEach((column) => {
             if (column.key === "fullName") {
               const cell = document.createElement("td");
               const englishName = String(row.englishName || "").trim();
