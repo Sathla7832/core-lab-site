@@ -45,6 +45,9 @@ section { padding: 56px 0; }
 .publication-hero .lead { margin-top: 0; }
 .publication-hero .hero-actions { margin-top: 16px; justify-content: flex-start; }
 .publication-hero .spectrum { display: none; }
+.simple-page-hero .container { width: 100%; }
+.simple-page-hero .hero-grid { grid-template-columns: 1fr; }
+.simple-page-hero .hero-copy { width: 100%; max-width: none; }
 .collaborator-hero .container { width: 100%; }
 .collaborator-hero .hero-grid { grid-template-columns: 1fr; }
 .collaborator-hero .hero-copy { width: 100%; max-width: none; }
