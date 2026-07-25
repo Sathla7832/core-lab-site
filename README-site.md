@@ -19,7 +19,7 @@ http://localhost:8123/index.html
 - `members.html`: graduate and undergraduate lab members
 - `research.html`: research areas
 - `publications.html`: publications
-- `team.html`: team placeholder page
+- `team.html`: compatibility redirect to the current Lab Members page
 - `news.html`: news
 - `contact.html`: contact page
 - `assets/styles.css`: visual design
@@ -38,5 +38,5 @@ The generated site is in `C:\AI\Website\lab-site`.
 
 ## Notes
 
-The team page is intentionally a placeholder because the team sheet has no real member rows yet.
+The legacy team URL redirects to `members.html`; it is excluded from the sitemap to prevent duplicate indexing.
 The contact form opens the visitor's default email client with a prefilled message.
