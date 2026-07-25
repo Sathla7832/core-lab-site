@@ -150,10 +150,10 @@
 <div class="wrap">
 <nav class="collaborator-filters" aria-label="合作夥伴分類">
   <button class="filter-button is-active" type="button" data-filter="all" aria-pressed="true">全部（All）</button>
-  <button class="filter-button" type="button" data-filter="supervisor" aria-pressed="false">指導教授（Supervisor）</button>
   <button class="filter-button" type="button" data-filter="university" aria-pressed="false">大學（University）</button>
   <button class="filter-button" type="button" data-filter="academia-sinica" aria-pressed="false">中央研究院（Academia Sinica）</button>
   <button class="filter-button" type="button" data-filter="nsrrc" aria-pressed="false">國家同步輻射研究中心（NSRRC）</button>
+  <button class="filter-button" type="button" data-filter="international" aria-pressed="false">海外（International）</button>
 </nav>
 <div class="grid">
 
@@ -448,11 +448,11 @@
 <script>
   (() => {
     const categories = {
-      'Chen-Hao Wang': 'supervisor',
-      'Li-Chyong Chen': 'supervisor',
-      'Kuei-Hsien Chen': 'supervisor',
-      'Chih-Wen Pao': 'supervisor',
-      'Chun-Hong Kuo': 'supervisor',
+      'Chen-Hao Wang': 'university',
+      'Li-Chyong Chen': 'university',
+      'Kuei-Hsien Chen': 'academia-sinica',
+      'Chih-Wen Pao': 'nsrrc',
+      'Chun-Hong Kuo': 'university',
       'Cedric Po-Wen Chung': 'academia-sinica',
       'Hsiung-Lin Tu': 'academia-sinica',
       'Jeng-Lung Chen': 'nsrrc',
@@ -466,7 +466,8 @@
       'Hsin-Chih Huang': 'university',
       'Vicki Yeung': 'university',
       'Je-Wei Chang': 'university',
-      'Chia-Che Chang': 'university'
+      'Chia-Che Chang': 'university',
+      'Zhiwei Hu': 'international'
     };
     const cards = [...document.querySelectorAll('.card')];
     cards.forEach((card) => {
