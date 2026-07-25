@@ -16,6 +16,7 @@ http://localhost:8123/index.html
 
 - `index.html`: home
 - `about.html`: principal investigator profile
+- `members.html`: graduate and undergraduate lab members
 - `research.html`: research areas
 - `publications.html`: publications
 - `team.html`: team placeholder page
