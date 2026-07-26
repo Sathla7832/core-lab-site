@@ -335,8 +335,6 @@ input:focus, textarea:focus { outline: 3px solid rgba(23,81,140,.18); border-col
 .member-announcements-dashboard .member-section-head { margin-bottom: 16px; }
 .member-portal-tabs { display: flex; gap: 4px; overflow-x: auto; padding: 12px 0 0; border-bottom: 1px solid var(--line); scrollbar-width: thin; }
 .member-portal-tab { flex: 0 0 auto; min-height: 48px; border: 0; border-bottom: 3px solid transparent; padding: 12px 18px; background: transparent; color: var(--muted); font: inherit; font-weight: 800; cursor: pointer; }
-.member-portal-tabs { scroll-padding-inline: 18px; scroll-snap-type: inline proximity; }
-.member-portal-tab { scroll-snap-align: start; }
 .member-portal-tab:hover { color: var(--brand-dark); background: var(--soft); }
 .member-portal-tab[aria-selected="true"] { border-bottom-color: var(--brand); color: var(--brand-dark); background: var(--surface); }
 .member-portal-tab:focus-visible { outline: 3px solid rgba(23,81,140,.22); outline-offset: -3px; }
@@ -344,6 +342,22 @@ input:focus, textarea:focus { outline: 3px solid rgba(23,81,140,.18); border-col
 .member-portal-panel[hidden] { display: none; }
 .member-roadmap-panel { padding-top: 20px; }
 .member-roadmap-frame { display: block; width: 100%; height: 3050px; border: 0; background: #eceef1; }
+.member-progress-filter { display: flex; flex-direction: column; gap: 5px; font-weight: 700; font-size: 14px; }
+.member-progress-filter select { min-height: 42px; padding: 8px 12px; border: 1px solid var(--line); border-radius: 8px; font: inherit; font-weight: 400; background: var(--surface); }
+.member-progress-list, .member-learning-list { display: flex; flex-direction: column; gap: 12px; }
+.member-progress-card, .member-learning-card { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 18px 20px; display: flex; flex-direction: column; gap: 6px; }
+.member-learning-card { flex-direction: row; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px; }
+.member-learning-card > div:first-child { flex: 1 1 320px; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+.member-progress-card h3, .member-learning-card h3 { font-size: 17px; margin: 0; word-break: break-word; }
+.member-progress-card-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.member-progress-status { font-family: var(--sans); font-size: 12px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; padding: 3px 10px; border-radius: 999px; white-space: nowrap; }
+.member-progress-status.is-done { background: #e3f1ec; color: #1f6b57; }
+.member-progress-status.is-active { background: #e7eef6; color: var(--brand-dark); }
+.member-progress-status.is-blocked { background: #f7e8e6; color: #a33227; }
+.member-progress-status.is-pending { background: var(--soft); color: var(--muted); }
+.member-learning-filters { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 18px; }
+.member-learning-filters label { display: flex; flex-direction: column; gap: 5px; font-weight: 700; font-size: 14px; }
+.member-learning-filters input { min-height: 42px; padding: 8px 12px; border: 1px solid var(--line); border-radius: 8px; font: inherit; font-weight: 400; }
 .member-schedule-table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
 .member-schedule-table { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: 16px; min-width: 920px; }
 .member-schedule-table th, .member-schedule-table td { text-align: left; }
@@ -462,101 +476,6 @@ input:focus, textarea:focus { outline: 3px solid rgba(23,81,140,.18); border-col
 .member-folder-file-meta { color: var(--muted); font-size: 14px; overflow-wrap: anywhere; }
 .member-resource-tree-roadmap { margin-top: 18px; }
 .member-resource-tree-roadmap .member-roadmap-frame { width: 100%; min-height: 720px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
-.member-progress-summary { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-bottom: 22px; }
-.member-progress-shell { --progress-ink: #132029; --progress-soft: #546570; --progress-faint: #8496a0; --progress-line: #dae3e6; --progress-grid: #e9eff1; --progress-teal: #0c6b75; --progress-amber: #c2801a; --progress-red: #c0453a; --progress-green: #2e8b6a; max-width: 920px; margin: 0 auto; color: var(--progress-ink); }
-.member-progress-heading { align-items: start; margin-bottom: 16px; }
-.member-progress-eyebrow { margin: 0 0 6px; color: var(--progress-teal); font-family: ui-monospace, "SF Mono", Consolas, monospace; font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
-.member-progress-access { flex: 0 0 auto; margin-top: 4px; border: 1px solid var(--progress-line); border-radius: 999px; padding: 6px 10px; color: var(--progress-soft); background: #fff; font-family: ui-monospace, "SF Mono", Consolas, monospace; font-size: 11px; font-weight: 700; }
-.member-progress-dashboard { display: grid; gap: 16px; }
-.member-progress-toolbar { display: flex; align-items: end; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding: 14px 16px; border: 1px solid var(--progress-line); border-radius: 12px; background: #f7fafb; }
-.member-progress-identity { color: var(--progress-ink); font-family: ui-monospace, "SF Mono", Consolas, monospace; font-size: 13px; font-weight: 800; }
-.member-progress-filter { display: grid; gap: 5px; min-width: min(100%, 250px); color: var(--progress-soft); font-family: ui-monospace, "SF Mono", Consolas, monospace; font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
-.member-progress-filter select { min-height: 38px; border: 1px solid var(--progress-line); border-radius: 999px; padding: 6px 12px; background: #fff; color: var(--progress-ink); font: 13px/1.2 var(--sans, inherit); text-transform: none; }
-.member-progress-summary { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin: 0; }
-.member-progress-stat { display: grid; gap: 5px; padding: 16px; background: #fff; border: 1px solid var(--progress-line); border-radius: 12px; }
-.member-progress-stat span { color: var(--progress-faint); font-family: ui-monospace, "SF Mono", Consolas, monospace; font-size: 10px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
-.member-progress-stat strong { color: var(--progress-ink); font-family: ui-monospace, "SF Mono", Consolas, monospace; font-size: 28px; line-height: 1; font-variant-numeric: tabular-nums; }
-.member-progress-timeline { display: grid; gap: 10px; padding: 16px; border: 1px solid var(--progress-line); border-radius: 12px; background: #fff; }
-.member-progress-timeline-copy { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; color: var(--progress-soft); font: 12px/1.45 ui-monospace, "SF Mono", Consolas, monospace; }
-.member-progress-timeline-copy strong { color: var(--progress-ink); font-size: 12px; }
-.member-progress-track { display: flex; min-height: 12px; overflow: hidden; border-radius: 99px; background: var(--progress-grid); }
-.member-progress-track span { min-width: 8px; }
-.member-progress-track .is-active { background: var(--progress-teal); }
-.member-progress-track .is-complete { background: var(--progress-green); }
-.member-progress-track .is-attention { background: var(--progress-amber); }
-.member-progress-records { overflow: hidden; border: 1px solid var(--progress-line); border-radius: 12px; background: #fff; }
-.member-progress-members { overflow: hidden; border: 1px solid var(--progress-line); border-radius: 12px; background: #fff; }
-.member-progress-records-head { display: flex; justify-content: space-between; align-items: center; gap: 14px; padding: 14px 16px; border-bottom: 1px solid var(--progress-line); background: #f7fafb; }
-.member-progress-records-head h3 { margin: 0; color: var(--progress-ink); font-family: ui-monospace, "SF Mono", Consolas, monospace; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; }
-.member-progress-records-head span { color: var(--progress-faint); font-family: ui-monospace, "SF Mono", Consolas, monospace; font-size: 11px; }
-.member-progress-member-list { display: flex; gap: 8px; overflow-x: auto; padding: 12px 16px; }
-.member-progress-member-card { display: grid; flex: 0 0 160px; gap: 5px; min-height: 70px; border: 1px solid var(--progress-line); border-radius: 9px; padding: 11px; background: #fff; color: var(--progress-ink); font: inherit; text-align: left; }
-.member-progress-member-card:not([disabled]) { cursor: pointer; }
-.member-progress-member-card:not([disabled]):hover, .member-progress-member-card[aria-pressed="true"] { border-color: var(--progress-teal); background: #eef7f8; }
-.member-progress-member-card:disabled { cursor: default; opacity: 1; }
-.member-progress-member-card strong { overflow: hidden; font-size: 13px; text-overflow: ellipsis; white-space: nowrap; }
-.member-progress-member-card span { color: var(--progress-faint); font-family: ui-monospace, "SF Mono", Consolas, monospace; font-size: 10px; }
-.member-progress-list { display: grid; gap: 12px; }
-.member-progress-records .member-progress-list { gap: 0; }
-.member-system-pending { max-width: 68ch; margin: 0; padding: 20px 22px; color: #765117; font-weight: 700; line-height: 1.65; background: #fff7df; border: 1px solid #eddaa1; border-left: 4px solid #c88a19; border-radius: 8px; }
-.member-progress-card { padding: 18px 16px; background: #fff; border: 0; border-left: 4px solid var(--progress-teal); border-radius: 0; }
-.member-progress-card + .member-progress-card { border-top: 1px solid var(--progress-line); }
-.member-progress-card.is-complete { border-left-color: var(--progress-green); }
-.member-progress-card.is-attention { border-left-color: var(--progress-amber); }
-.member-progress-card-head { display: flex; justify-content: space-between; gap: 16px; align-items: flex-start; }
-.member-progress-card h3 { margin: 0; color: var(--progress-ink); font-size: 17px; }
-.member-progress-owner, .member-progress-detail, .member-progress-due { margin: 8px 0 0; color: var(--progress-soft); line-height: 1.55; }
-.member-progress-owner { font-size: 14px; font-weight: 800; }
-.member-progress-due { color: var(--progress-faint); font-family: ui-monospace, "SF Mono", Consolas, monospace; font-size: 11px; font-weight: 700; }
-.member-progress-badge { flex: 0 0 auto; border-radius: 999px; padding: 5px 9px; font-family: ui-monospace, "SF Mono", Consolas, monospace; font-size: 11px; font-weight: 800; }
-.member-progress-badge.is-complete { background: #e7f4ed; color: #17633d; }
-.member-progress-badge.is-attention { background: #fde8e5; color: #9b2c20; }
-.member-progress-badge.is-active { background: #eaf2f8; color: #17518c; }
-.member-progress-empty { margin: 0; padding: 28px 16px; color: var(--progress-soft); text-align: center; }
-.member-progress-shell { max-width: 900px; padding: 16px; border-radius: 16px; background: #eaeff1; }
-.member-progress-heading { display: flex; justify-content: flex-end; margin: 0 0 10px; }
-.member-progress-dashboard { gap: 14px; }
-.member-progress-toolbar { align-items: center; padding: 2px 0; border: 0; border-radius: 0; background: transparent; }
-.member-progress-toolbar-label { color: var(--progress-teal); font-family: ui-monospace, "SF Mono", Consolas, monospace; font-size: 11px; font-weight: 700; letter-spacing: .13em; text-transform: uppercase; }
-.member-progress-members, .member-progress-hero-card { overflow: hidden; border: 1px solid var(--progress-line); border-radius: 14px; background: #fff; }
-.member-progress-hero-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap; padding: 16px; }
-.member-progress-hero-head h3 { margin: 0; color: var(--progress-ink); font-size: 19px; letter-spacing: -.01em; }
-.member-progress-hero-head p { margin: 3px 0 0; color: var(--progress-soft); font-size: 13px; }
-.member-progress-hero-body { display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 18px; align-items: center; padding: 0 16px 18px; }
-.member-progress-ring { width: 132px; height: 132px; }.member-progress-ring svg { display: block; width: 132px; height: 132px; }
-.member-progress-ring circle:first-child { fill: none; stroke: var(--progress-grid); stroke-width: 13; }
-.member-progress-ring circle[data-member-progress-ring] { fill: none; stroke: var(--progress-teal); stroke-width: 13; stroke-linecap: round; stroke-dasharray: 326.7; stroke-dashoffset: 326.7; transform: rotate(-90deg); transform-origin: 66px 66px; transition: stroke-dashoffset .7s ease; }
-.member-progress-ring text[data-member-progress-ring-value] { fill: var(--progress-ink); font-family: ui-monospace, "SF Mono", Consolas, monospace; font-size: 29px; font-weight: 700; }
-.member-progress-ring text:last-child { fill: var(--progress-soft); font-family: ui-monospace, "SF Mono", Consolas, monospace; font-size: 9px; letter-spacing: 1px; }
-.member-progress-hero-body .member-progress-summary { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin: 0; }
-.member-progress-hero-body .member-progress-stat { gap: 3px; padding: 9px 0; border: 0; border-radius: 0; background: transparent; }
-.member-progress-timeline { margin: 0 16px 16px; padding: 14px 0 0; border: 0; border-top: 1px solid var(--progress-line); border-radius: 0; background: transparent; }
-.member-progress-records { border-radius: 14px; }.member-progress-columns { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
-.member-progress-operations { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
-.member-progress-operation-card { overflow: hidden; border: 1px solid var(--progress-line); border-radius: 14px; background: #fff; }
-.member-progress-action-list, .member-progress-raw-list { display: grid; }
-.member-progress-action, .member-progress-raw { display: grid; gap: 5px; padding: 13px 16px; }
-.member-progress-action + .member-progress-action, .member-progress-raw + .member-progress-raw { border-top: 1px solid var(--progress-grid); }
-.member-progress-action strong, .member-progress-raw strong, .member-progress-raw a { color: var(--progress-ink); font-size: 13px; font-weight: 800; text-decoration: none; }
-.member-progress-raw a:hover { color: var(--progress-teal); text-decoration: underline; }
-.member-progress-action span, .member-progress-raw span { overflow: hidden; color: var(--progress-soft); font-size: 12px; line-height: 1.45; text-overflow: ellipsis; white-space: nowrap; }
-.member-progress-foundation { display: flex; gap: 10px; align-items: baseline; padding: 12px 14px; border: 1px solid #c9dee1; border-radius: 12px; background: #f1f8f8; color: #31565b; font-size: 12px; line-height: 1.55; }
-.member-progress-foundation strong { flex: 0 0 auto; color: var(--progress-teal); font-family: ui-monospace, "SF Mono", Consolas, monospace; font-size: 10px; letter-spacing: .06em; text-transform: uppercase; }
-.member-progress-milestones, .member-progress-trend { overflow: hidden; border: 1px solid var(--progress-line); border-radius: 14px; background: #fff; }
-.member-progress-milestone { display: flex; justify-content: space-between; gap: 12px; padding: 12px 16px; color: var(--progress-soft); font-size: 13px; }.member-progress-milestone + .member-progress-milestone { border-top: 1px solid var(--progress-grid); }
-.member-progress-milestone strong { font-family: ui-monospace, "SF Mono", Consolas, monospace; font-size: 11px; }.member-progress-milestone strong.is-active { color: var(--progress-teal); }.member-progress-milestone strong.is-complete { color: var(--progress-green); }.member-progress-milestone strong.is-attention { color: var(--progress-amber); }
-.member-progress-trend-copy { margin: 14px 16px 6px; color: var(--progress-soft); font-family: ui-monospace, "SF Mono", Consolas, monospace; font-size: 10px; }.member-progress-trend-chart { display: grid; gap: 10px; padding: 12px 16px 16px; }
-.member-progress-trend-row { display: grid; grid-template-columns: 78px minmax(8px, 1fr) 18px; align-items: center; gap: 8px; color: var(--progress-soft); font: 10px ui-monospace, "SF Mono", Consolas, monospace; }.member-progress-trend-row i { display: block; min-height: 9px; border-radius: 99px; background: var(--progress-teal); }.member-progress-trend-row i.is-complete { background: var(--progress-green); }.member-progress-trend-row i.is-attention { background: var(--progress-amber); }.member-progress-trend-row b { color: var(--progress-ink); font-weight: 700; text-align: right; }
-@media (max-width: 560px) { .member-progress-shell { padding: 12px; }.member-progress-hero-body, .member-progress-columns, .member-progress-operations { grid-template-columns: 1fr; }.member-progress-ring { margin: 0 auto; }.member-progress-hero-body .member-progress-summary { grid-template-columns: repeat(2, minmax(0, 1fr)); }.member-progress-hero-head { align-items: stretch; }.member-progress-access { align-self: flex-start; }.member-progress-foundation { display: grid; gap: 4px; }.member-progress-action span, .member-progress-raw span { white-space: normal; } }
-.member-learning-filters { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 20px; }
-.member-learning-filters label { flex: 1 1 240px; }
-.member-learning-filters select { width: 100%; min-height: 44px; border: 1px solid var(--line); border-radius: 6px; padding: 8px 12px; background: #fff; color: var(--ink); font: inherit; }
-.member-learning-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 14px; }
-.member-learning-card { display: flex; min-width: 0; flex-direction: column; align-items: flex-start; padding: 20px; background: var(--surface); border: 1px solid var(--line); border-top: 4px solid var(--brand); border-radius: 10px; }
-.member-learning-card h3 { margin: 5px 0 0; color: var(--brand-dark); font-size: 18px; line-height: 1.4; overflow-wrap: anywhere; }
-.member-learning-category { margin: 0; color: var(--accent); font-size: 12px; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; }
-.member-learning-description { margin: 10px 0 18px; color: var(--muted); line-height: 1.58; overflow-wrap: anywhere; }
-.member-learning-card .btn { margin-top: auto; }
 .member-group-reminder { margin: 0 0 16px; padding: 12px 14px; border: 1px solid var(--line); border-left: 3px solid var(--accent); border-radius: 6px; background: var(--soft); font-size: 15px; }
 .member-experiment-filters { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 18px; }
 .member-experiment-filters label { display: flex; flex-direction: column; gap: 5px; font-weight: 700; font-size: 14px; }
@@ -620,9 +539,6 @@ input:focus, textarea:focus { outline: 3px solid rgba(23,81,140,.18); border-col
   .member-calendar-toolbar { align-items: flex-start; flex-direction: column; }
   .member-calendar-state { white-space: normal; }
   .member-resource { grid-template-columns: 1fr; }
-  .member-progress-summary { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .member-progress-heading { flex-direction: column; }
-  .member-portal-tabs { scroll-padding-inline: 14px; }
   .member-account { justify-content: flex-start; }
   .nav-toggle { display: inline-flex; margin-left: auto; border: 1px solid var(--line); background: var(--surface); border-radius: 6px; padding: 8px 12px; font-size: 14px; }
   section { padding: 38px 0; }
@@ -695,8 +611,6 @@ input:focus, textarea:focus { outline: 3px solid rgba(23,81,140,.18); border-col
   .metric-grid { grid-template-columns: 1fr; }
   .metric-card:nth-child(odd) { border-right: 0; }
   .member-card-grid { grid-template-columns: 1fr; }
-  .member-progress-summary { grid-template-columns: 1fr; }
-  .member-progress-card-head { flex-direction: column; }
   .member-roadmap-frame { height: 4600px; }
   .member-report-schedule-frame { height: 980px; }
   .member-auth-copy, .member-security-note, .member-form, .member-approval-section, .member-card, .member-resource { padding: 18px; }

@@ -66,9 +66,6 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
     if (target === "calendars") loadMemberCalendars();
     if (target === "progress") loadMemberProgress();
     if (target === "learning") loadMemberLearning();
-    // Keep the selected tab fully visible on narrow screens instead of leaving
-    // a partial label at the edge of the horizontal tab strip.
-    selectedTab.scrollIntoView({ block: "nearest", inline: "nearest" });
     if (moveFocus) selectedTab.focus();
   };
 
@@ -300,6 +297,133 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
         }
       };
 
+      // Progress: read live from the laboratory database via the member API.
+      let progressRecords = [];
+      const progressStatusClass = (status) => {
+        const s = String(status || "").toLowerCase();
+        if (s.includes("done") || s.includes("complete") || s.includes("\u5b8c\u6210")) return "is-done";
+        if (s.includes("block") || s.includes("stuck") || s.includes("\u5361")) return "is-blocked";
+        if (s.includes("progress") || s.includes("\u9032\u884c")) return "is-active";
+        return "is-pending";
+      };
+      const renderProgressList = () => {
+        const host = document.querySelector("[data-member-progress-list]");
+        if (!host) return;
+        const filter = document.querySelector("[data-member-progress-filter]");
+        const who = filter ? filter.value : "";
+        const rows = progressRecords.filter((r) => !who || r.studentName === who);
+        host.replaceChildren();
+        if (!rows.length) {
+          host.append(createText("p", progressRecords.length ? "No records match that member." : "No progress records yet.", "muted"));
+          return;
+        }
+        rows.forEach((record) => {
+          const card = document.createElement("article");
+          card.className = "member-progress-card";
+          const head = document.createElement("div");
+          head.className = "member-progress-card-head";
+          head.append(createText("h3", record.title || "Untitled"));
+          if (record.status) head.append(createText("span", record.status, "member-progress-status " + progressStatusClass(record.status)));
+          card.append(head);
+          const meta = [record.studentName, record.dueDate].filter(Boolean).join("  |  ");
+          if (meta) card.append(createText("p", meta, "member-card-meta"));
+          if (record.nextAction) card.append(createText("p", record.nextAction));
+          host.append(card);
+        });
+      };
+      loadMemberProgress = async () => {
+        const host = document.querySelector("[data-member-progress-list]");
+        const state = document.querySelector("[data-member-progress-state]");
+        if (!host || host.dataset.loaded === "true" || host.dataset.loading === "true") return;
+        host.dataset.loading = "true";
+        if (state) state.textContent = "Loading progress records...";
+        try {
+          if (!syncApiUrl) throw new Error("The member resource service is not configured.");
+          const token = await auth.currentUser?.getIdToken();
+          if (!token) throw new Error("Please sign in again to load progress records.");
+          const response = await fetch(syncApiUrl + "/api/progress", { method: "GET", headers: { Authorization: "Bearer " + token } });
+          const data = await response.json().catch(() => ({}));
+          if (!response.ok) throw new Error(String(data.error || "Progress records could not be loaded."));
+          progressRecords = Array.isArray(data.items) ? data.items : (Array.isArray(data.records) ? data.records : []);
+          const filter = document.querySelector("[data-member-progress-filter]");
+          if (filter) {
+            const names = Array.from(new Set(progressRecords.map((r) => r.studentName).filter(Boolean))).sort();
+            names.forEach((name) => { const opt = document.createElement("option"); opt.value = name; opt.textContent = name; filter.append(opt); });
+            filter.addEventListener("change", renderProgressList);
+          }
+          renderProgressList();
+          host.hidden = false;
+          if (state) state.hidden = true;
+          host.dataset.loaded = "true";
+          host.dataset.loading = "false";
+        } catch (error) {
+          host.dataset.loading = "false";
+          if (state) state.textContent = friendlyError(error);
+        }
+      };
+
+      // Learning: read laboratory materials live via the member API.
+      let learningRecords = [];
+      const renderLearningList = () => {
+        const host = document.querySelector("[data-member-learning-list]");
+        if (!host) return;
+        const search = document.querySelector("[data-member-learning-search]");
+        const term = search ? search.value.trim().toLowerCase() : "";
+        const rows = learningRecords.filter((r) => !term
+          || String(r.title || "").toLowerCase().includes(term)
+          || String(r.description || "").toLowerCase().includes(term));
+        host.replaceChildren();
+        if (!rows.length) {
+          host.append(createText("p", learningRecords.length ? "No materials match that search." : "No learning materials yet.", "muted"));
+          return;
+        }
+        rows.forEach((record) => {
+          const card = document.createElement("article");
+          card.className = "member-learning-card";
+          const copy = document.createElement("div");
+          copy.append(createText("h3", record.title || "Untitled material"));
+          const meta = [record.uploader, record.date].filter(Boolean).join("  |  ");
+          if (meta) copy.append(createText("p", meta, "member-card-meta"));
+          if (record.description) copy.append(createText("p", record.description));
+          card.append(copy);
+          if (record.driveUrl) {
+            const actions = document.createElement("div");
+            actions.className = "member-resource-actions";
+            const link = createText("a", "Open material", "btn btn-secondary");
+            link.href = record.driveUrl; link.target = "_blank"; link.rel = "noopener noreferrer";
+            actions.append(link);
+            card.append(actions);
+          }
+          host.append(card);
+        });
+      };
+      loadMemberLearning = async () => {
+        const host = document.querySelector("[data-member-learning-list]");
+        const state = document.querySelector("[data-member-learning-state]");
+        if (!host || host.dataset.loaded === "true" || host.dataset.loading === "true") return;
+        host.dataset.loading = "true";
+        if (state) state.textContent = "Loading learning materials...";
+        try {
+          if (!syncApiUrl) throw new Error("The member resource service is not configured.");
+          const token = await auth.currentUser?.getIdToken();
+          if (!token) throw new Error("Please sign in again to load learning materials.");
+          const response = await fetch(syncApiUrl + "/api/courses", { method: "GET", headers: { Authorization: "Bearer " + token } });
+          const data = await response.json().catch(() => ({}));
+          if (!response.ok) throw new Error(String(data.error || "Learning materials could not be loaded."));
+          learningRecords = Array.isArray(data.items) ? data.items : (Array.isArray(data.records) ? data.records : []);
+          const search = document.querySelector("[data-member-learning-search]");
+          if (search) search.addEventListener("input", renderLearningList);
+          renderLearningList();
+          host.hidden = false;
+          if (state) state.hidden = true;
+          host.dataset.loaded = "true";
+          host.dataset.loading = "false";
+        } catch (error) {
+          host.dataset.loading = "false";
+          if (state) state.textContent = friendlyError(error);
+        }
+      };
+
       const memberDirectoryColumns = [
         { key: "fullName", label: "\u59d3\u540d\n(Full Name)" },
         { key: "roleStatus", label: "\u76ee\u524d\u8eab\u4efd\n(Current Role/Status)" },
@@ -345,28 +469,6 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
         host.replaceChildren(table);
       };
 
-      const fetchMemberDirectory = async () => {
-        if (!resourceApiUrl) throw new Error("The member directory service is not configured.");
-        const token = await auth.currentUser?.getIdToken();
-        if (!token) throw new Error("Please sign in again to load the member directory.");
-        const response = await fetch(`${resourceApiUrl}/api/members`, {
-          method: "GET",
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const data = await response.json().catch(() => ({}));
-        if (!response.ok) throw new Error(String(data.error || "The member directory could not be loaded."));
-        return (Array.isArray(data.members) ? data.members : []).slice().sort((a, b) => {
-          const rank = (member) => {
-            const role = String(member.role || "");
-            if (/\u78a9\u58eb\u751f|Master/i.test(role)) return 0;
-            if (/\u5b78\u751f|Undergraduate/i.test(role)) return 1;
-            return 2;
-          };
-          return rank(a) - rank(b)
-            || String(a.englishName || a.fullName || "").localeCompare(String(b.englishName || b.fullName || ""));
-        });
-      };
-
       loadMemberDirectory = async () => {
         const host = document.querySelector("[data-member-directory-table]");
         const state = document.querySelector("[data-member-directory-state]");
@@ -374,7 +476,25 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
         host.dataset.loading = "true";
         if (state) state.textContent = "Loading the protected member directory...";
         try {
-          const members = await fetchMemberDirectory();
+          if (!resourceApiUrl) throw new Error("The member directory service is not configured.");
+          const token = await auth.currentUser?.getIdToken();
+          if (!token) throw new Error("Please sign in again to load the member directory.");
+          const response = await fetch(`${resourceApiUrl}/api/members`, {
+            method: "GET",
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          const data = await response.json().catch(() => ({}));
+          if (!response.ok) throw new Error(String(data.error || "The member directory could not be loaded."));
+          const members = (Array.isArray(data.members) ? data.members : []).slice().sort((a, b) => {
+            const rank = (member) => {
+              const role = String(member.role || "");
+              if (/\u78a9\u58eb\u751f|Master/i.test(role)) return 0;
+              if (/\u5b78\u58eb\u751f|Undergraduate/i.test(role)) return 1;
+              return 2;
+            };
+            return rank(a) - rank(b)
+              || String(a.englishName || a.fullName || "").localeCompare(String(b.englishName || b.fullName || ""));
+          });
           if (!members.length) {
             host.replaceChildren(createText("p", "No member records are available yet.", "muted"));
           } else {
@@ -805,341 +925,6 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
         const data = await response.json().catch(() => ({}));
         if (!response.ok) throw new Error(String(data.error || "Experiment records could not be loaded."));
         return Array.isArray(data.experiments) ? data.experiments : [];
-      };
-
-      // Progress and learning are read from Notion through the same protected
-      // service as experiment data. The service, rather than the browser,
-      // decides which progress records a member may see.
-      const fetchProtectedRecords = async (path, key) => {
-        if (!syncApiUrl) throw new Error("The member data service is not configured.");
-        const token = await auth.currentUser?.getIdToken();
-        if (!token) throw new Error("Please sign in again to load member data.");
-        const response = await fetch(`${syncApiUrl}${path}`, {
-          method: "GET",
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const data = await response.json().catch(() => ({}));
-        if (!response.ok) throw new Error(String(data.error || "Member data could not be loaded."));
-        return Array.isArray(data[key]) ? data[key] : [];
-      };
-
-      let progressRecords = [];
-      let learningRecords = [];
-      let activeProgressMember = "";
-      let progressDirectoryMembers = [];
-
-      const progressTone = (value) => {
-        const normalized = String(value || "").toLowerCase();
-        if (/(complete|done|finished|完成)/.test(normalized)) return "complete";
-        if (/(overdue|blocked|late|delay|暫停|停滯)/.test(normalized)) return "attention";
-        return "active";
-      };
-
-      const progressDueDate = (record) => String(record.dueDate || record.due || record.deadline || "").trim();
-
-      const progressMemberLabel = (member) => String(member.englishName || member.fullName || member.discordNickname || member.email || "").trim();
-      const progressMemberMatches = (record, member) => {
-        const owner = String(record.studentName || "").casefold();
-        const values = [member.fullName, member.englishName, member.discordNickname, member.email]
-          .map((value) => String(value || "").trim().casefold())
-          .filter(Boolean);
-        return values.some((value) => owner.includes(value) || value.includes(owner));
-      };
-
-      const renderProgress = () => {
-        const state = document.querySelector("[data-member-progress-state]");
-        const dashboard = document.querySelector("[data-member-progress-dashboard]");
-        const access = document.querySelector("[data-member-progress-access]");
-        const identity = document.querySelector("[data-member-progress-identity]");
-        const filterWrap = document.querySelector("[data-member-progress-filter]");
-        const memberFilter = document.querySelector("[data-member-progress-member]");
-        const project = document.querySelector("[data-member-progress-project]");
-        const ring = document.querySelector("[data-member-progress-ring]");
-        const ringValue = document.querySelector("[data-member-progress-ring-value]");
-        const summary = document.querySelector("[data-member-progress-summary]");
-        const timeline = document.querySelector("[data-member-progress-timeline]");
-        const count = document.querySelector("[data-member-progress-count]");
-        const list = document.querySelector("[data-member-progress-list]");
-        const milestones = document.querySelector("[data-member-progress-milestones]");
-        const trend = document.querySelector("[data-member-progress-trend]");
-        const memberPanel = document.querySelector("[data-member-progress-members]");
-        const memberList = document.querySelector("[data-member-progress-member-list]");
-        const memberCount = document.querySelector("[data-member-progress-member-count]");
-        const actions = document.querySelector("[data-member-progress-actions]");
-        const rawData = document.querySelector("[data-member-progress-raw]");
-        if (!state || !dashboard || !access || !identity || !filterWrap || !memberFilter || !project || !ring || !ringValue || !summary || !timeline || !count || !list || !milestones || !trend || !memberPanel || !memberList || !memberCount || !actions || !rawData) return;
-        const fallbackMembers = Array.from(new Set(progressRecords.map((record) => String(record.studentName || "").trim()).filter(Boolean))).sort((a, b) => a.localeCompare(b)).map((name) => ({ fullName: name }));
-        const members = progressDirectoryMembers.length ? progressDirectoryMembers : fallbackMembers;
-        if (!currentIsAdmin) activeProgressMember = "";
-        if (currentIsAdmin) {
-          const previous = activeProgressMember;
-          memberFilter.replaceChildren(createText("option", "All laboratory members"));
-          memberFilter.firstElementChild.value = "";
-          members.forEach((member) => {
-            const label = progressMemberLabel(member);
-            if (!label) return;
-            const option = createText("option", label);
-            option.value = label;
-            option.selected = label === previous;
-            memberFilter.append(option);
-          });
-          filterWrap.hidden = false;
-          access.textContent = "Administrator · laboratory view";
-        } else {
-          filterWrap.hidden = true;
-          access.textContent = "Private · your progress only";
-        }
-        const selectedMember = members.find((member) => progressMemberLabel(member) === activeProgressMember);
-        const displayed = selectedMember ? progressRecords.filter((record) => progressMemberMatches(record, selectedMember)) : progressRecords;
-        const completed = displayed.filter((record) => progressTone(record.status) === "complete").length;
-        const attention = displayed.filter((record) => progressTone(record.status) === "attention").length;
-        const active = displayed.filter((record) => progressTone(record.status) === "active").length;
-        const latest = displayed.map(progressDueDate).filter(Boolean).sort().reverse()[0] || "No updates yet";
-        identity.textContent = currentIsAdmin ? (activeProgressMember || "All laboratory members") : "My research records";
-        project.textContent = displayed.length ? "Notion research-record overview" : "No research records have been added yet";
-        const completionPercent = displayed.length ? Math.round((completed / displayed.length) * 100) : 0;
-        ring.style.strokeDashoffset = String(326.7 * (1 - completionPercent / 100));
-        ringValue.textContent = `${completionPercent}%`;
-        memberList.replaceChildren();
-        memberCount.textContent = `${members.length} member${members.length === 1 ? "" : "s"}`;
-        members.forEach((member) => {
-          const label = progressMemberLabel(member);
-          if (!label) return;
-          const records = progressRecords.filter((record) => progressMemberMatches(record, member));
-          const button = createText("button", "", "member-progress-member-card");
-          button.type = "button";
-          button.disabled = !currentIsAdmin;
-          button.setAttribute("aria-pressed", String(label === activeProgressMember));
-          button.append(createText("strong", label), createText("span", `${records.length} progress record${records.length === 1 ? "" : "s"}`));
-          if (currentIsAdmin) button.addEventListener("click", () => {
-            activeProgressMember = label;
-            renderProgress();
-          });
-          memberList.append(button);
-        });
-        memberPanel.hidden = !members.length;
-        summary.replaceChildren();
-        [["Records", displayed.length], ["In progress", active], ["Completed", completed], ["Paused", attention]].forEach(([label, value]) => {
-          const item = document.createElement("article");
-          item.className = "member-progress-stat";
-          item.append(createText("span", label), createText("strong", String(value)));
-          summary.append(item);
-        });
-        timeline.replaceChildren();
-        const copy = document.createElement("div");
-        copy.className = "member-progress-timeline-copy";
-        copy.append(createText("strong", "Current research status"), createText("span", `Latest update: ${latest}`));
-        const track = document.createElement("div");
-        track.className = "member-progress-track";
-        const total = displayed.length || 1;
-        [["active", active], ["complete", completed], ["attention", attention]].forEach(([tone, value]) => {
-          if (!value) return;
-          const segment = document.createElement("span");
-          segment.className = `is-${tone}`;
-          segment.style.flexBasis = `${(Number(value) / total) * 100}%`;
-          track.append(segment);
-        });
-        timeline.append(copy, track);
-        actions.replaceChildren();
-        const actionRecords = displayed.filter((record) => String(record.nextAction || record.notes || record.description || "").trim());
-        if (!actionRecords.length) {
-          actions.append(createText("p", "No next actions have been recorded yet.", "member-progress-empty"));
-        } else {
-          actionRecords.slice(0, 6).forEach((record) => {
-            const title = String(record.title || record.project || record.task || "Research item").trim();
-            const action = String(record.nextAction || record.notes || record.description || "").trim();
-            const row = document.createElement("article");
-            row.className = "member-progress-action";
-            row.append(createText("strong", title), createText("span", action));
-            actions.append(row);
-          });
-        }
-        rawData.replaceChildren();
-        const rawForView = selectedMember
-          ? experimentRecords.filter((record) => progressMemberMatches({ studentName: experimentStudentName(record) }, selectedMember))
-          : currentIsAdmin
-            ? experimentRecords
-            : experimentRecords.filter((record) => displayed.some((progress) => progressMemberMatches({ studentName: experimentStudentName(record) }, { fullName: progress.studentName })));
-        if (!rawForView.length) {
-          rawData.append(createText("p", "No raw-data uploads are available for this view yet.", "member-progress-empty"));
-        } else {
-          rawForView.slice(0, 6).forEach((record) => {
-            const label = String(record.filename || "Untitled experiment file").trim();
-            const meta = [experimentStudentName(record), record.date, record.instrument, record.sample].filter(Boolean).join(" · ");
-            const row = document.createElement("article");
-            row.className = "member-progress-raw";
-            const target = secureHttpsUrl(record.driveUrl);
-            const title = target ? createText("a", label) : createText("strong", label);
-            if (target) {
-              title.href = target;
-              title.target = "_blank";
-              title.rel = "noopener noreferrer";
-            }
-            row.append(title, createText("span", meta || "Experiment upload"));
-            rawData.append(row);
-          });
-        }
-        milestones.replaceChildren();
-        [["In progress", active, "active"], ["Completed", completed, "complete"], ["Paused", attention, "attention"]].forEach(([label, value, tone]) => {
-          const row = document.createElement("div");
-          row.className = "member-progress-milestone";
-          row.append(createText("span", label), createText("strong", `${value} record${value === 1 ? "" : "s"}`, `is-${tone}`));
-          milestones.append(row);
-        });
-        trend.replaceChildren();
-        const trendTitle = createText("p", "Current distribution of verified Notion records", "member-progress-trend-copy");
-        const trendChart = document.createElement("div");
-        trendChart.className = "member-progress-trend-chart";
-        [["In progress", active, "active"], ["Completed", completed, "complete"], ["Paused", attention, "attention"]].forEach(([label, value, tone]) => {
-          const row = document.createElement("div");
-          row.className = "member-progress-trend-row";
-          row.append(createText("span", label));
-          const bar = document.createElement("i");
-          bar.className = `is-${tone}`;
-          bar.style.width = `${displayed.length ? Math.max(4, Math.round((Number(value) / displayed.length) * 100)) : 0}%`;
-          row.append(bar, createText("b", String(value)));
-          trendChart.append(row);
-        });
-        trend.append(trendTitle, trendChart);
-        list.replaceChildren();
-        count.textContent = `${displayed.length} record${displayed.length === 1 ? "" : "s"}`;
-        if (!displayed.length) {
-          list.append(createText("p", currentIsAdmin ? "No progress records are available for this view yet." : "No progress records are assigned to your account yet.", "member-progress-empty"));
-        } else {
-          displayed.forEach((record) => {
-            const title = String(record.title || record.project || record.task || "Untitled progress item").trim();
-            const owner = String(record.studentName || record.member || record.owner || "").trim();
-            const status = String(record.status || "In progress").trim();
-            const detail = String(record.nextAction || record.notes || record.description || "").trim();
-            const due = progressDueDate(record);
-            const card = document.createElement("article");
-            card.className = `member-progress-card is-${progressTone(status)}`;
-            const head = document.createElement("div");
-            head.className = "member-progress-card-head";
-            const titleGroup = document.createElement("div");
-            titleGroup.append(createText("h3", title));
-            if (owner && currentIsAdmin) titleGroup.append(createText("p", owner, "member-progress-owner"));
-            const badge = createText("span", status, `member-progress-badge is-${progressTone(status)}`);
-            head.append(titleGroup, badge);
-            card.append(head);
-            if (detail) card.append(createText("p", detail, "member-progress-detail"));
-            if (due) card.append(createText("p", `Last updated: ${due}`, "member-progress-due"));
-            list.append(card);
-          });
-        }
-        state.hidden = true;
-        dashboard.hidden = false;
-      };
-
-      loadMemberProgress = async () => {
-        const state = document.querySelector("[data-member-progress-state]");
-        const list = document.querySelector("[data-member-progress-list]");
-        const memberFilter = document.querySelector("[data-member-progress-member]");
-        if (!state || !list || !memberFilter || list.dataset.loading === "true" || list.dataset.loaded === "true") return;
-        list.dataset.loading = "true";
-        state.hidden = false;
-        state.textContent = "Loading progress records...";
-        try {
-          [progressRecords, progressDirectoryMembers, experimentRecords] = await Promise.all([
-            fetchProtectedRecords("/api/progress", "progress"),
-            fetchMemberDirectory().catch((error) => {
-              console.warn("[member-portal] progress member directory", error);
-              return [];
-            }),
-            fetchExperimentRecords().catch((error) => {
-              console.warn("[member-portal] progress raw-data summary", error);
-              return [];
-            }),
-          ]);
-          if (memberFilter.dataset.bound !== "true") {
-            memberFilter.addEventListener("change", () => {
-              activeProgressMember = memberFilter.value;
-              renderProgress();
-            });
-            memberFilter.dataset.bound = "true";
-          }
-          renderProgress();
-          list.dataset.loaded = "true";
-        } catch (error) {
-          console.error("[member-portal] progress records", error);
-          state.textContent = "Progress records are being connected to the portal. Once the Notion sync is ready, your milestones and next actions will appear here.";
-          state.className = "member-progress-state member-system-pending";
-        } finally {
-          list.dataset.loading = "false";
-        }
-      };
-
-      const learningCategory = (record) => String(record.category || record.type || "General").trim() || "General";
-
-      const renderLearning = () => {
-        const state = document.querySelector("[data-member-learning-state]");
-        const list = document.querySelector("[data-member-learning-list]");
-        const search = document.querySelector("[data-member-learning-search]");
-        const category = document.querySelector("[data-member-learning-category]");
-        if (!state || !list || !search || !category) return;
-        const query = String(search.value || "").trim().toLowerCase();
-        const selectedCategory = String(category.value || "");
-        const filtered = learningRecords.filter((record) => {
-          const haystack = [record.title, record.description, record.summary, record.tags, learningCategory(record)].join(" ").toLowerCase();
-          return (!query || haystack.includes(query)) && (!selectedCategory || learningCategory(record) === selectedCategory);
-        });
-        list.replaceChildren();
-        if (!filtered.length) {
-          list.append(createText("p", "No learning materials match these filters.", "muted"));
-        } else {
-          filtered.forEach((record) => {
-            const card = document.createElement("article");
-            card.className = "member-learning-card";
-            card.append(createText("p", learningCategory(record), "member-learning-category"));
-            card.append(createText("h3", String(record.title || "Untitled learning material")));
-            const description = String(record.description || record.summary || "").trim();
-            if (description) card.append(createText("p", description, "member-learning-description"));
-            const url = secureHttpsUrl(record.url || record.driveUrl || record.link);
-            if (url) {
-              const link = createText("a", "Open material", "btn btn-secondary");
-              link.href = url;
-              link.target = "_blank";
-              link.rel = "noopener noreferrer";
-              card.append(link);
-            }
-            list.append(card);
-          });
-        }
-      };
-
-      loadMemberLearning = async () => {
-        const state = document.querySelector("[data-member-learning-state]");
-        const filters = document.querySelector("[data-member-learning-filters]");
-        const list = document.querySelector("[data-member-learning-list]");
-        const search = document.querySelector("[data-member-learning-search]");
-        const category = document.querySelector("[data-member-learning-category]");
-        if (!state || !filters || !list || !search || !category || list.dataset.loading === "true" || list.dataset.loaded === "true") return;
-        list.dataset.loading = "true";
-        state.textContent = "Loading learning materials...";
-        try {
-          learningRecords = await fetchProtectedRecords("/api/courses", "courses");
-          const categories = Array.from(new Set(learningRecords.map(learningCategory))).sort((a, b) => a.localeCompare(b));
-          category.replaceChildren(createText("option", "All categories"));
-          category.firstElementChild.value = "";
-          categories.forEach((value) => {
-            const option = createText("option", value);
-            option.value = value;
-            category.append(option);
-          });
-          search.addEventListener("input", renderLearning, { once: false });
-          category.addEventListener("change", renderLearning, { once: false });
-          renderLearning();
-          state.hidden = true;
-          filters.hidden = false;
-          list.hidden = false;
-          list.dataset.loaded = "true";
-        } catch (error) {
-          console.error("[member-portal] learning records", error);
-          state.textContent = "Learning materials are being connected to the portal. Once the Notion sync is ready, laboratory procedures and training resources will appear here.";
-          state.className = "member-learning-state member-system-pending";
-        } finally {
-          list.dataset.loading = "false";
-        }
       };
 
       const fetchResourceRecords = async () => {

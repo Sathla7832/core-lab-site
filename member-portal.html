@@ -22,7 +22,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/styles.css?v=pm-workspace-20260726" />
+  <link rel="stylesheet" href="assets/styles.css?v=6b29c4ac4343" />
 </head>
 <body>
   <a class="skip-link" href="#main-content">Skip to main content</a>
@@ -107,68 +107,24 @@
           </div>
         </section>
 
-        <section id="member-panel-progress" class="member-content-section member-portal-panel" role="tabpanel" aria-labelledby="member-tab-progress" data-member-panel="progress" hidden>
-          <div class="member-progress-shell">
-<p class="member-progress-state muted" data-member-progress-state>Open this tab to load progress records.</p>
-          <div class="member-progress-dashboard" data-member-progress-dashboard hidden>
-            <div class="member-progress-toolbar">
-              <div class="member-progress-toolbar-label">CORE Lab · Progress Dashboard</div>
-              <label class="member-progress-filter" data-member-progress-filter hidden>Member<select data-member-progress-member aria-label="Filter progress by member"></select></label>
-            </div>
-            <section class="member-progress-members" data-member-progress-members hidden>
-              <div class="member-progress-records-head"><h3>Members</h3><span data-member-progress-member-count></span></div>
-              <div class="member-progress-member-list" data-member-progress-member-list></div>
-            </section>
-            <section class="member-progress-hero-card">
-              <div class="member-progress-hero-head">
-                <div><h3 data-member-progress-identity></h3><p data-member-progress-project>Research record overview</p></div>
-                <div class="member-progress-access" data-member-progress-access>Private member view</div>
-              </div>
-              <div class="member-progress-hero-body">
-                <div class="member-progress-ring" aria-label="Completed-record percentage"><svg viewBox="0 0 132 132" role="img"><circle cx="66" cy="66" r="52"></circle><circle data-member-progress-ring cx="66" cy="66" r="52"></circle><text data-member-progress-ring-value x="66" y="63" text-anchor="middle"></text><text x="66" y="82" text-anchor="middle">COMPLETE</text></svg></div>
-                <div class="member-progress-summary" data-member-progress-summary></div>
-              </div>
-<section class="member-progress-timeline" data-member-progress-timeline></section>
-</section>
-<section class="member-progress-operations" aria-label="Research operations">
-<section class="member-progress-operation-card">
-<div class="member-progress-records-head"><h3>Research next actions</h3><span>Progress</span></div>
-<div class="member-progress-action-list" data-member-progress-actions></div>
-</section>
-<section class="member-progress-operation-card">
-<div class="member-progress-records-head"><h3>Recent raw data</h3><span>Discord · Drive</span></div>
-<div class="member-progress-raw-list" data-member-progress-raw></div>
-</section>
-</section>
-<aside class="member-progress-foundation" data-member-progress-foundation>
-<strong>Private research workspace</strong>
-<span>Progress is shown from the protected laboratory record. Tasks, comments, personal Todo, and the Discord intake workflow use the Supabase operational layer defined for this portal.</span>
-</aside>
-<section class="member-progress-records">
-              <div class="member-progress-records-head"><h3>Current work</h3><span data-member-progress-count></span></div>
-              <div class="member-progress-list" data-member-progress-list></div>
-            </section>
-            <div class="member-progress-columns">
-              <section class="member-progress-milestones"><div class="member-progress-records-head"><h3>Milestones</h3></div><div data-member-progress-milestones></div></section>
-              <section class="member-progress-trend"><div class="member-progress-records-head"><h3>Research status</h3></div><div data-member-progress-trend></div></section>
-            </div>
+        <section id="member-panel-progress" class="member-content-section member-portal-panel member-progress-panel" role="tabpanel" aria-labelledby="member-tab-progress" data-member-panel="progress" hidden>
+          <div class="member-section-head">
+            <div><h2>Progress Dashboard</h2><p class="member-section-description">Research progress tracked in the laboratory database.</p></div>
+            <label class="member-progress-filter">Member<select data-member-progress-filter><option value="">All laboratory members</option></select></label>
           </div>
-          </div>
+          <p class="member-progress-state muted" data-member-progress-state>Open this tab to load progress records.</p>
+          <div class="member-progress-list" data-member-progress-list hidden></div>
         </section>
 
-        <section id="member-panel-learning" class="member-content-section member-portal-panel" role="tabpanel" aria-labelledby="member-tab-learning" data-member-panel="learning" hidden>
+        <section id="member-panel-learning" class="member-content-section member-portal-panel member-learning-panel" role="tabpanel" aria-labelledby="member-tab-learning" data-member-panel="learning" hidden>
           <div class="member-section-head">
-            <div>
-              <h2>Learning Library</h2>
-              <p class="member-section-description">Laboratory learning materials, operating procedures, instrument principles, and onboarding references.</p>
-            </div>
+            <div><h2>Learning Library</h2><p class="member-section-description">Laboratory learning materials: instrument principles, synthesis, and operation.</p></div>
+          </div>
+          <div class="member-learning-filters">
+            <label>Search<input type="search" data-member-learning-search placeholder="Instrument, method, keyword..." autocomplete="off"></label>
           </div>
           <p class="member-learning-state muted" data-member-learning-state>Open this tab to load learning materials.</p>
-          <div class="member-learning-filters" data-member-learning-filters hidden>
-            <label>Search<input type="search" data-member-learning-search placeholder="Title, topic, or keyword" autocomplete="off"></label>
-            <label>Category<select data-member-learning-category><option value="">All categories</option></select></label>
-          </div>
-          <div class="member-learning-grid" data-member-learning-list hidden></div>
+          <div class="member-learning-list" data-member-learning-list hidden></div>
         </section>
 
         <section id="member-panel-members" class="member-content-section member-portal-panel member-members-panel" role="tabpanel" aria-labelledby="member-tab-members" data-member-panel="members" hidden>
@@ -238,7 +194,7 @@
 
     </div>
   </footer>
-<script defer src="assets/main.js?v=pm-workspace-20260726"></script>
-<script src="assets/firebase-config.js?v=pm-workspace-20260726"></script><script type="module" src="assets/member.js?v=pm-workspace-20260726"></script>
+  <script defer src="assets/main.js?v=6b29c4ac4343"></script>
+  <script src="assets/firebase-config.js?v=6b29c4ac4343"></script><script type="module" src="assets/member.js?v=6b29c4ac4343"></script>
 </body>
 </html>
