@@ -59,7 +59,7 @@
   </section>
   <section class="section-soft collaborator-section">
     <div class="container collaborator-container">
-      <iframe class="collaborator-embed" title="CORE Lab research collaborators" src="assets/collaborators_cards_5.html" loading="lazy"></iframe>
+      <iframe class="collaborator-embed" title="CORE Lab research collaborators" src="assets/collaborators_cards_5.html?v=categories-20260727" loading="lazy"></iframe>
     </div>
   </section>
   </main>
@@ -81,6 +81,15 @@
   </footer>
   <script defer src="https://vercount.one/js"></script>
   <script defer src="assets/main.js?v=6b29c4ac4343"></script>
+  <script>
+    window.addEventListener('message', (event) => {
+      if (event.origin !== window.location.origin || event.data?.type !== 'core-lab-collaborators-resize') return;
+      const height = Number(event.data.height);
+      if (Number.isFinite(height) && height > 0) {
+        document.querySelector('.collaborator-embed').style.height = `${height}px`;
+      }
+    });
+  </script>
   
 </body>
 </html>
