@@ -821,11 +821,12 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
 
       let progressRecords = [];
       let learningRecords = [];
+      let activeProgressMember = "";
 
       const progressTone = (value) => {
         const normalized = String(value || "").toLowerCase();
-        if (/(complete|done|finished)/.test(normalized)) return "complete";
-        if (/(overdue|blocked|late|delay)/.test(normalized)) return "attention";
+        if (/(complete|done|finished|完成)/.test(normalized)) return "complete";
+        if (/(overdue|blocked|late|delay|暫停|停滯)/.test(normalized)) return "attention";
         return "active";
       };
 
@@ -833,30 +834,75 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
 
       const renderProgress = () => {
         const state = document.querySelector("[data-member-progress-state]");
+        const dashboard = document.querySelector("[data-member-progress-dashboard]");
+        const access = document.querySelector("[data-member-progress-access]");
+        const identity = document.querySelector("[data-member-progress-identity]");
+        const filterWrap = document.querySelector("[data-member-progress-filter]");
+        const memberFilter = document.querySelector("[data-member-progress-member]");
         const summary = document.querySelector("[data-member-progress-summary]");
+        const timeline = document.querySelector("[data-member-progress-timeline]");
+        const count = document.querySelector("[data-member-progress-count]");
         const list = document.querySelector("[data-member-progress-list]");
-        if (!state || !summary || !list) return;
-        const completed = progressRecords.filter((record) => progressTone(record.status) === "complete").length;
-        const attention = progressRecords.filter((record) => progressTone(record.status) === "attention").length;
+        if (!state || !dashboard || !access || !identity || !filterWrap || !memberFilter || !summary || !timeline || !count || !list) return;
+        const members = Array.from(new Set(progressRecords.map((record) => String(record.studentName || "").trim()).filter(Boolean))).sort((a, b) => a.localeCompare(b));
+        if (!currentIsAdmin) activeProgressMember = "";
+        if (currentIsAdmin) {
+          const previous = activeProgressMember;
+          memberFilter.replaceChildren(createText("option", "All laboratory members"));
+          memberFilter.firstElementChild.value = "";
+          members.forEach((member) => {
+            const option = createText("option", member);
+            option.value = member;
+            option.selected = member === previous;
+            memberFilter.append(option);
+          });
+          filterWrap.hidden = false;
+          access.textContent = "Administrator · laboratory view";
+        } else {
+          filterWrap.hidden = true;
+          access.textContent = "Private · your progress only";
+        }
+        const displayed = activeProgressMember ? progressRecords.filter((record) => String(record.studentName || "").trim() === activeProgressMember) : progressRecords;
+        const completed = displayed.filter((record) => progressTone(record.status) === "complete").length;
+        const attention = displayed.filter((record) => progressTone(record.status) === "attention").length;
+        const active = displayed.filter((record) => progressTone(record.status) === "active").length;
+        const latest = displayed.map(progressDueDate).filter(Boolean).sort().reverse()[0] || "No updates yet";
+        identity.textContent = currentIsAdmin ? (activeProgressMember || "All laboratory members") : "My research records";
         summary.replaceChildren();
-        [["Records", progressRecords.length], ["Completed", completed], ["Needs attention", attention]].forEach(([label, value]) => {
+        [["Records", displayed.length], ["In progress", active], ["Completed", completed], ["Paused", attention]].forEach(([label, value]) => {
           const item = document.createElement("article");
           item.className = "member-progress-stat";
           item.append(createText("span", label), createText("strong", String(value)));
           summary.append(item);
         });
+        timeline.replaceChildren();
+        const copy = document.createElement("div");
+        copy.className = "member-progress-timeline-copy";
+        copy.append(createText("strong", "Current research status"), createText("span", `Latest update: ${latest}`));
+        const track = document.createElement("div");
+        track.className = "member-progress-track";
+        const total = displayed.length || 1;
+        [["active", active], ["complete", completed], ["attention", attention]].forEach(([tone, value]) => {
+          if (!value) return;
+          const segment = document.createElement("span");
+          segment.className = `is-${tone}`;
+          segment.style.flexBasis = `${(Number(value) / total) * 100}%`;
+          track.append(segment);
+        });
+        timeline.append(copy, track);
         list.replaceChildren();
-        if (!progressRecords.length) {
-          list.append(createText("p", "No progress records are available yet.", "muted"));
+        count.textContent = `${displayed.length} record${displayed.length === 1 ? "" : "s"}`;
+        if (!displayed.length) {
+          list.append(createText("p", currentIsAdmin ? "No progress records are available for this view yet." : "No progress records are assigned to your account yet.", "member-progress-empty"));
         } else {
-          progressRecords.forEach((record) => {
+          displayed.forEach((record) => {
             const title = String(record.title || record.project || record.task || "Untitled progress item").trim();
             const owner = String(record.studentName || record.member || record.owner || "").trim();
             const status = String(record.status || "In progress").trim();
             const detail = String(record.nextAction || record.notes || record.description || "").trim();
             const due = progressDueDate(record);
             const card = document.createElement("article");
-            card.className = "member-progress-card";
+            card.className = `member-progress-card is-${progressTone(status)}`;
             const head = document.createElement("div");
             head.className = "member-progress-card-head";
             const titleGroup = document.createElement("div");
@@ -866,24 +912,31 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
             head.append(titleGroup, badge);
             card.append(head);
             if (detail) card.append(createText("p", detail, "member-progress-detail"));
-            if (due) card.append(createText("p", `Due: ${due}`, "member-progress-due"));
+            if (due) card.append(createText("p", `Last updated: ${due}`, "member-progress-due"));
             list.append(card);
           });
         }
         state.hidden = true;
-        summary.hidden = false;
-        list.hidden = false;
+        dashboard.hidden = false;
       };
 
       loadMemberProgress = async () => {
         const state = document.querySelector("[data-member-progress-state]");
         const list = document.querySelector("[data-member-progress-list]");
-        if (!state || !list || list.dataset.loading === "true" || list.dataset.loaded === "true") return;
+        const memberFilter = document.querySelector("[data-member-progress-member]");
+        if (!state || !list || !memberFilter || list.dataset.loading === "true" || list.dataset.loaded === "true") return;
         list.dataset.loading = "true";
         state.hidden = false;
         state.textContent = "Loading progress records...";
         try {
           progressRecords = await fetchProtectedRecords("/api/progress", "progress");
+          if (memberFilter.dataset.bound !== "true") {
+            memberFilter.addEventListener("change", () => {
+              activeProgressMember = memberFilter.value;
+              renderProgress();
+            });
+            memberFilter.dataset.bound = "true";
+          }
           renderProgress();
           list.dataset.loaded = "true";
         } catch (error) {

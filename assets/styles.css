@@ -463,21 +463,48 @@ input:focus, textarea:focus { outline: 3px solid rgba(23,81,140,.18); border-col
 .member-resource-tree-roadmap { margin-top: 18px; }
 .member-resource-tree-roadmap .member-roadmap-frame { width: 100%; min-height: 720px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
 .member-progress-summary { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-bottom: 22px; }
-.member-progress-stat { display: grid; gap: 5px; padding: 18px; background: var(--soft); border: 1px solid var(--line); border-radius: 8px; }
-.member-progress-stat span { color: var(--muted); font-size: 13px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; }
-.member-progress-stat strong { color: var(--brand-dark); font-size: 30px; line-height: 1; font-variant-numeric: tabular-nums; }
+.member-progress-shell { --progress-ink: #132029; --progress-soft: #546570; --progress-faint: #8496a0; --progress-line: #dae3e6; --progress-grid: #e9eff1; --progress-teal: #0c6b75; --progress-amber: #c2801a; --progress-red: #c0453a; --progress-green: #2e8b6a; max-width: 920px; margin: 0 auto; color: var(--progress-ink); }
+.member-progress-heading { align-items: start; margin-bottom: 16px; }
+.member-progress-eyebrow { margin: 0 0 6px; color: var(--progress-teal); font-family: ui-monospace, "SF Mono", Consolas, monospace; font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+.member-progress-access { flex: 0 0 auto; margin-top: 4px; border: 1px solid var(--progress-line); border-radius: 999px; padding: 6px 10px; color: var(--progress-soft); background: #fff; font-family: ui-monospace, "SF Mono", Consolas, monospace; font-size: 11px; font-weight: 700; }
+.member-progress-dashboard { display: grid; gap: 16px; }
+.member-progress-toolbar { display: flex; align-items: end; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding: 14px 16px; border: 1px solid var(--progress-line); border-radius: 12px; background: #f7fafb; }
+.member-progress-identity { color: var(--progress-ink); font-family: ui-monospace, "SF Mono", Consolas, monospace; font-size: 13px; font-weight: 800; }
+.member-progress-filter { display: grid; gap: 5px; min-width: min(100%, 250px); color: var(--progress-soft); font-family: ui-monospace, "SF Mono", Consolas, monospace; font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+.member-progress-filter select { min-height: 38px; border: 1px solid var(--progress-line); border-radius: 999px; padding: 6px 12px; background: #fff; color: var(--progress-ink); font: 13px/1.2 var(--sans, inherit); text-transform: none; }
+.member-progress-summary { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin: 0; }
+.member-progress-stat { display: grid; gap: 5px; padding: 16px; background: #fff; border: 1px solid var(--progress-line); border-radius: 12px; }
+.member-progress-stat span { color: var(--progress-faint); font-family: ui-monospace, "SF Mono", Consolas, monospace; font-size: 10px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+.member-progress-stat strong { color: var(--progress-ink); font-family: ui-monospace, "SF Mono", Consolas, monospace; font-size: 28px; line-height: 1; font-variant-numeric: tabular-nums; }
+.member-progress-timeline { display: grid; gap: 10px; padding: 16px; border: 1px solid var(--progress-line); border-radius: 12px; background: #fff; }
+.member-progress-timeline-copy { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; color: var(--progress-soft); font: 12px/1.45 ui-monospace, "SF Mono", Consolas, monospace; }
+.member-progress-timeline-copy strong { color: var(--progress-ink); font-size: 12px; }
+.member-progress-track { display: flex; min-height: 12px; overflow: hidden; border-radius: 99px; background: var(--progress-grid); }
+.member-progress-track span { min-width: 8px; }
+.member-progress-track .is-active { background: var(--progress-teal); }
+.member-progress-track .is-complete { background: var(--progress-green); }
+.member-progress-track .is-attention { background: var(--progress-amber); }
+.member-progress-records { overflow: hidden; border: 1px solid var(--progress-line); border-radius: 12px; background: #fff; }
+.member-progress-records-head { display: flex; justify-content: space-between; align-items: center; gap: 14px; padding: 14px 16px; border-bottom: 1px solid var(--progress-line); background: #f7fafb; }
+.member-progress-records-head h3 { margin: 0; color: var(--progress-ink); font-family: ui-monospace, "SF Mono", Consolas, monospace; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; }
+.member-progress-records-head span { color: var(--progress-faint); font-family: ui-monospace, "SF Mono", Consolas, monospace; font-size: 11px; }
 .member-progress-list { display: grid; gap: 12px; }
+.member-progress-records .member-progress-list { gap: 0; }
 .member-system-pending { max-width: 68ch; margin: 0; padding: 20px 22px; color: #765117; font-weight: 700; line-height: 1.65; background: #fff7df; border: 1px solid #eddaa1; border-left: 4px solid #c88a19; border-radius: 8px; }
-.member-progress-card { padding: 20px; background: var(--surface); border: 1px solid var(--line); border-left: 4px solid var(--brand); border-radius: 8px; }
+.member-progress-card { padding: 18px 16px; background: #fff; border: 0; border-left: 4px solid var(--progress-teal); border-radius: 0; }
+.member-progress-card + .member-progress-card { border-top: 1px solid var(--progress-line); }
+.member-progress-card.is-complete { border-left-color: var(--progress-green); }
+.member-progress-card.is-attention { border-left-color: var(--progress-amber); }
 .member-progress-card-head { display: flex; justify-content: space-between; gap: 16px; align-items: flex-start; }
-.member-progress-card h3 { margin: 0; color: var(--brand-dark); font-size: 18px; }
-.member-progress-owner, .member-progress-detail, .member-progress-due { margin: 8px 0 0; color: var(--muted); line-height: 1.55; }
+.member-progress-card h3 { margin: 0; color: var(--progress-ink); font-size: 17px; }
+.member-progress-owner, .member-progress-detail, .member-progress-due { margin: 8px 0 0; color: var(--progress-soft); line-height: 1.55; }
 .member-progress-owner { font-size: 14px; font-weight: 800; }
-.member-progress-due { color: var(--brand-dark); font-size: 14px; font-weight: 800; }
-.member-progress-badge { flex: 0 0 auto; border-radius: 999px; padding: 5px 9px; font-size: 12px; font-weight: 800; }
+.member-progress-due { color: var(--progress-faint); font-family: ui-monospace, "SF Mono", Consolas, monospace; font-size: 11px; font-weight: 700; }
+.member-progress-badge { flex: 0 0 auto; border-radius: 999px; padding: 5px 9px; font-family: ui-monospace, "SF Mono", Consolas, monospace; font-size: 11px; font-weight: 800; }
 .member-progress-badge.is-complete { background: #e7f4ed; color: #17633d; }
 .member-progress-badge.is-attention { background: #fde8e5; color: #9b2c20; }
 .member-progress-badge.is-active { background: #eaf2f8; color: #17518c; }
+.member-progress-empty { margin: 0; padding: 28px 16px; color: var(--progress-soft); text-align: center; }
 .member-learning-filters { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 20px; }
 .member-learning-filters label { flex: 1 1 240px; }
 .member-learning-filters select { width: 100%; min-height: 44px; border: 1px solid var(--line); border-radius: 6px; padding: 8px 12px; background: #fff; color: var(--ink); font: inherit; }
@@ -550,7 +577,8 @@ input:focus, textarea:focus { outline: 3px solid rgba(23,81,140,.18); border-col
   .member-calendar-toolbar { align-items: flex-start; flex-direction: column; }
   .member-calendar-state { white-space: normal; }
   .member-resource { grid-template-columns: 1fr; }
-  .member-progress-summary { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .member-progress-summary { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .member-progress-heading { flex-direction: column; }
   .member-portal-tabs { scroll-padding-inline: 14px; }
   .member-account { justify-content: flex-start; }
   .nav-toggle { display: inline-flex; margin-left: auto; border: 1px solid var(--line); background: var(--surface); border-radius: 6px; padding: 8px 12px; font-size: 14px; }

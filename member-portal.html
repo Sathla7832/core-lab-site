@@ -108,15 +108,29 @@
         </section>
 
         <section id="member-panel-progress" class="member-content-section member-portal-panel" role="tabpanel" aria-labelledby="member-tab-progress" data-member-panel="progress" hidden>
-          <div class="member-section-head">
+          <div class="member-progress-shell">
+          <div class="member-section-head member-progress-heading">
             <div>
+              <p class="member-progress-eyebrow">CORE Lab · Progress tracking</p>
               <h2>Research Progress</h2>
-              <p class="member-section-description">Track project milestones, next actions, and due dates. Members see their own work; administrators see the laboratory view.</p>
+              <p class="member-section-description">A private view of research records, current status, and recent updates. Members see their own work; administrators can switch between laboratory members.</p>
             </div>
+            <div class="member-progress-access" data-member-progress-access>Private member view</div>
           </div>
           <p class="member-progress-state muted" data-member-progress-state>Open this tab to load progress records.</p>
-          <div class="member-progress-summary" data-member-progress-summary hidden></div>
-          <div class="member-progress-list" data-member-progress-list hidden></div>
+          <div class="member-progress-dashboard" data-member-progress-dashboard hidden>
+            <div class="member-progress-toolbar">
+              <div class="member-progress-identity" data-member-progress-identity></div>
+              <label class="member-progress-filter" data-member-progress-filter hidden>Member<select data-member-progress-member aria-label="Filter progress by member"></select></label>
+            </div>
+            <div class="member-progress-summary" data-member-progress-summary></div>
+            <section class="member-progress-timeline" data-member-progress-timeline></section>
+            <section class="member-progress-records">
+              <div class="member-progress-records-head"><h3>Research records</h3><span data-member-progress-count></span></div>
+              <div class="member-progress-list" data-member-progress-list></div>
+            </section>
+          </div>
+          </div>
         </section>
 
         <section id="member-panel-learning" class="member-content-section member-portal-panel" role="tabpanel" aria-labelledby="member-tab-learning" data-member-panel="learning" hidden>
