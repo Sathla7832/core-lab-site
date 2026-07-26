@@ -460,6 +460,30 @@ input:focus, textarea:focus { outline: 3px solid rgba(23,81,140,.18); border-col
 .member-folder-file-meta { color: var(--muted); font-size: 14px; overflow-wrap: anywhere; }
 .member-resource-tree-roadmap { margin-top: 18px; }
 .member-resource-tree-roadmap .member-roadmap-frame { width: 100%; min-height: 720px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+.member-progress-summary { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-bottom: 22px; }
+.member-progress-stat { display: grid; gap: 5px; padding: 18px; background: var(--soft); border: 1px solid var(--line); border-radius: 8px; }
+.member-progress-stat span { color: var(--muted); font-size: 13px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; }
+.member-progress-stat strong { color: var(--brand-dark); font-size: 30px; line-height: 1; font-variant-numeric: tabular-nums; }
+.member-progress-list { display: grid; gap: 12px; }
+.member-progress-card { padding: 20px; background: var(--surface); border: 1px solid var(--line); border-left: 4px solid var(--brand); border-radius: 8px; }
+.member-progress-card-head { display: flex; justify-content: space-between; gap: 16px; align-items: flex-start; }
+.member-progress-card h3 { margin: 0; color: var(--brand-dark); font-size: 18px; }
+.member-progress-owner, .member-progress-detail, .member-progress-due { margin: 8px 0 0; color: var(--muted); line-height: 1.55; }
+.member-progress-owner { font-size: 14px; font-weight: 800; }
+.member-progress-due { color: var(--brand-dark); font-size: 14px; font-weight: 800; }
+.member-progress-badge { flex: 0 0 auto; border-radius: 999px; padding: 5px 9px; font-size: 12px; font-weight: 800; }
+.member-progress-badge.is-complete { background: #e7f4ed; color: #17633d; }
+.member-progress-badge.is-attention { background: #fde8e5; color: #9b2c20; }
+.member-progress-badge.is-active { background: #eaf2f8; color: #17518c; }
+.member-learning-filters { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 20px; }
+.member-learning-filters label { flex: 1 1 240px; }
+.member-learning-filters select { width: 100%; min-height: 44px; border: 1px solid var(--line); border-radius: 6px; padding: 8px 12px; background: #fff; color: var(--ink); font: inherit; }
+.member-learning-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 14px; }
+.member-learning-card { display: flex; min-width: 0; flex-direction: column; align-items: flex-start; padding: 20px; background: var(--surface); border: 1px solid var(--line); border-top: 4px solid var(--brand); border-radius: 10px; }
+.member-learning-card h3 { margin: 5px 0 0; color: var(--brand-dark); font-size: 18px; line-height: 1.4; overflow-wrap: anywhere; }
+.member-learning-category { margin: 0; color: var(--accent); font-size: 12px; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; }
+.member-learning-description { margin: 10px 0 18px; color: var(--muted); line-height: 1.58; overflow-wrap: anywhere; }
+.member-learning-card .btn { margin-top: auto; }
 .member-group-reminder { margin: 0 0 16px; padding: 12px 14px; border: 1px solid var(--line); border-left: 3px solid var(--accent); border-radius: 6px; background: var(--soft); font-size: 15px; }
 .member-experiment-filters { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 18px; }
 .member-experiment-filters label { display: flex; flex-direction: column; gap: 5px; font-weight: 700; font-size: 14px; }
@@ -523,6 +547,7 @@ input:focus, textarea:focus { outline: 3px solid rgba(23,81,140,.18); border-col
   .member-calendar-toolbar { align-items: flex-start; flex-direction: column; }
   .member-calendar-state { white-space: normal; }
   .member-resource { grid-template-columns: 1fr; }
+  .member-progress-summary { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .member-account { justify-content: flex-start; }
   .nav-toggle { display: inline-flex; margin-left: auto; border: 1px solid var(--line); background: var(--surface); border-radius: 6px; padding: 8px 12px; font-size: 14px; }
   section { padding: 38px 0; }
@@ -595,6 +620,8 @@ input:focus, textarea:focus { outline: 3px solid rgba(23,81,140,.18); border-col
   .metric-grid { grid-template-columns: 1fr; }
   .metric-card:nth-child(odd) { border-right: 0; }
   .member-card-grid { grid-template-columns: 1fr; }
+  .member-progress-summary { grid-template-columns: 1fr; }
+  .member-progress-card-head { flex-direction: column; }
   .member-roadmap-frame { height: 4600px; }
   .member-report-schedule-frame { height: 980px; }
   .member-auth-copy, .member-security-note, .member-form, .member-approval-section, .member-card, .member-resource { padding: 18px; }

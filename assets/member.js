@@ -47,6 +47,8 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
       let loadMemberResourceTree = () => {};
       let loadMemberDirectory = () => {};
       let loadMemberCalendars = () => {};
+      let loadMemberProgress = () => {};
+      let loadMemberLearning = () => {};
   const activatePortalTab = (target, moveFocus = false) => {
     const selectedTab = portalTabs.find((tab) => tab.dataset.memberTabTarget === target && !tab.hidden);
     if (!selectedTab) return;
@@ -62,6 +64,8 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
     if (target === "report-schedule") loadMemberReportSchedule();
     if (target === "members") loadMemberDirectory();
     if (target === "calendars") loadMemberCalendars();
+    if (target === "progress") loadMemberProgress();
+    if (target === "learning") loadMemberLearning();
     if (moveFocus) selectedTab.focus();
   };
 
@@ -794,6 +798,167 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
         const data = await response.json().catch(() => ({}));
         if (!response.ok) throw new Error(String(data.error || "Experiment records could not be loaded."));
         return Array.isArray(data.experiments) ? data.experiments : [];
+      };
+
+      // Progress and learning are read from Notion through the same protected
+      // service as experiment data. The service, rather than the browser,
+      // decides which progress records a member may see.
+      const fetchProtectedRecords = async (path, key) => {
+        if (!syncApiUrl) throw new Error("The member data service is not configured.");
+        const token = await auth.currentUser?.getIdToken();
+        if (!token) throw new Error("Please sign in again to load member data.");
+        const response = await fetch(`${syncApiUrl}${path}`, {
+          method: "GET",
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(String(data.error || "Member data could not be loaded."));
+        return Array.isArray(data[key]) ? data[key] : [];
+      };
+
+      let progressRecords = [];
+      let learningRecords = [];
+
+      const progressTone = (value) => {
+        const normalized = String(value || "").toLowerCase();
+        if (/(complete|done|finished)/.test(normalized)) return "complete";
+        if (/(overdue|blocked|late|delay)/.test(normalized)) return "attention";
+        return "active";
+      };
+
+      const progressDueDate = (record) => String(record.dueDate || record.due || record.deadline || "").trim();
+
+      const renderProgress = () => {
+        const state = document.querySelector("[data-member-progress-state]");
+        const summary = document.querySelector("[data-member-progress-summary]");
+        const list = document.querySelector("[data-member-progress-list]");
+        if (!state || !summary || !list) return;
+        const completed = progressRecords.filter((record) => progressTone(record.status) === "complete").length;
+        const attention = progressRecords.filter((record) => progressTone(record.status) === "attention").length;
+        summary.replaceChildren();
+        [["Records", progressRecords.length], ["Completed", completed], ["Needs attention", attention]].forEach(([label, value]) => {
+          const item = document.createElement("article");
+          item.className = "member-progress-stat";
+          item.append(createText("span", label), createText("strong", String(value)));
+          summary.append(item);
+        });
+        list.replaceChildren();
+        if (!progressRecords.length) {
+          list.append(createText("p", "No progress records are available yet.", "muted"));
+        } else {
+          progressRecords.forEach((record) => {
+            const title = String(record.title || record.project || record.task || "Untitled progress item").trim();
+            const owner = String(record.studentName || record.member || record.owner || "").trim();
+            const status = String(record.status || "In progress").trim();
+            const detail = String(record.nextAction || record.notes || record.description || "").trim();
+            const due = progressDueDate(record);
+            const card = document.createElement("article");
+            card.className = "member-progress-card";
+            const head = document.createElement("div");
+            head.className = "member-progress-card-head";
+            const titleGroup = document.createElement("div");
+            titleGroup.append(createText("h3", title));
+            if (owner && currentIsAdmin) titleGroup.append(createText("p", owner, "member-progress-owner"));
+            const badge = createText("span", status, `member-progress-badge is-${progressTone(status)}`);
+            head.append(titleGroup, badge);
+            card.append(head);
+            if (detail) card.append(createText("p", detail, "member-progress-detail"));
+            if (due) card.append(createText("p", `Due: ${due}`, "member-progress-due"));
+            list.append(card);
+          });
+        }
+        state.hidden = true;
+        summary.hidden = false;
+        list.hidden = false;
+      };
+
+      loadMemberProgress = async () => {
+        const state = document.querySelector("[data-member-progress-state]");
+        const list = document.querySelector("[data-member-progress-list]");
+        if (!state || !list || list.dataset.loading === "true" || list.dataset.loaded === "true") return;
+        list.dataset.loading = "true";
+        state.hidden = false;
+        state.textContent = "Loading progress records...";
+        try {
+          progressRecords = await fetchProtectedRecords("/api/progress", "progress");
+          renderProgress();
+          list.dataset.loaded = "true";
+        } catch (error) {
+          state.textContent = friendlyError(error);
+        } finally {
+          list.dataset.loading = "false";
+        }
+      };
+
+      const learningCategory = (record) => String(record.category || record.type || "General").trim() || "General";
+
+      const renderLearning = () => {
+        const state = document.querySelector("[data-member-learning-state]");
+        const list = document.querySelector("[data-member-learning-list]");
+        const search = document.querySelector("[data-member-learning-search]");
+        const category = document.querySelector("[data-member-learning-category]");
+        if (!state || !list || !search || !category) return;
+        const query = String(search.value || "").trim().toLowerCase();
+        const selectedCategory = String(category.value || "");
+        const filtered = learningRecords.filter((record) => {
+          const haystack = [record.title, record.description, record.summary, record.tags, learningCategory(record)].join(" ").toLowerCase();
+          return (!query || haystack.includes(query)) && (!selectedCategory || learningCategory(record) === selectedCategory);
+        });
+        list.replaceChildren();
+        if (!filtered.length) {
+          list.append(createText("p", "No learning materials match these filters.", "muted"));
+        } else {
+          filtered.forEach((record) => {
+            const card = document.createElement("article");
+            card.className = "member-learning-card";
+            card.append(createText("p", learningCategory(record), "member-learning-category"));
+            card.append(createText("h3", String(record.title || "Untitled learning material")));
+            const description = String(record.description || record.summary || "").trim();
+            if (description) card.append(createText("p", description, "member-learning-description"));
+            const url = secureHttpsUrl(record.url || record.driveUrl || record.link);
+            if (url) {
+              const link = createText("a", "Open material", "btn btn-secondary");
+              link.href = url;
+              link.target = "_blank";
+              link.rel = "noopener noreferrer";
+              card.append(link);
+            }
+            list.append(card);
+          });
+        }
+      };
+
+      loadMemberLearning = async () => {
+        const state = document.querySelector("[data-member-learning-state]");
+        const filters = document.querySelector("[data-member-learning-filters]");
+        const list = document.querySelector("[data-member-learning-list]");
+        const search = document.querySelector("[data-member-learning-search]");
+        const category = document.querySelector("[data-member-learning-category]");
+        if (!state || !filters || !list || !search || !category || list.dataset.loading === "true" || list.dataset.loaded === "true") return;
+        list.dataset.loading = "true";
+        state.textContent = "Loading learning materials...";
+        try {
+          learningRecords = await fetchProtectedRecords("/api/courses", "courses");
+          const categories = Array.from(new Set(learningRecords.map(learningCategory))).sort((a, b) => a.localeCompare(b));
+          category.replaceChildren(createText("option", "All categories"));
+          category.firstElementChild.value = "";
+          categories.forEach((value) => {
+            const option = createText("option", value);
+            option.value = value;
+            category.append(option);
+          });
+          search.addEventListener("input", renderLearning, { once: false });
+          category.addEventListener("change", renderLearning, { once: false });
+          renderLearning();
+          state.hidden = true;
+          filters.hidden = false;
+          list.hidden = false;
+          list.dataset.loaded = "true";
+        } catch (error) {
+          state.textContent = friendlyError(error);
+        } finally {
+          list.dataset.loading = "false";
+        }
       };
 
       const fetchResourceRecords = async () => {

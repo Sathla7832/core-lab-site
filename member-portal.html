@@ -22,7 +22,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/styles.css?v=66fec99e0c56" />
+  <link rel="stylesheet" href="assets/styles.css?v=member-systems-20260726" />
 </head>
 <body>
   <a class="skip-link" href="#main-content">Skip to main content</a>
@@ -77,6 +77,8 @@
           <button id="member-tab-report-schedule" class="member-portal-tab" type="button" role="tab" aria-selected="true" aria-controls="member-panel-report-schedule" data-member-tab-target="report-schedule">Presentation Schedule</button>
           <button id="member-tab-calendars" class="member-portal-tab" type="button" role="tab" aria-selected="false" aria-controls="member-panel-calendars" data-member-tab-target="calendars" tabindex="-1">Calendars</button>
           <button id="member-tab-resources" class="member-portal-tab" type="button" role="tab" aria-selected="false" aria-controls="member-panel-resources" data-member-tab-target="resources" tabindex="-1">Resources</button>
+          <button id="member-tab-progress" class="member-portal-tab" type="button" role="tab" aria-selected="false" aria-controls="member-panel-progress" data-member-tab-target="progress" tabindex="-1">Progress</button>
+          <button id="member-tab-learning" class="member-portal-tab" type="button" role="tab" aria-selected="false" aria-controls="member-panel-learning" data-member-tab-target="learning" tabindex="-1">Learning</button>
           <button id="member-tab-members" class="member-portal-tab" type="button" role="tab" aria-selected="false" aria-controls="member-panel-members" data-member-tab-target="members" tabindex="-1">Members list</button>
           <button id="member-tab-manage" class="member-portal-tab" type="button" role="tab" aria-selected="false" aria-controls="member-panel-manage" data-member-tab-target="manage" data-member-admin-tab tabindex="-1" hidden>Manage Portal</button>
         </nav>
@@ -103,6 +105,33 @@
             <p class="member-roadmap-state muted" data-member-roadmap-state>Choose Student Roadmap to load the protected roadmap.</p>
             <iframe class="member-roadmap-frame" title="Undergraduate research and graduate admission roadmap" data-member-roadmap-frame sandbox scrolling="no" hidden></iframe>
           </div>
+        </section>
+
+        <section id="member-panel-progress" class="member-content-section member-portal-panel" role="tabpanel" aria-labelledby="member-tab-progress" data-member-panel="progress" hidden>
+          <div class="member-section-head">
+            <div>
+              <h2>Research Progress</h2>
+              <p class="member-section-description">Track project milestones, next actions, and due dates. Members see their own work; administrators see the laboratory view.</p>
+            </div>
+          </div>
+          <p class="member-progress-state muted" data-member-progress-state>Open this tab to load progress records.</p>
+          <div class="member-progress-summary" data-member-progress-summary hidden></div>
+          <div class="member-progress-list" data-member-progress-list hidden></div>
+        </section>
+
+        <section id="member-panel-learning" class="member-content-section member-portal-panel" role="tabpanel" aria-labelledby="member-tab-learning" data-member-panel="learning" hidden>
+          <div class="member-section-head">
+            <div>
+              <h2>Learning Library</h2>
+              <p class="member-section-description">Laboratory learning materials, operating procedures, instrument principles, and onboarding references.</p>
+            </div>
+          </div>
+          <p class="member-learning-state muted" data-member-learning-state>Open this tab to load learning materials.</p>
+          <div class="member-learning-filters" data-member-learning-filters hidden>
+            <label>Search<input type="search" data-member-learning-search placeholder="Title, topic, or keyword" autocomplete="off"></label>
+            <label>Category<select data-member-learning-category><option value="">All categories</option></select></label>
+          </div>
+          <div class="member-learning-grid" data-member-learning-list hidden></div>
         </section>
 
         <section id="member-panel-members" class="member-content-section member-portal-panel member-members-panel" role="tabpanel" aria-labelledby="member-tab-members" data-member-panel="members" hidden>
@@ -172,7 +201,7 @@
 
     </div>
   </footer>
-  <script defer src="assets/main.js?v=66fec99e0c56"></script>
-  <script src="assets/firebase-config.js?v=66fec99e0c56"></script><script type="module" src="assets/member.js?v=66fec99e0c56"></script>
+  <script defer src="assets/main.js?v=member-systems-20260726"></script>
+  <script src="assets/firebase-config.js?v=member-systems-20260726"></script><script type="module" src="assets/member.js?v=member-systems-20260726"></script>
 </body>
 </html>
