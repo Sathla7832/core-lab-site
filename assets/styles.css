@@ -335,6 +335,8 @@ input:focus, textarea:focus { outline: 3px solid rgba(23,81,140,.18); border-col
 .member-announcements-dashboard .member-section-head { margin-bottom: 16px; }
 .member-portal-tabs { display: flex; gap: 4px; overflow-x: auto; padding: 12px 0 0; border-bottom: 1px solid var(--line); scrollbar-width: thin; }
 .member-portal-tab { flex: 0 0 auto; min-height: 48px; border: 0; border-bottom: 3px solid transparent; padding: 12px 18px; background: transparent; color: var(--muted); font: inherit; font-weight: 800; cursor: pointer; }
+.member-portal-tabs { scroll-padding-inline: 18px; scroll-snap-type: inline proximity; }
+.member-portal-tab { scroll-snap-align: start; }
 .member-portal-tab:hover { color: var(--brand-dark); background: var(--soft); }
 .member-portal-tab[aria-selected="true"] { border-bottom-color: var(--brand); color: var(--brand-dark); background: var(--surface); }
 .member-portal-tab:focus-visible { outline: 3px solid rgba(23,81,140,.22); outline-offset: -3px; }
@@ -465,6 +467,7 @@ input:focus, textarea:focus { outline: 3px solid rgba(23,81,140,.18); border-col
 .member-progress-stat span { color: var(--muted); font-size: 13px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; }
 .member-progress-stat strong { color: var(--brand-dark); font-size: 30px; line-height: 1; font-variant-numeric: tabular-nums; }
 .member-progress-list { display: grid; gap: 12px; }
+.member-system-pending { max-width: 68ch; margin: 0; padding: 20px 22px; color: #765117; font-weight: 700; line-height: 1.65; background: #fff7df; border: 1px solid #eddaa1; border-left: 4px solid #c88a19; border-radius: 8px; }
 .member-progress-card { padding: 20px; background: var(--surface); border: 1px solid var(--line); border-left: 4px solid var(--brand); border-radius: 8px; }
 .member-progress-card-head { display: flex; justify-content: space-between; gap: 16px; align-items: flex-start; }
 .member-progress-card h3 { margin: 0; color: var(--brand-dark); font-size: 18px; }
@@ -548,6 +551,7 @@ input:focus, textarea:focus { outline: 3px solid rgba(23,81,140,.18); border-col
   .member-calendar-state { white-space: normal; }
   .member-resource { grid-template-columns: 1fr; }
   .member-progress-summary { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .member-portal-tabs { scroll-padding-inline: 14px; }
   .member-account { justify-content: flex-start; }
   .nav-toggle { display: inline-flex; margin-left: auto; border: 1px solid var(--line); background: var(--surface); border-radius: 6px; padding: 8px 12px; font-size: 14px; }
   section { padding: 38px 0; }

@@ -66,6 +66,9 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
     if (target === "calendars") loadMemberCalendars();
     if (target === "progress") loadMemberProgress();
     if (target === "learning") loadMemberLearning();
+    // Keep the selected tab fully visible on narrow screens instead of leaving
+    // a partial label at the edge of the horizontal tab strip.
+    selectedTab.scrollIntoView({ block: "nearest", inline: "nearest" });
     if (moveFocus) selectedTab.focus();
   };
 
@@ -884,7 +887,9 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
           renderProgress();
           list.dataset.loaded = "true";
         } catch (error) {
-          state.textContent = friendlyError(error);
+          console.error("[member-portal] progress records", error);
+          state.textContent = "Progress records are being connected to the portal. Once the Notion sync is ready, your milestones and next actions will appear here.";
+          state.className = "member-progress-state member-system-pending";
         } finally {
           list.dataset.loading = "false";
         }
@@ -955,7 +960,9 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
           list.hidden = false;
           list.dataset.loaded = "true";
         } catch (error) {
-          state.textContent = friendlyError(error);
+          console.error("[member-portal] learning records", error);
+          state.textContent = "Learning materials are being connected to the portal. Once the Notion sync is ready, laboratory procedures and training resources will appear here.";
+          state.className = "member-learning-state member-system-pending";
         } finally {
           list.dataset.loading = "false";
         }
