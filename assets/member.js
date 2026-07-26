@@ -345,6 +345,28 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
         host.replaceChildren(table);
       };
 
+      const fetchMemberDirectory = async () => {
+        if (!resourceApiUrl) throw new Error("The member directory service is not configured.");
+        const token = await auth.currentUser?.getIdToken();
+        if (!token) throw new Error("Please sign in again to load the member directory.");
+        const response = await fetch(`${resourceApiUrl}/api/members`, {
+          method: "GET",
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(String(data.error || "The member directory could not be loaded."));
+        return (Array.isArray(data.members) ? data.members : []).slice().sort((a, b) => {
+          const rank = (member) => {
+            const role = String(member.role || "");
+            if (/\u78a9\u58eb\u751f|Master/i.test(role)) return 0;
+            if (/\u5b78\u751f|Undergraduate/i.test(role)) return 1;
+            return 2;
+          };
+          return rank(a) - rank(b)
+            || String(a.englishName || a.fullName || "").localeCompare(String(b.englishName || b.fullName || ""));
+        });
+      };
+
       loadMemberDirectory = async () => {
         const host = document.querySelector("[data-member-directory-table]");
         const state = document.querySelector("[data-member-directory-state]");
@@ -352,25 +374,7 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
         host.dataset.loading = "true";
         if (state) state.textContent = "Loading the protected member directory...";
         try {
-          if (!resourceApiUrl) throw new Error("The member directory service is not configured.");
-          const token = await auth.currentUser?.getIdToken();
-          if (!token) throw new Error("Please sign in again to load the member directory.");
-          const response = await fetch(`${resourceApiUrl}/api/members`, {
-            method: "GET",
-            headers: { Authorization: `Bearer ${token}` },
-          });
-          const data = await response.json().catch(() => ({}));
-          if (!response.ok) throw new Error(String(data.error || "The member directory could not be loaded."));
-          const members = (Array.isArray(data.members) ? data.members : []).slice().sort((a, b) => {
-            const rank = (member) => {
-              const role = String(member.role || "");
-              if (/\u78a9\u58eb\u751f|Master/i.test(role)) return 0;
-              if (/\u5b78\u58eb\u751f|Undergraduate/i.test(role)) return 1;
-              return 2;
-            };
-            return rank(a) - rank(b)
-              || String(a.englishName || a.fullName || "").localeCompare(String(b.englishName || b.fullName || ""));
-          });
+          const members = await fetchMemberDirectory();
           if (!members.length) {
             host.replaceChildren(createText("p", "No member records are available yet.", "muted"));
           } else {
@@ -822,6 +826,7 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
       let progressRecords = [];
       let learningRecords = [];
       let activeProgressMember = "";
+      let progressDirectoryMembers = [];
 
       const progressTone = (value) => {
         const normalized = String(value || "").toLowerCase();
@@ -831,6 +836,15 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
       };
 
       const progressDueDate = (record) => String(record.dueDate || record.due || record.deadline || "").trim();
+
+      const progressMemberLabel = (member) => String(member.englishName || member.fullName || member.discordNickname || member.email || "").trim();
+      const progressMemberMatches = (record, member) => {
+        const owner = String(record.studentName || "").casefold();
+        const values = [member.fullName, member.englishName, member.discordNickname, member.email]
+          .map((value) => String(value || "").trim().casefold())
+          .filter(Boolean);
+        return values.some((value) => owner.includes(value) || value.includes(owner));
+      };
 
       const renderProgress = () => {
         const state = document.querySelector("[data-member-progress-state]");
@@ -843,17 +857,23 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
         const timeline = document.querySelector("[data-member-progress-timeline]");
         const count = document.querySelector("[data-member-progress-count]");
         const list = document.querySelector("[data-member-progress-list]");
-        if (!state || !dashboard || !access || !identity || !filterWrap || !memberFilter || !summary || !timeline || !count || !list) return;
-        const members = Array.from(new Set(progressRecords.map((record) => String(record.studentName || "").trim()).filter(Boolean))).sort((a, b) => a.localeCompare(b));
+        const memberPanel = document.querySelector("[data-member-progress-members]");
+        const memberList = document.querySelector("[data-member-progress-member-list]");
+        const memberCount = document.querySelector("[data-member-progress-member-count]");
+        if (!state || !dashboard || !access || !identity || !filterWrap || !memberFilter || !summary || !timeline || !count || !list || !memberPanel || !memberList || !memberCount) return;
+        const fallbackMembers = Array.from(new Set(progressRecords.map((record) => String(record.studentName || "").trim()).filter(Boolean))).sort((a, b) => a.localeCompare(b)).map((name) => ({ fullName: name }));
+        const members = progressDirectoryMembers.length ? progressDirectoryMembers : fallbackMembers;
         if (!currentIsAdmin) activeProgressMember = "";
         if (currentIsAdmin) {
           const previous = activeProgressMember;
           memberFilter.replaceChildren(createText("option", "All laboratory members"));
           memberFilter.firstElementChild.value = "";
           members.forEach((member) => {
-            const option = createText("option", member);
-            option.value = member;
-            option.selected = member === previous;
+            const label = progressMemberLabel(member);
+            if (!label) return;
+            const option = createText("option", label);
+            option.value = label;
+            option.selected = label === previous;
             memberFilter.append(option);
           });
           filterWrap.hidden = false;
@@ -862,12 +882,31 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
           filterWrap.hidden = true;
           access.textContent = "Private · your progress only";
         }
-        const displayed = activeProgressMember ? progressRecords.filter((record) => String(record.studentName || "").trim() === activeProgressMember) : progressRecords;
+        const selectedMember = members.find((member) => progressMemberLabel(member) === activeProgressMember);
+        const displayed = selectedMember ? progressRecords.filter((record) => progressMemberMatches(record, selectedMember)) : progressRecords;
         const completed = displayed.filter((record) => progressTone(record.status) === "complete").length;
         const attention = displayed.filter((record) => progressTone(record.status) === "attention").length;
         const active = displayed.filter((record) => progressTone(record.status) === "active").length;
         const latest = displayed.map(progressDueDate).filter(Boolean).sort().reverse()[0] || "No updates yet";
         identity.textContent = currentIsAdmin ? (activeProgressMember || "All laboratory members") : "My research records";
+        memberList.replaceChildren();
+        memberCount.textContent = `${members.length} member${members.length === 1 ? "" : "s"}`;
+        members.forEach((member) => {
+          const label = progressMemberLabel(member);
+          if (!label) return;
+          const records = progressRecords.filter((record) => progressMemberMatches(record, member));
+          const button = createText("button", "", "member-progress-member-card");
+          button.type = "button";
+          button.disabled = !currentIsAdmin;
+          button.setAttribute("aria-pressed", String(label === activeProgressMember));
+          button.append(createText("strong", label), createText("span", `${records.length} progress record${records.length === 1 ? "" : "s"}`));
+          if (currentIsAdmin) button.addEventListener("click", () => {
+            activeProgressMember = label;
+            renderProgress();
+          });
+          memberList.append(button);
+        });
+        memberPanel.hidden = !members.length;
         summary.replaceChildren();
         [["Records", displayed.length], ["In progress", active], ["Completed", completed], ["Paused", attention]].forEach(([label, value]) => {
           const item = document.createElement("article");
@@ -929,7 +968,13 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
         state.hidden = false;
         state.textContent = "Loading progress records...";
         try {
-          progressRecords = await fetchProtectedRecords("/api/progress", "progress");
+          [progressRecords, progressDirectoryMembers] = await Promise.all([
+            fetchProtectedRecords("/api/progress", "progress"),
+            fetchMemberDirectory().catch((error) => {
+              console.warn("[member-portal] progress member directory", error);
+              return [];
+            }),
+          ]);
           if (memberFilter.dataset.bound !== "true") {
             memberFilter.addEventListener("change", () => {
               activeProgressMember = memberFilter.value;

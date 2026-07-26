@@ -22,7 +22,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/styles.css?v=progress-dashboard-20260726" />
+  <link rel="stylesheet" href="assets/styles.css?v=progress-members-20260726" />
 </head>
 <body>
   <a class="skip-link" href="#main-content">Skip to main content</a>
@@ -110,11 +110,6 @@
         <section id="member-panel-progress" class="member-content-section member-portal-panel" role="tabpanel" aria-labelledby="member-tab-progress" data-member-panel="progress" hidden>
           <div class="member-progress-shell">
           <div class="member-section-head member-progress-heading">
-            <div>
-              <p class="member-progress-eyebrow">CORE Lab · Progress tracking</p>
-              <h2>Research Progress</h2>
-              <p class="member-section-description">A private view of research records, current status, and recent updates. Members see their own work; administrators can switch between laboratory members.</p>
-            </div>
             <div class="member-progress-access" data-member-progress-access>Private member view</div>
           </div>
           <p class="member-progress-state muted" data-member-progress-state>Open this tab to load progress records.</p>
@@ -123,6 +118,10 @@
               <div class="member-progress-identity" data-member-progress-identity></div>
               <label class="member-progress-filter" data-member-progress-filter hidden>Member<select data-member-progress-member aria-label="Filter progress by member"></select></label>
             </div>
+            <section class="member-progress-members" data-member-progress-members hidden>
+              <div class="member-progress-records-head"><h3>Members</h3><span data-member-progress-member-count></span></div>
+              <div class="member-progress-member-list" data-member-progress-member-list></div>
+            </section>
             <div class="member-progress-summary" data-member-progress-summary></div>
             <section class="member-progress-timeline" data-member-progress-timeline></section>
             <section class="member-progress-records">
@@ -215,7 +214,7 @@
 
     </div>
   </footer>
-  <script defer src="assets/main.js?v=progress-dashboard-20260726"></script>
-  <script src="assets/firebase-config.js?v=progress-dashboard-20260726"></script><script type="module" src="assets/member.js?v=progress-dashboard-20260726"></script>
+  <script defer src="assets/main.js?v=progress-members-20260726"></script>
+  <script src="assets/firebase-config.js?v=progress-members-20260726"></script><script type="module" src="assets/member.js?v=progress-members-20260726"></script>
 </body>
 </html>
