@@ -22,7 +22,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/styles.css?v=progress-prototype-20260726" />
+<link rel="stylesheet" href="assets/styles.css?v=pm-workspace-20260726" />
 </head>
 <body>
   <a class="skip-link" href="#main-content">Skip to main content</a>
@@ -109,10 +109,7 @@
 
         <section id="member-panel-progress" class="member-content-section member-portal-panel" role="tabpanel" aria-labelledby="member-tab-progress" data-member-panel="progress" hidden>
           <div class="member-progress-shell">
-          <div class="member-section-head member-progress-heading">
-            <div class="member-progress-access" data-member-progress-access>Private member view</div>
-          </div>
-          <p class="member-progress-state muted" data-member-progress-state>Open this tab to load progress records.</p>
+<p class="member-progress-state muted" data-member-progress-state>Open this tab to load progress records.</p>
           <div class="member-progress-dashboard" data-member-progress-dashboard hidden>
             <div class="member-progress-toolbar">
               <div class="member-progress-toolbar-label">CORE Lab · Progress Dashboard</div>
@@ -131,9 +128,23 @@
                 <div class="member-progress-ring" aria-label="Completed-record percentage"><svg viewBox="0 0 132 132" role="img"><circle cx="66" cy="66" r="52"></circle><circle data-member-progress-ring cx="66" cy="66" r="52"></circle><text data-member-progress-ring-value x="66" y="63" text-anchor="middle"></text><text x="66" y="82" text-anchor="middle">COMPLETE</text></svg></div>
                 <div class="member-progress-summary" data-member-progress-summary></div>
               </div>
-              <section class="member-progress-timeline" data-member-progress-timeline></section>
-            </section>
-            <section class="member-progress-records">
+<section class="member-progress-timeline" data-member-progress-timeline></section>
+</section>
+<section class="member-progress-operations" aria-label="Research operations">
+<section class="member-progress-operation-card">
+<div class="member-progress-records-head"><h3>Research next actions</h3><span>Progress</span></div>
+<div class="member-progress-action-list" data-member-progress-actions></div>
+</section>
+<section class="member-progress-operation-card">
+<div class="member-progress-records-head"><h3>Recent raw data</h3><span>Discord · Drive</span></div>
+<div class="member-progress-raw-list" data-member-progress-raw></div>
+</section>
+</section>
+<aside class="member-progress-foundation" data-member-progress-foundation>
+<strong>Private research workspace</strong>
+<span>Progress is shown from the protected laboratory record. Tasks, comments, personal Todo, and the Discord intake workflow use the Supabase operational layer defined for this portal.</span>
+</aside>
+<section class="member-progress-records">
               <div class="member-progress-records-head"><h3>Current work</h3><span data-member-progress-count></span></div>
               <div class="member-progress-list" data-member-progress-list></div>
             </section>
@@ -227,7 +238,7 @@
 
     </div>
   </footer>
-  <script defer src="assets/main.js?v=progress-prototype-20260726"></script>
-  <script src="assets/firebase-config.js?v=progress-prototype-20260726"></script><script type="module" src="assets/member.js?v=progress-prototype-20260726"></script>
+<script defer src="assets/main.js?v=pm-workspace-20260726"></script>
+<script src="assets/firebase-config.js?v=pm-workspace-20260726"></script><script type="module" src="assets/member.js?v=pm-workspace-20260726"></script>
 </body>
 </html>

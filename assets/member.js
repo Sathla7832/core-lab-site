@@ -865,7 +865,9 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
         const memberPanel = document.querySelector("[data-member-progress-members]");
         const memberList = document.querySelector("[data-member-progress-member-list]");
         const memberCount = document.querySelector("[data-member-progress-member-count]");
-        if (!state || !dashboard || !access || !identity || !filterWrap || !memberFilter || !project || !ring || !ringValue || !summary || !timeline || !count || !list || !milestones || !trend || !memberPanel || !memberList || !memberCount) return;
+        const actions = document.querySelector("[data-member-progress-actions]");
+        const rawData = document.querySelector("[data-member-progress-raw]");
+        if (!state || !dashboard || !access || !identity || !filterWrap || !memberFilter || !project || !ring || !ringValue || !summary || !timeline || !count || !list || !milestones || !trend || !memberPanel || !memberList || !memberCount || !actions || !rawData) return;
         const fallbackMembers = Array.from(new Set(progressRecords.map((record) => String(record.studentName || "").trim()).filter(Boolean))).sort((a, b) => a.localeCompare(b)).map((name) => ({ fullName: name }));
         const members = progressDirectoryMembers.length ? progressDirectoryMembers : fallbackMembers;
         if (!currentIsAdmin) activeProgressMember = "";
@@ -938,6 +940,45 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
           track.append(segment);
         });
         timeline.append(copy, track);
+        actions.replaceChildren();
+        const actionRecords = displayed.filter((record) => String(record.nextAction || record.notes || record.description || "").trim());
+        if (!actionRecords.length) {
+          actions.append(createText("p", "No next actions have been recorded yet.", "member-progress-empty"));
+        } else {
+          actionRecords.slice(0, 6).forEach((record) => {
+            const title = String(record.title || record.project || record.task || "Research item").trim();
+            const action = String(record.nextAction || record.notes || record.description || "").trim();
+            const row = document.createElement("article");
+            row.className = "member-progress-action";
+            row.append(createText("strong", title), createText("span", action));
+            actions.append(row);
+          });
+        }
+        rawData.replaceChildren();
+        const rawForView = selectedMember
+          ? experimentRecords.filter((record) => progressMemberMatches({ studentName: experimentStudentName(record) }, selectedMember))
+          : currentIsAdmin
+            ? experimentRecords
+            : experimentRecords.filter((record) => displayed.some((progress) => progressMemberMatches({ studentName: experimentStudentName(record) }, { fullName: progress.studentName })));
+        if (!rawForView.length) {
+          rawData.append(createText("p", "No raw-data uploads are available for this view yet.", "member-progress-empty"));
+        } else {
+          rawForView.slice(0, 6).forEach((record) => {
+            const label = String(record.filename || "Untitled experiment file").trim();
+            const meta = [experimentStudentName(record), record.date, record.instrument, record.sample].filter(Boolean).join(" · ");
+            const row = document.createElement("article");
+            row.className = "member-progress-raw";
+            const target = secureHttpsUrl(record.driveUrl);
+            const title = target ? createText("a", label) : createText("strong", label);
+            if (target) {
+              title.href = target;
+              title.target = "_blank";
+              title.rel = "noopener noreferrer";
+            }
+            row.append(title, createText("span", meta || "Experiment upload"));
+            rawData.append(row);
+          });
+        }
         milestones.replaceChildren();
         [["In progress", active, "active"], ["Completed", completed, "complete"], ["Paused", attention, "attention"]].forEach(([label, value, tone]) => {
           const row = document.createElement("div");
@@ -999,10 +1040,14 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
         state.hidden = false;
         state.textContent = "Loading progress records...";
         try {
-          [progressRecords, progressDirectoryMembers] = await Promise.all([
+          [progressRecords, progressDirectoryMembers, experimentRecords] = await Promise.all([
             fetchProtectedRecords("/api/progress", "progress"),
             fetchMemberDirectory().catch((error) => {
               console.warn("[member-portal] progress member directory", error);
+              return [];
+            }),
+            fetchExperimentRecords().catch((error) => {
+              console.warn("[member-portal] progress raw-data summary", error);
               return [];
             }),
           ]);
