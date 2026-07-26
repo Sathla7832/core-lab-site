@@ -22,7 +22,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/styles.css?v=progress-members-20260726" />
+  <link rel="stylesheet" href="assets/styles.css?v=progress-prototype-20260726" />
 </head>
 <body>
   <a class="skip-link" href="#main-content">Skip to main content</a>
@@ -115,19 +115,32 @@
           <p class="member-progress-state muted" data-member-progress-state>Open this tab to load progress records.</p>
           <div class="member-progress-dashboard" data-member-progress-dashboard hidden>
             <div class="member-progress-toolbar">
-              <div class="member-progress-identity" data-member-progress-identity></div>
+              <div class="member-progress-toolbar-label">CORE Lab · Progress Dashboard</div>
               <label class="member-progress-filter" data-member-progress-filter hidden>Member<select data-member-progress-member aria-label="Filter progress by member"></select></label>
             </div>
             <section class="member-progress-members" data-member-progress-members hidden>
               <div class="member-progress-records-head"><h3>Members</h3><span data-member-progress-member-count></span></div>
               <div class="member-progress-member-list" data-member-progress-member-list></div>
             </section>
-            <div class="member-progress-summary" data-member-progress-summary></div>
-            <section class="member-progress-timeline" data-member-progress-timeline></section>
+            <section class="member-progress-hero-card">
+              <div class="member-progress-hero-head">
+                <div><h3 data-member-progress-identity></h3><p data-member-progress-project>Research record overview</p></div>
+                <div class="member-progress-access" data-member-progress-access>Private member view</div>
+              </div>
+              <div class="member-progress-hero-body">
+                <div class="member-progress-ring" aria-label="Completed-record percentage"><svg viewBox="0 0 132 132" role="img"><circle cx="66" cy="66" r="52"></circle><circle data-member-progress-ring cx="66" cy="66" r="52"></circle><text data-member-progress-ring-value x="66" y="63" text-anchor="middle"></text><text x="66" y="82" text-anchor="middle">COMPLETE</text></svg></div>
+                <div class="member-progress-summary" data-member-progress-summary></div>
+              </div>
+              <section class="member-progress-timeline" data-member-progress-timeline></section>
+            </section>
             <section class="member-progress-records">
-              <div class="member-progress-records-head"><h3>Research records</h3><span data-member-progress-count></span></div>
+              <div class="member-progress-records-head"><h3>Current work</h3><span data-member-progress-count></span></div>
               <div class="member-progress-list" data-member-progress-list></div>
             </section>
+            <div class="member-progress-columns">
+              <section class="member-progress-milestones"><div class="member-progress-records-head"><h3>Milestones</h3></div><div data-member-progress-milestones></div></section>
+              <section class="member-progress-trend"><div class="member-progress-records-head"><h3>Research status</h3></div><div data-member-progress-trend></div></section>
+            </div>
           </div>
           </div>
         </section>
@@ -214,7 +227,7 @@
 
     </div>
   </footer>
-  <script defer src="assets/main.js?v=progress-members-20260726"></script>
-  <script src="assets/firebase-config.js?v=progress-members-20260726"></script><script type="module" src="assets/member.js?v=progress-members-20260726"></script>
+  <script defer src="assets/main.js?v=progress-prototype-20260726"></script>
+  <script src="assets/firebase-config.js?v=progress-prototype-20260726"></script><script type="module" src="assets/member.js?v=progress-prototype-20260726"></script>
 </body>
 </html>

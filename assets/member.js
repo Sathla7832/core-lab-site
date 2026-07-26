@@ -853,14 +853,19 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
         const identity = document.querySelector("[data-member-progress-identity]");
         const filterWrap = document.querySelector("[data-member-progress-filter]");
         const memberFilter = document.querySelector("[data-member-progress-member]");
+        const project = document.querySelector("[data-member-progress-project]");
+        const ring = document.querySelector("[data-member-progress-ring]");
+        const ringValue = document.querySelector("[data-member-progress-ring-value]");
         const summary = document.querySelector("[data-member-progress-summary]");
         const timeline = document.querySelector("[data-member-progress-timeline]");
         const count = document.querySelector("[data-member-progress-count]");
         const list = document.querySelector("[data-member-progress-list]");
+        const milestones = document.querySelector("[data-member-progress-milestones]");
+        const trend = document.querySelector("[data-member-progress-trend]");
         const memberPanel = document.querySelector("[data-member-progress-members]");
         const memberList = document.querySelector("[data-member-progress-member-list]");
         const memberCount = document.querySelector("[data-member-progress-member-count]");
-        if (!state || !dashboard || !access || !identity || !filterWrap || !memberFilter || !summary || !timeline || !count || !list || !memberPanel || !memberList || !memberCount) return;
+        if (!state || !dashboard || !access || !identity || !filterWrap || !memberFilter || !project || !ring || !ringValue || !summary || !timeline || !count || !list || !milestones || !trend || !memberPanel || !memberList || !memberCount) return;
         const fallbackMembers = Array.from(new Set(progressRecords.map((record) => String(record.studentName || "").trim()).filter(Boolean))).sort((a, b) => a.localeCompare(b)).map((name) => ({ fullName: name }));
         const members = progressDirectoryMembers.length ? progressDirectoryMembers : fallbackMembers;
         if (!currentIsAdmin) activeProgressMember = "";
@@ -889,6 +894,10 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
         const active = displayed.filter((record) => progressTone(record.status) === "active").length;
         const latest = displayed.map(progressDueDate).filter(Boolean).sort().reverse()[0] || "No updates yet";
         identity.textContent = currentIsAdmin ? (activeProgressMember || "All laboratory members") : "My research records";
+        project.textContent = displayed.length ? "Notion research-record overview" : "No research records have been added yet";
+        const completionPercent = displayed.length ? Math.round((completed / displayed.length) * 100) : 0;
+        ring.style.strokeDashoffset = String(326.7 * (1 - completionPercent / 100));
+        ringValue.textContent = `${completionPercent}%`;
         memberList.replaceChildren();
         memberCount.textContent = `${members.length} member${members.length === 1 ? "" : "s"}`;
         members.forEach((member) => {
@@ -929,6 +938,28 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
           track.append(segment);
         });
         timeline.append(copy, track);
+        milestones.replaceChildren();
+        [["In progress", active, "active"], ["Completed", completed, "complete"], ["Paused", attention, "attention"]].forEach(([label, value, tone]) => {
+          const row = document.createElement("div");
+          row.className = "member-progress-milestone";
+          row.append(createText("span", label), createText("strong", `${value} record${value === 1 ? "" : "s"}`, `is-${tone}`));
+          milestones.append(row);
+        });
+        trend.replaceChildren();
+        const trendTitle = createText("p", "Current distribution of verified Notion records", "member-progress-trend-copy");
+        const trendChart = document.createElement("div");
+        trendChart.className = "member-progress-trend-chart";
+        [["In progress", active, "active"], ["Completed", completed, "complete"], ["Paused", attention, "attention"]].forEach(([label, value, tone]) => {
+          const row = document.createElement("div");
+          row.className = "member-progress-trend-row";
+          row.append(createText("span", label));
+          const bar = document.createElement("i");
+          bar.className = `is-${tone}`;
+          bar.style.width = `${displayed.length ? Math.max(4, Math.round((Number(value) / displayed.length) * 100)) : 0}%`;
+          row.append(bar, createText("b", String(value)));
+          trendChart.append(row);
+        });
+        trend.append(trendTitle, trendChart);
         list.replaceChildren();
         count.textContent = `${displayed.length} record${displayed.length === 1 ? "" : "s"}`;
         if (!displayed.length) {
