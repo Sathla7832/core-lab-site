@@ -158,6 +158,12 @@
 #cl-progress .cl-tplmsg { font-family: var(--clm); font-size: 12px; color: var(--cls); }
 #cl-progress .cl-tplmsg.ok { color: var(--clgn); }
 #cl-progress .cl-tplmsg.err { color: var(--clr); }
+#cl-progress .cl-fold summary { cursor: pointer; list-style: revert; margin-bottom: 10px; }
+#cl-progress .cl-fold summary::-webkit-details-marker { display: revert; }
+#cl-progress .cl-rrow { display: grid; grid-template-columns: 1fr 130px; gap: 10px; align-items: center; padding: 6px 0; border-bottom: 1px solid var(--clgr); }
+#cl-progress .cl-rrow:last-child { border-bottom: 0; }
+#cl-progress .cl-rn { font-size: 13px; }
+#cl-progress .cl-rrow select { width: 100%; }
 @media (min-width: 620px) { #cl-progress .cl-tplgrid { grid-template-columns: 1fr 1fr; } }
 #cl-progress .cl-cols { display: grid; grid-template-columns: 1fr; gap: 14px; }
 @media (min-width: 760px) { #cl-progress .cl-hero { grid-template-columns: 340px 1fr; } #cl-progress .cl-cols { grid-template-columns: 1.05fr 1fr; } }

@@ -195,7 +195,7 @@
     const isPI = cfg.role === "admin" || cfg.role === "pi";
     container.id = "cl-progress";
     container.innerHTML = "";
-    let progs = [], myTodos = [], students = [], inbox = [], cur = 0;
+    let progs = [], myTodos = [], students = [], inbox = [], cur = 0, programSupported = false;
 
     // Fill a <select> with active members grouped 碩班生 -> 專題生 -> 指導教授
     // (falls back to an "其他" group when program isn't set yet).
@@ -242,7 +242,8 @@
           const rows = await ax.get("profiles?select=id,program");
           const pm = {}; rows.forEach((r) => (pm[r.id] = r.program));
           students.forEach((s) => (s.program = pm[s.id]));
-        } catch (e) { /* program column not added yet */ }
+          programSupported = true;
+        } catch (e) { programSupported = false; /* program column not added yet */ }
       }
     }
 
@@ -309,6 +310,40 @@
       });
       bar.appendChild(btn); bar.appendChild(msg); c.appendChild(bar);
       return c;
+    }
+
+    // Set each member's program (碩班/專題/PI) from the panel — replaces the manual
+    // UPDATE SQL. Only the one-time ALTER (add column) still needs the SQL editor.
+    function renderRolesCard() {
+      const c = el("div", "cl-card");
+      const d = document.createElement("details"); d.className = "cl-fold";
+      const sm = document.createElement("summary"); sm.className = "cl-h"; sm.textContent = "設定成員身分 · 碩班 / 專題 / 指導教授";
+      d.appendChild(sm);
+      if (!programSupported) {
+        d.appendChild(el("div", "cl-err", "尚未啟用 program 欄位。請先在 Supabase SQL Editor 執行一次:alter table public.profiles add column if not exists program text;"));
+        c.appendChild(d); return c;
+      }
+      d.appendChild(el("div", "cl-sub", "設定後,上方「套範本 / 匯入」的學生下拉會依此分組排序;新學生預設為專題生。"));
+      const rank = { masters: 0, project: 1, pi: 2 };
+      const list = students.filter((s) => s.active !== false).slice().sort((a, b) => {
+        const ra = (a.role === "pi" || a.role === "admin") ? 2 : (rank[a.program] != null ? rank[a.program] : 1);
+        const rb = (b.role === "pi" || b.role === "admin") ? 2 : (rank[b.program] != null ? rank[b.program] : 1);
+        return ra - rb || String(a.name).localeCompare(String(b.name));
+      });
+      list.forEach((s) => {
+        const row = el("div", "cl-rrow");
+        row.appendChild(el("div", "cl-rn", s.name));
+        const sel = el("select");
+        [["masters", "碩班生"], ["project", "專題生"], ["pi", "指導教授"]].forEach((x) => { const o = el("option", null, x[1]); o.value = x[0]; sel.appendChild(o); });
+        sel.value = (s.role === "pi" || s.role === "admin") ? "pi" : (s.program || "project");
+        sel.addEventListener("change", async () => {
+          const prev = s.program;
+          try { await ax.patch("profiles?id=eq." + s.id, { program: sel.value }); s.program = sel.value; }
+          catch (e) { sel.value = (s.role === "pi" || s.role === "admin") ? "pi" : (prev || "project"); alert("更新失敗:" + e.message); }
+        });
+        row.appendChild(sel); d.appendChild(row);
+      });
+      c.appendChild(d); return c;
     }
 
     // Import a student's whole progress from the lab's CSV format:
@@ -429,7 +464,7 @@
 
     function render() {
       container.innerHTML = "";
-      if (isPI) { container.appendChild(renderTemplateCard()); container.appendChild(renderImportCard()); }
+      if (isPI) { container.appendChild(renderTemplateCard()); container.appendChild(renderImportCard()); container.appendChild(renderRolesCard()); }
       if (!progs.length) { container.appendChild(el("div", "cl-empty", isPI ? "目前沒有進度資料。用上面的範本建立第一筆。" : "目前沒有進度資料。")); return; }
 
       if (progs.length > 1) {
