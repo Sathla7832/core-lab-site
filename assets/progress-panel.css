@@ -66,6 +66,10 @@
 #cl-progress .cl-add input[type=text] { flex: 1; min-width: 150px; }
 #cl-progress .cl-btn { border: 0; background: var(--clt); color: #fff; font-family: var(--clm); font-size: 12px; font-weight: 600; padding: 8px 15px; border-radius: 8px; cursor: pointer; }
 #cl-progress .cl-btn.dark { background: var(--cli); }
+#cl-progress .cl-btn.ghost { background: transparent; border: 1px solid var(--cll); color: var(--cls); }
+#cl-progress .cl-btn.ghost.danger { color: var(--clr); border-color: var(--clr); }
+#cl-progress .cl-btn.ghost.danger:hover { background: var(--clr); color: #fff; }
+#cl-progress .cl-nmrow { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; justify-content: space-between; }
 #cl-progress .cl-todo { display: flex; align-items: center; gap: 10px; padding: 9px 2px; border-bottom: 1px solid var(--clgr); }
 #cl-progress .cl-todo:last-child { border-bottom: 0; }
 #cl-progress .cl-ck { width: 20px; height: 20px; border-radius: 6px; border: 1.5px solid var(--cll); cursor: pointer; display: grid; place-items: center; font-size: 12px; background: var(--clg); }

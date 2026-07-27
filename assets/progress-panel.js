@@ -214,7 +214,19 @@
       const f2 = el("div"); f2.style.marginTop = "10px"; f2.appendChild(el("div", "cl-lab", "距到期")); f2.appendChild(el("div", "cl-big", left >= 0 ? left + " 天" : "已逾期 " + (-left) + " 天"));
       figs.appendChild(f1); figs.appendChild(f2); rb.appendChild(figs);
       const right = el("div");
-      const nm = el("div"); nm.style.fontSize = "18px"; nm.style.fontWeight = "800"; nm.textContent = P._name; right.appendChild(nm);
+      const nmrow = el("div", "cl-nmrow");
+      const nm = el("div"); nm.style.fontSize = "18px"; nm.style.fontWeight = "800"; nm.textContent = P._name; nmrow.appendChild(nm);
+      if (isPI) {
+        const del = el("button", "cl-btn ghost danger", "刪除此進度");
+        del.addEventListener("click", async () => {
+          if (!confirm("確定刪除「" + P._name + " — " + (P.project || "") + "」?\n會一併移除底下所有里程碑、必要產出與留言,無法復原。")) return;
+          del.disabled = true; del.textContent = "刪除中…";
+          try { await ax.del("progress?id=eq." + P.id); await load(); cur = 0; render(); }
+          catch (e) { del.disabled = false; del.textContent = "刪除此進度"; alert("刪除失敗:" + e.message); }
+        });
+        nmrow.appendChild(del);
+      }
+      right.appendChild(nmrow);
       right.appendChild(el("div", "cl-sub", P.project || ""));
       const th = el("div", "cl-h", "進度 vs 時間軸"); th.style.marginTop = "14px"; right.appendChild(th);
       const track = el("div", "cl-track");
