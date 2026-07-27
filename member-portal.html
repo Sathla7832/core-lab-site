@@ -22,7 +22,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/styles.css?v=544e1e0fb5cb" />
+  <link rel="stylesheet" href="assets/styles.css?v=b65cc7f40f35" />
 </head>
 <body>
   <a class="skip-link" href="#main-content">Skip to main content</a>
@@ -108,12 +108,8 @@
         </section>
 
         <section id="member-panel-progress" class="member-content-section member-portal-panel member-progress-panel" role="tabpanel" aria-labelledby="member-tab-progress" data-member-panel="progress" hidden>
-          <div class="member-section-head">
-            <div><h2>Progress Dashboard</h2><p class="member-section-description">Research progress tracked in the laboratory database.</p></div>
-            <label class="member-progress-filter">Member<select data-member-progress-filter><option value="">All laboratory members</option></select></label>
-          </div>
-          <p class="member-progress-state muted" data-member-progress-state>Open this tab to load progress records.</p>
-          <div class="member-progress-list" data-member-progress-list hidden></div>
+          <p class="member-progress-state muted" data-member-progress-state>Open this tab to load your progress workspace.</p>
+          <div id="cl-progress" data-member-progress-mount hidden></div>
         </section>
 
         <section id="member-panel-learning" class="member-content-section member-portal-panel member-learning-panel" role="tabpanel" aria-labelledby="member-tab-learning" data-member-panel="learning" hidden>
@@ -194,7 +190,7 @@
 
     </div>
   </footer>
-  <script defer src="assets/main.js?v=544e1e0fb5cb"></script>
-  <script src="assets/firebase-config.js?v=544e1e0fb5cb"></script><script type="module" src="assets/member.js?v=544e1e0fb5cb"></script>
+  <script defer src="assets/main.js?v=b65cc7f40f35"></script>
+  <script src="assets/firebase-config.js?v=b65cc7f40f35"></script><script type="module" src="assets/member.js?v=b65cc7f40f35"></script>
 </body>
 </html>

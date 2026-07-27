@@ -297,79 +297,50 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
         }
       };
 
-      // Progress: read live from the laboratory database via the member API.
-      let progressRecords = [];
-      const progressStatusClass = (status) => {
-        const s = String(status || "").toLowerCase();
-        if (s.includes("done") || s.includes("complete") || s.includes("\u5b8c\u6210")) return "is-done";
-        if (s.includes("block") || s.includes("stuck") || s.includes("\u5361")) return "is-blocked";
-        if (s.includes("progress") || s.includes("\u9032\u884c")) return "is-active";
-        return "is-pending";
-      };
-      const renderProgressList = () => {
-        const host = document.querySelector("[data-member-progress-list]");
-        if (!host) return;
-        const filter = document.querySelector("[data-member-progress-filter]");
-        const who = filter ? filter.value : "";
-        const rows = progressRecords.filter((r) => !who || r.studentName === who);
-        host.replaceChildren();
-        if (!rows.length) {
-          host.append(createText("p", progressRecords.length ? "No records match that member." : "No progress records yet.", "muted"));
-          return;
-        }
-        rows.forEach((record) => {
-          const card = document.createElement("article");
-          card.className = "member-progress-card";
-          const head = document.createElement("div");
-          head.className = "member-progress-card-head";
-          head.append(createText("h3", record.title || "Untitled"));
-          if (record.status) head.append(createText("span", record.status, "member-progress-status " + progressStatusClass(record.status)));
-          card.append(head);
-          const meta = [record.studentName, record.dueDate].filter(Boolean).join("  |  ");
-          if (meta) card.append(createText("p", meta, "member-card-meta"));
-          if (record.nextAction) card.append(createText("p", record.nextAction));
-          host.append(card);
+      // Progress: rich workspace rendered by the same-origin progress-panel.js,
+      // fed live from Supabase through the 1b bridge (RLS scopes rows per user).
+      let progressAssetsPromise = null;
+      const ensureProgressAssets = () => {
+        if (progressAssetsPromise) return progressAssetsPromise;
+        progressAssetsPromise = new Promise((resolve, reject) => {
+          if (!document.querySelector("link[data-progress-panel-css]")) {
+            const link = document.createElement("link");
+            link.rel = "stylesheet"; link.href = "assets/progress-panel.css";
+            link.setAttribute("data-progress-panel-css", "");
+            document.head.appendChild(link);
+          }
+          if (window.CoreLabProgress) { resolve(); return; }
+          const s = document.createElement("script");
+          s.src = "assets/progress-panel.js";
+          s.onload = () => resolve();
+          s.onerror = () => reject(new Error("Could not load the progress workspace."));
+          document.head.appendChild(s);
         });
+        return progressAssetsPromise;
       };
       loadMemberProgress = async () => {
-        const host = document.querySelector("[data-member-progress-list]");
+        const mount = document.querySelector("[data-member-progress-mount]");
         const state = document.querySelector("[data-member-progress-state]");
-        if (!host || host.dataset.loaded === "true" || host.dataset.loading === "true") return;
-        host.dataset.loading = "true";
-        if (state) state.textContent = "Loading progress records...";
+        if (!mount || mount.dataset.loaded === "true" || mount.dataset.loading === "true") return;
+        mount.dataset.loading = "true";
+        if (state) state.textContent = "Loading your progress workspace...";
         try {
           if (!syncApiUrl) throw new Error("The member resource service is not configured.");
           const idToken = await auth.currentUser?.getIdToken();
-          if (!idToken) throw new Error("Please sign in again to load progress records.");
-          // 1b bridge: exchange the Firebase identity for a Supabase-scoped token.
+          if (!idToken) throw new Error("Please sign in again to load the progress workspace.");
           const bridgeRes = await fetch(syncApiUrl + "/api/supabase-token", { method: "GET", headers: { Authorization: "Bearer " + idToken } });
           const bridge = await bridgeRes.json().catch(() => ({}));
           if (!bridgeRes.ok) throw new Error(String(bridge.error || "Progress workspace is unavailable."));
-          // Read progress straight from Supabase; RLS returns only rows this account may see.
-          const url = bridge.supabaseUrl + "/rest/v1/progress?select=id,project,start_date,due_date,profiles(name)&order=due_date.asc";
-          const rowsRes = await fetch(url, { headers: { apikey: bridge.anonKey, Authorization: "Bearer " + bridge.token } });
-          const rows = await rowsRes.json().catch(() => []);
-          if (!rowsRes.ok) throw new Error("Progress records could not be loaded.");
-          progressRecords = (Array.isArray(rows) ? rows : []).map((r) => ({
-            title: r.project || "Untitled",
-            studentName: (r.profiles && r.profiles.name) || "",
-            dueDate: r.due_date || "",
-            status: "",
-            nextAction: "",
-          }));
-          const filter = document.querySelector("[data-member-progress-filter]");
-          if (filter) {
-            const names = Array.from(new Set(progressRecords.map((r) => r.studentName).filter(Boolean))).sort();
-            names.forEach((name) => { const opt = document.createElement("option"); opt.value = name; opt.textContent = name; filter.append(opt); });
-            filter.addEventListener("change", renderProgressList);
-          }
-          renderProgressList();
-          host.hidden = false;
+          await ensureProgressAssets();
+          await window.CoreLabProgress.mount(mount, {
+            supabaseUrl: bridge.supabaseUrl, anonKey: bridge.anonKey, token: bridge.token, role: bridge.role,
+          });
+          mount.hidden = false;
           if (state) state.hidden = true;
-          host.dataset.loaded = "true";
-          host.dataset.loading = "false";
+          mount.dataset.loaded = "true";
+          mount.dataset.loading = "false";
         } catch (error) {
-          host.dataset.loading = "false";
+          mount.dataset.loading = "false";
           if (state) state.textContent = friendlyError(error);
         }
       };

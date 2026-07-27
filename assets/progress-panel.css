@@ -1,0 +1,67 @@
+/* CORE Lab Progress panel — scoped under #cl-progress, loaded same-origin.
+   Colours inherit the portal's CSS variables with fallbacks. */
+#cl-progress {
+  --clg: var(--surface, #fff);
+  --cli: var(--ink, #17212b);
+  --cls: var(--muted, #55606e);
+  --clf: #8496a0;
+  --cll: var(--line, #d8dee6);
+  --clgr: #e9eff1;
+  --clt: var(--brand, #17518c);
+  --clgn: #1f6b57;
+  --cla: #8a5a12;
+  --clr: #a33227;
+  --clm: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  color: var(--cli);
+  line-height: 1.5;
+}
+#cl-progress * { box-sizing: border-box; }
+#cl-progress .cl-top { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+#cl-progress .cl-seg { display: inline-flex; border: 1px solid var(--cll); border-radius: 999px; overflow: hidden; background: var(--clg); }
+#cl-progress .cl-seg button { border: 0; background: transparent; padding: 7px 14px; font-family: var(--clm); font-size: 12px; color: var(--cls); cursor: pointer; }
+#cl-progress .cl-seg button.cl-on { background: var(--clt); color: #fff; }
+#cl-progress select { font: inherit; font-size: 13px; padding: 8px 12px; border: 1px solid var(--cll); border-radius: 8px; background: var(--clg); color: var(--cli); }
+#cl-progress .cl-card { background: var(--clg); border: 1px solid var(--cll); border-radius: 12px; padding: 18px 20px; margin-bottom: 16px; }
+#cl-progress .cl-hero { display: grid; grid-template-columns: 1fr; gap: 20px; }
+@media (min-width: 760px) { #cl-progress .cl-hero { grid-template-columns: 320px 1fr; } }
+#cl-progress .cl-name { font-size: 18px; font-weight: 800; margin: 0; }
+#cl-progress .cl-proj { font-size: 14px; color: var(--cls); margin: 2px 0 0; }
+#cl-progress .cl-ringbox { display: flex; align-items: center; gap: 18px; }
+#cl-progress .cl-lab { font-family: var(--clm); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--clf); }
+#cl-progress .cl-big { font-family: var(--clm); font-size: 15px; font-weight: 600; margin-top: 2px; }
+#cl-progress .cl-h { font-family: var(--clm); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--cls); margin: 0 0 12px; font-weight: 600; }
+#cl-progress .cl-track { position: relative; height: 12px; border-radius: 6px; background: var(--clgr); margin: 26px 0 30px; }
+#cl-progress .cl-fill { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 6px; background: linear-gradient(90deg, #b9cbd1, #8fa8b0); }
+#cl-progress .cl-mk { position: absolute; top: -4px; width: 2px; height: 20px; transform: translateX(-1px); }
+#cl-progress .cl-mk.today { background: var(--cli); height: 24px; top: -6px; }
+#cl-progress .cl-mk.half { background: var(--cla); }
+#cl-progress .cl-mk.due { background: var(--clr); }
+#cl-progress .cl-mk span { position: absolute; font-family: var(--clm); font-size: 10px; white-space: nowrap; top: -16px; transform: translateX(-50%); }
+#cl-progress .cl-mk.today span { top: auto; bottom: -18px; font-weight: 600; }
+#cl-progress .cl-mk.half span { color: var(--cla); }
+#cl-progress .cl-mk.due span { color: var(--clr); }
+#cl-progress .cl-ends { display: flex; justify-content: space-between; font-family: var(--clm); font-size: 11px; color: var(--cls); }
+#cl-progress .cl-ms { border: 1px solid var(--cll); border-radius: 11px; margin-bottom: 10px; overflow: hidden; }
+#cl-progress .cl-mh { display: grid; grid-template-columns: 46px 1fr auto; gap: 12px; align-items: center; padding: 12px 14px; cursor: pointer; }
+#cl-progress .cl-mn { font-size: 15px; }
+#cl-progress .cl-mo { font-family: var(--clm); font-size: 11px; color: var(--clf); margin-top: 2px; }
+#cl-progress .cl-mm { display: flex; align-items: center; gap: 8px; }
+#cl-progress .cl-wt { font-family: var(--clm); font-size: 11px; color: var(--cls); border: 1px solid var(--cll); border-radius: 6px; padding: 2px 7px; }
+#cl-progress .cl-st { font-family: var(--clm); font-size: 11px; padding: 3px 9px; border-radius: 6px; font-weight: 600; }
+#cl-progress .cl-st.done { background: #e3f1ec; color: var(--clgn); }
+#cl-progress .cl-st.doing { background: #e7eef6; color: var(--clt); }
+#cl-progress .cl-st.todo { background: var(--clgr); color: var(--clf); }
+#cl-progress .cl-car { color: var(--clf); font-family: var(--clm); transition: transform .18s; }
+#cl-progress .cl-ms.open .cl-car { transform: rotate(90deg); }
+#cl-progress .cl-att { display: none; padding: 6px 14px 16px; border-top: 1px dashed var(--cll); }
+#cl-progress .cl-ms.open .cl-att { display: block; }
+#cl-progress .cl-ol { font-family: var(--clm); font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: var(--clf); margin: 12px 0 8px; }
+#cl-progress .cl-or { display: flex; align-items: center; gap: 9px; padding: 6px 0; font-size: 13px; border-bottom: 1px solid var(--clgr); }
+#cl-progress .cl-or:last-of-type { border-bottom: 0; }
+#cl-progress .cl-oc { width: 19px; height: 19px; border-radius: 50%; display: grid; place-items: center; font-size: 11px; }
+#cl-progress .cl-oc.done { background: var(--clgn); color: #fff; }
+#cl-progress .cl-oc.miss { border: 1.5px dashed var(--clf); }
+#cl-progress .cl-or.miss { color: var(--cls); }
+#cl-progress .cl-ok { margin-left: auto; font-family: var(--clm); font-size: 10px; color: var(--clf); border: 1px solid var(--cll); border-radius: 5px; padding: 1px 6px; }
+#cl-progress .cl-empty { font-size: 14px; color: var(--clf); padding: 10px 2px; }
+#cl-progress .cl-err { font-size: 14px; color: var(--clr); padding: 10px 2px; }
