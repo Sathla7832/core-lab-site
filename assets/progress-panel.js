@@ -595,6 +595,17 @@
         head.addEventListener("click", (e) => { if (!e.target.closest("input,button,.cl-or")) box.classList.toggle("open"); });
         box.appendChild(head);
         const att = el("div", "cl-att");
+        if (isPI) {
+          const dueRow = el("div", "cl-msdue");
+          dueRow.appendChild(el("span", "cl-ol", "到期日（甘特圖用）"));
+          const di = el("input"); di.type = "date"; if (m.due_date) di.value = m.due_date;
+          di.addEventListener("change", async () => {
+            try { await ax.patch("milestones?id=eq." + m.id, { due_date: di.value || null }); m.due_date = di.value || null; render(); }
+            catch (e) { alert("更新失敗:" + e.message); }
+          });
+          dueRow.appendChild(di);
+          att.appendChild(dueRow);
+        }
         att.appendChild(el("div", "cl-ol", "必要產出（點一下切換完成）"));
         outs.forEach((o) => {
           const row = el("div", "cl-or" + (o.is_done ? "" : " miss"));

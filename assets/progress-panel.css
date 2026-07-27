@@ -164,6 +164,8 @@
 #cl-progress .cl-rrow:last-child { border-bottom: 0; }
 #cl-progress .cl-rn { font-size: 13px; }
 #cl-progress .cl-rrow select { width: 100%; }
+#cl-progress .cl-msdue { display: flex; align-items: center; gap: 10px; margin-top: 8px; }
+#cl-progress .cl-msdue .cl-ol { margin: 0; }
 @media (min-width: 620px) { #cl-progress .cl-tplgrid { grid-template-columns: 1fr 1fr; } }
 #cl-progress .cl-cols { display: grid; grid-template-columns: 1fr; gap: 14px; }
 @media (min-width: 760px) { #cl-progress .cl-hero { grid-template-columns: 340px 1fr; } #cl-progress .cl-cols { grid-template-columns: 1.05fr 1fr; } }
