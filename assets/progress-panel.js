@@ -92,6 +92,31 @@
     return { cls: "doc", txt: (type || "DOC").slice(0, 4).toUpperCase() };
   }
 
+  // Minimal RFC-4180-ish CSV parser (handles quotes, embedded commas/newlines).
+  function parseCsv(text) {
+    const rows = []; let field = "", row = [], inq = false, i = 0;
+    text = String(text).replace(/\r\n/g, "\n").replace(/\r/g, "\n");
+    while (i < text.length) {
+      const c = text[i];
+      if (inq) {
+        if (c === '"') { if (text[i + 1] === '"') { field += '"'; i += 2; continue; } inq = false; i++; continue; }
+        field += c; i++; continue;
+      }
+      if (c === '"') { inq = true; i++; continue; }
+      if (c === ",") { row.push(field); field = ""; i++; continue; }
+      if (c === "\n") { row.push(field); rows.push(row); row = []; field = ""; i++; continue; }
+      field += c; i++;
+    }
+    if (field.length || row.length) { row.push(field); rows.push(row); }
+    return rows.filter((r) => !(r.length === 1 && r[0].trim() === ""));
+  }
+  function csvObjects(text) {
+    const rows = parseCsv(text);
+    if (rows.length < 2) return [];
+    const head = rows[0].map((h) => h.trim());
+    return rows.slice(1).map((r) => { const o = {}; head.forEach((h, j) => (o[h] = r[j] != null ? String(r[j]).trim() : "")); return o; });
+  }
+
   const ymd = (d) => d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
   const addMonths = (n) => { const d = new Date(); d.setMonth(d.getMonth() + n); return ymd(d); };
 
@@ -114,7 +139,7 @@
         { name: "電化學性能與機制", weight: 40, outputs: [{ label: "LSV 數據", kind: "data" }, { label: "CA 數據", kind: "data" }, { label: "組會報告", kind: "slide" }] },
       ],
     },
-    blank: { label: "空白（只建立專案，里程碑自訂）", milestones: [] },
+    blank: { label: "空白（只建立專案，進度主軸自訂）", milestones: [] },
   };
 
   async function mount(container, cfg) {
@@ -163,7 +188,7 @@
     function renderTemplateCard() {
       const c = el("div", "cl-card cl-tpl");
       c.appendChild(el("div", "cl-h", "建立學生進度 · 套用範本"));
-      c.appendChild(el("div", "cl-sub", "選學生 → 選範本 → 一鍵建立整套里程碑與必要產出，不需寫 SQL。"));
+      c.appendChild(el("div", "cl-sub", "選學生 → 選範本 → 一鍵建立整套進度主軸與必要產出，不需寫 SQL。"));
       const grid = el("div", "cl-tplgrid");
 
       function field(labelText, node) {
@@ -212,6 +237,115 @@
       return c;
     }
 
+    // Import a student's whole progress from the lab's CSV format:
+    //   milestones.csv (required): student_id,ms_no,milestone,weight,output,kind,done,...
+    //   progress.csv  (optional) : student_id,name,short,project,start_date,due_date,...
+    //   tasks.csv     (optional) : student_id,title,ms_no,due_date,priority,status,remind_days
+    // Comments are NOT imported: RLS only lets an author insert their own comment,
+    // so a PI cannot back-fill student-authored replies.
+    async function importCsv(studentId, code, project, start, due, data) {
+      const mrows = (data.milestones || []).filter((r) => !code || (r.student_id || "").trim() === code);
+      if (!mrows.length) throw new Error("檔案中找不到代號「" + code + "」的進度主軸資料");
+      const groups = {}, order = [];
+      mrows.forEach((r) => {
+        const k = (r.ms_no || "").trim() || String(order.length + 1);
+        if (!groups[k]) { groups[k] = { name: r.milestone || "", weight: parseInt(r.weight, 10) || 0, outputs: [] }; order.push(k); }
+        const dv = String(r.done).trim().toLowerCase();
+        groups[k].outputs.push({ label: r.output || "", kind: (r.kind || "doc").trim(), is_done: dv === "1" || dv === "true" || dv === "yes" });
+      });
+      const prog = (await ax.post("progress", { student_id: studentId, project: project, start_date: start, due_date: due }))[0];
+      const msIdByNo = {}; let outCount = 0;
+      for (let i = 0; i < order.length; i++) {
+        const k = order[i], g = groups[k], pos = parseInt(k, 10) || (i + 1);
+        const mrow = (await ax.post("milestones", { progress_id: prog.id, name: g.name, weight: g.weight, position: pos }))[0];
+        msIdByNo[k] = mrow.id;
+        const outs = g.outputs.map((o, j) => ({ milestone_id: mrow.id, label: o.label, kind: o.kind, is_done: o.is_done, position: j + 1 }));
+        if (outs.length) { await ax.post("required_outputs", outs); outCount += outs.length; }
+      }
+      let taskCount = 0;
+      const trows = (data.tasks || []).filter((r) => !code || (r.student_id || "").trim() === code);
+      if (trows.length) {
+        const payload = trows.map((r) => ({ student_id: studentId, assigner_id: cfg.profileId, title: r.title || "", milestone_id: msIdByNo[(r.ms_no || "").trim()] || null, due_date: r.due_date || null, priority: (r.priority || "med").trim(), status: (r.status || "todo").trim(), remind_lead_days: parseInt(r.remind_days, 10) || 3 }));
+        await ax.post("tasks", payload); taskCount = payload.length;
+      }
+      return { ms: order.length, outs: outCount, tasks: taskCount };
+    }
+
+    function renderImportCard() {
+      const c = el("div", "cl-card cl-tpl");
+      c.appendChild(el("div", "cl-h", "從 CSV / TXT 匯入進度"));
+      c.appendChild(el("div", "cl-sub", "上傳 milestones.csv(必要);progress.csv、tasks.csv 可選。選好系統帳號按匯入,自動建立整套進度主軸、必要產出與任務。"));
+      let parsed = { milestones: [], progress: [], tasks: [] };
+      const grid = el("div", "cl-tplgrid");
+      function field(labelText, node) { const w = el("label", "cl-fld"); w.appendChild(el("span", "cl-lab", labelText)); w.appendChild(node); return w; }
+
+      const stuSel = el("select");
+      const o0 = el("option", null, "選擇目標學生…"); o0.value = ""; stuSel.appendChild(o0);
+      students.filter((s) => s.active !== false).forEach((s) => { const o = el("option", null, s.name + (s.role && s.role !== "student" ? " (" + s.role + ")" : "")); o.value = s.id; stuSel.appendChild(o); });
+      const codeSel = el("select");
+      const proj = el("input"); proj.type = "text"; proj.placeholder = "專案名稱(可由 progress.csv 帶入)";
+      const sd = el("input"); sd.type = "date";
+      const dd = el("input"); dd.type = "date";
+      const file = el("input"); file.type = "file"; file.multiple = true; file.accept = ".csv,.txt";
+      const summary = el("div", "cl-sub");
+
+      function applyMeta() {
+        const prow = parsed.progress.find((r) => (r.student_id || "").trim() === codeSel.value);
+        if (prow) { if (prow.project) proj.value = prow.project; if (prow.start_date) sd.value = prow.start_date; if (prow.due_date) dd.value = prow.due_date; }
+      }
+      function refreshCodes() {
+        codeSel.innerHTML = "";
+        const codes = Array.from(new Set(parsed.milestones.map((r) => (r.student_id || "").trim()).filter(Boolean)));
+        if (!codes.length) { const o = el("option", null, "(檔案無資料)"); o.value = ""; codeSel.appendChild(o); return; }
+        codes.forEach((cd) => { const o = el("option", null, cd); o.value = cd; codeSel.appendChild(o); });
+        applyMeta();
+      }
+      codeSel.addEventListener("change", applyMeta);
+      file.addEventListener("change", async () => {
+        parsed = { milestones: [], progress: [], tasks: [] };
+        const files = Array.from(file.files || []);
+        for (const f of files) {
+          const objs = csvObjects(await f.text());
+          if (!objs.length) continue;
+          const keys = Object.keys(objs[0]);
+          if (keys.indexOf("milestone") >= 0 && keys.indexOf("output") >= 0) parsed.milestones = objs;
+          else if (keys.indexOf("project") >= 0 && keys.indexOf("start_date") >= 0) parsed.progress = objs;
+          else if (keys.indexOf("title") >= 0 && keys.indexOf("priority") >= 0) parsed.tasks = objs;
+        }
+        summary.textContent = "已讀取:進度主軸 " + parsed.milestones.length + " 列 / progress " + parsed.progress.length + " 列 / tasks " + parsed.tasks.length + " 列。";
+        refreshCodes();
+      });
+
+      grid.appendChild(field("目標學生(系統帳號)", stuSel));
+      grid.appendChild(field("檔案內學生代號", codeSel));
+      grid.appendChild(field("專案名稱", proj));
+      grid.appendChild(field("開始日", sd));
+      grid.appendChild(field("到期日", dd));
+      grid.appendChild(field("CSV / TXT 檔案", file));
+      c.appendChild(grid); c.appendChild(summary);
+
+      const bar = el("div", "cl-tplbar");
+      const btn = el("button", "cl-btn dark", "匯入建立 →");
+      const msg = el("div", "cl-tplmsg");
+      btn.addEventListener("click", async () => {
+        if (!stuSel.value) { msg.className = "cl-tplmsg err"; msg.textContent = "請選擇目標學生。"; return; }
+        if (!parsed.milestones.length) { msg.className = "cl-tplmsg err"; msg.textContent = "請先上傳 milestones CSV。"; return; }
+        if (!proj.value.trim() || !sd.value || !dd.value) { msg.className = "cl-tplmsg err"; msg.textContent = "請填專案名稱與起訖日(或提供 progress.csv)。"; return; }
+        btn.disabled = true; msg.className = "cl-tplmsg"; msg.textContent = "匯入中…";
+        try {
+          const r = await importCsv(stuSel.value, codeSel.value, proj.value.trim(), sd.value, dd.value, parsed);
+          const sid = stuSel.value, pjt = proj.value.trim();
+          await load();
+          const idx = progs.findIndex((p) => p.student_id === sid && p.project === pjt);
+          cur = idx >= 0 ? idx : 0; render();
+          const m2 = document.querySelector(".cl-tplmsg");
+          if (m2) { m2.className = "cl-tplmsg ok"; m2.textContent = "匯入完成 ✓ 進度主軸 " + r.ms + " / 產出 " + r.outs + " / 任務 " + r.tasks; }
+        } catch (e) { btn.disabled = false; msg.className = "cl-tplmsg err"; msg.textContent = "匯入失敗:" + e.message; }
+      });
+      bar.appendChild(btn); bar.appendChild(msg); c.appendChild(bar);
+      return c;
+    }
+
     function dueChip(due, lead, st) {
       if (st === "done" || !due) return { c: "", cls: "" };
       const n = daysBetween(new Date(), new Date(due));
@@ -222,7 +356,7 @@
 
     function render() {
       container.innerHTML = "";
-      if (isPI) container.appendChild(renderTemplateCard());
+      if (isPI) { container.appendChild(renderTemplateCard()); container.appendChild(renderImportCard()); }
       if (!progs.length) { container.appendChild(el("div", "cl-empty", isPI ? "目前沒有進度資料。用上面的範本建立第一筆。" : "目前沒有進度資料。")); return; }
 
       if (progs.length > 1) {
@@ -254,7 +388,7 @@
       if (isPI) {
         const del = el("button", "cl-btn ghost danger", "刪除此進度");
         del.addEventListener("click", async () => {
-          const ans = prompt("確定刪除「" + P._name + " — " + (P.project || "") + "」?\n會一併移除底下所有里程碑、必要產出與留言,無法復原。\n\n若確定,請輸入 DELETE(全大寫)以確認:");
+          const ans = prompt("確定刪除「" + P._name + " — " + (P.project || "") + "」?\n會一併移除底下所有進度主軸、必要產出與留言,無法復原。\n\n若確定,請輸入 DELETE(全大寫)以確認:");
           if (ans !== "DELETE") { if (ans !== null) alert("未輸入 DELETE,已取消刪除。"); return; }
           del.disabled = true; del.textContent = "刪除中…";
           try { await ax.del("progress?id=eq." + P.id); await load(); cur = 0; render(); }
@@ -316,7 +450,7 @@
         const ti = el("input"); ti.type = "text"; ti.placeholder = "任務內容…";
         const dd = el("input"); dd.type = "date";
         const pr = el("select"); [["high", "高"], ["med", "中"], ["low", "低"]].forEach((x) => { const o = el("option", null, x[1]); o.value = x[0]; if (x[0] === "med") o.selected = true; pr.appendChild(o); });
-        const mm = el("select"); const o0 = el("option", null, "（不綁里程碑）"); o0.value = ""; mm.appendChild(o0);
+        const mm = el("select"); const o0 = el("option", null, "（不綁進度主軸）"); o0.value = ""; mm.appendChild(o0);
         ms.forEach((m) => { const o = el("option", null, m.name); o.value = m.id; mm.appendChild(o); });
         const bt = el("button", "cl-btn dark", "派工 →");
         bt.addEventListener("click", async () => {
@@ -333,8 +467,8 @@
 
       // milestones
       const mc = el("div", "cl-card");
-      mc.appendChild(el("div", "cl-h", "里程碑 · 產出到齊才算完成"));
-      if (!ms.length) mc.appendChild(el("div", "cl-empty", "尚未建立里程碑。"));
+      mc.appendChild(el("div", "cl-h", "進度主軸 · 產出到齊才算完成"));
+      if (!ms.length) mc.appendChild(el("div", "cl-empty", "尚未建立進度主軸。"));
       ms.forEach((m) => {
         const p = msPct(m), st = msStatus(p);
         const outs = m.required_outputs || [], comments = (m.comments || []);
@@ -361,7 +495,7 @@
           });
           att.appendChild(row);
         });
-        if (!outs.length) att.appendChild(el("div", "cl-empty", "此里程碑尚未定義必要產出。"));
+        if (!outs.length) att.appendChild(el("div", "cl-empty", "此進度主軸尚未定義必要產出。"));
         att.appendChild(el("div", "cl-ol", "指導教授留言"));
         comments.sort((a, b) => String(a.created_at).localeCompare(String(b.created_at)));
         comments.forEach((c) => {
@@ -392,7 +526,7 @@
       const ih = el("div", "cl-h", "Discord 上傳收件匣 · 點選拉進必要產出");
       const dtag = el("span", "cl-dc", "DISCORD"); dtag.style.order = "-1"; ih.insertBefore(dtag, ih.firstChild);
       ic.appendChild(ih);
-      ic.appendChild(el("div", "cl-hint", "學生從 Discord 丟檔案零摩擦;指派到某里程碑的必要產出,那一項才算到齊、完成度自動往上跳。"));
+      ic.appendChild(el("div", "cl-hint", "學生從 Discord 丟檔案零摩擦;指派到某進度主軸的必要產出,那一項才算到齊、完成度自動往上跳。"));
       if (!items.length) ic.appendChild(el("div", "cl-empty", "目前收件匣沒有待處理檔案(學生從 Discord 上傳後會出現在這裡)。"));
       const targets = [];
       ms.forEach((m, i) => (m.required_outputs || []).forEach((o) => targets.push({ v: m.id + "|" + o.id, t: String(i + 1).padStart(2, "0") + " " + m.name + " › " + o.label + (o.is_done ? " (已到齊)" : "") })));
@@ -406,7 +540,7 @@
         const act = el("div", "cl-inact");
         if (isPI && targets.length) {
           const sel = el("select");
-          const o0 = el("option", null, "選擇里程碑 › 產出…"); o0.value = ""; sel.appendChild(o0);
+          const o0 = el("option", null, "選擇進度主軸 › 產出…"); o0.value = ""; sel.appendChild(o0);
           targets.forEach((t) => { const o = el("option", null, t.t); o.value = t.v; sel.appendChild(o); });
           const bt = el("button", "cl-btn", "拉進產出 →");
           bt.addEventListener("click", async () => {
@@ -422,7 +556,7 @@
           });
           act.appendChild(sel); act.appendChild(bt);
         } else if (isPI) {
-          act.appendChild(el("span", "cl-sub", "此進度尚無必要產出可指派,請先在里程碑建立產出。"));
+          act.appendChild(el("span", "cl-sub", "此進度尚無必要產出可指派,請先在進度主軸建立產出。"));
         } else {
           act.appendChild(el("span", "cl-sub", "等待指導教授歸檔至必要產出。"));
         }

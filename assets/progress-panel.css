@@ -18,6 +18,7 @@
 #cl-progress .cl-seg button { border: 0; background: transparent; padding: 6px 12px; font-family: var(--clm); font-size: 12px; color: var(--cls); cursor: pointer; }
 #cl-progress .cl-seg button.cl-on { background: var(--clt); color: #fff; }
 #cl-progress select, #cl-progress input[type=text], #cl-progress input[type=date] { font: inherit; font-size: 13px; padding: 6px 10px; border: 1px solid var(--cll); border-radius: 8px; background: var(--clg); color: var(--cli); }
+#cl-progress input[type=file] { font: inherit; font-size: 12px; color: var(--cls); }
 #cl-progress .cl-lock { display: inline-flex; align-items: center; gap: 6px; font-family: var(--clm); font-size: 11px; color: var(--cls); border: 1px solid var(--cll); border-radius: 999px; padding: 5px 10px; }
 #cl-progress .cl-audit { font-family: var(--clm); font-size: 10.5px; color: var(--clf); margin-top: 8px; }
 #cl-progress .cl-hero { display: grid; grid-template-columns: 1fr; gap: 18px; }
