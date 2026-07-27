@@ -339,12 +339,24 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
         if (state) state.textContent = "Loading progress records...";
         try {
           if (!syncApiUrl) throw new Error("The member resource service is not configured.");
-          const token = await auth.currentUser?.getIdToken();
-          if (!token) throw new Error("Please sign in again to load progress records.");
-          const response = await fetch(syncApiUrl + "/api/progress", { method: "GET", headers: { Authorization: "Bearer " + token } });
-          const data = await response.json().catch(() => ({}));
-          if (!response.ok) throw new Error(String(data.error || "Progress records could not be loaded."));
-          progressRecords = Array.isArray(data.items) ? data.items : (Array.isArray(data.records) ? data.records : []);
+          const idToken = await auth.currentUser?.getIdToken();
+          if (!idToken) throw new Error("Please sign in again to load progress records.");
+          // 1b bridge: exchange the Firebase identity for a Supabase-scoped token.
+          const bridgeRes = await fetch(syncApiUrl + "/api/supabase-token", { method: "GET", headers: { Authorization: "Bearer " + idToken } });
+          const bridge = await bridgeRes.json().catch(() => ({}));
+          if (!bridgeRes.ok) throw new Error(String(bridge.error || "Progress workspace is unavailable."));
+          // Read progress straight from Supabase; RLS returns only rows this account may see.
+          const url = bridge.supabaseUrl + "/rest/v1/progress?select=id,project,start_date,due_date,profiles(name)&order=due_date.asc";
+          const rowsRes = await fetch(url, { headers: { apikey: bridge.anonKey, Authorization: "Bearer " + bridge.token } });
+          const rows = await rowsRes.json().catch(() => []);
+          if (!rowsRes.ok) throw new Error("Progress records could not be loaded.");
+          progressRecords = (Array.isArray(rows) ? rows : []).map((r) => ({
+            title: r.project || "Untitled",
+            studentName: (r.profiles && r.profiles.name) || "",
+            dueDate: r.due_date || "",
+            status: "",
+            nextAction: "",
+          }));
           const filter = document.querySelector("[data-member-progress-filter]");
           if (filter) {
             const names = Array.from(new Set(progressRecords.map((r) => r.studentName).filter(Boolean))).sort();
