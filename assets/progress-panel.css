@@ -90,6 +90,25 @@
 #cl-progress .cl-lg i.solid { border-top: 3px solid var(--clt); }
 #cl-progress .cl-lg i.dash { border-top: 2px dashed var(--clf); }
 #cl-progress .cl-lg i.vt { border-top: 2px dashed var(--cla); }
+#cl-progress .cl-lg i.bx { width: 14px; height: 10px; border: 0; border-radius: 3px; }
+#cl-progress .cl-lg i.bx.done { background: var(--clgn); }
+#cl-progress .cl-lg i.bx.doing { background: var(--clt); }
+#cl-progress .cl-lg i.bx.todo { background: var(--clf); }
+#cl-progress .cl-gantt { --lw: 150px; margin-top: 14px; }
+#cl-progress .cl-gbody { position: relative; }
+#cl-progress .cl-grow { display: grid; grid-template-columns: var(--lw) 1fr; align-items: center; padding: 5px 0; }
+#cl-progress .cl-glabel { font-size: 12.5px; padding-right: 10px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#cl-progress .cl-gtrack { position: relative; height: 20px; background: var(--clgr); border-radius: 6px; }
+#cl-progress .cl-gbar { position: absolute; top: 0; bottom: 0; border-radius: 6px; display: flex; align-items: center; justify-content: flex-end; padding: 0 6px; min-width: 3px; }
+#cl-progress .cl-gbar span { font-family: var(--clm); font-size: 10px; color: #fff; }
+#cl-progress .cl-gbar.done { background: var(--clgn); }
+#cl-progress .cl-gbar.doing { background: var(--clt); }
+#cl-progress .cl-gbar.todo { background: var(--clf); }
+#cl-progress .cl-gtoday { position: absolute; top: -4px; bottom: 0; width: 2px; background: var(--cli); z-index: 2; pointer-events: none; }
+#cl-progress .cl-gtoday span { position: absolute; top: -16px; transform: translateX(-50%); font-family: var(--clm); font-size: 10px; font-weight: 600; white-space: nowrap; color: var(--cli); }
+#cl-progress .cl-gaxis { display: grid; grid-template-columns: var(--lw) 1fr; margin-top: 6px; }
+#cl-progress .cl-gaxrange { display: flex; justify-content: space-between; font-family: var(--clm); font-size: 11px; color: var(--cls); }
+@media (max-width: 560px) { #cl-progress .cl-gantt { --lw: 104px; } #cl-progress .cl-glabel { font-size: 11px; } }
 #cl-progress .cl-fn { font-family: var(--clm); font-size: 12px; word-break: break-all; }
 #cl-progress .cl-sub { font-size: 11px; color: var(--cls); margin-top: 2px; }
 #cl-progress .cl-inact { grid-column: 1/3; display: flex; gap: 8px; margin-top: 4px; flex-wrap: wrap; }

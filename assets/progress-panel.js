@@ -92,6 +92,53 @@
     return { cls: "doc", txt: (type || "DOC").slice(0, 4).toUpperCase() };
   }
 
+  // Gantt: Y axis = each progress axis (milestone). Bars run sequentially from the
+  // previous axis's due date to this one's (first starts at project start); if the
+  // data has no per-axis due dates, fall back to even spacing by order.
+  function renderGantt(P, ms) {
+    const c = el("div", "cl-card");
+    c.appendChild(el("div", "cl-h", "甘特圖 · 進度主軸時程"));
+    if (!ms.length) { c.appendChild(el("div", "cl-empty", "尚未建立進度主軸。")); return c; }
+    const start = new Date(P.start_date), due = new Date(P.due_date), today = new Date();
+    const total = Math.max(1, due - start);
+    const allHaveDue = ms.every((m) => m.due_date);
+    const g = el("div", "cl-gantt");
+    const body = el("div", "cl-gbody");
+    let prev = 0;
+    ms.forEach((m, i) => {
+      let endF = allHaveDue ? Math.min(1, Math.max(0, (new Date(m.due_date) - start) / total)) : (i + 1) / ms.length;
+      let startF = i === 0 ? 0 : prev;
+      if (endF < startF) endF = startF;
+      prev = endF;
+      const p = msPct(m), st = msStatus(p);
+      const row = el("div", "cl-grow");
+      row.appendChild(el("div", "cl-glabel", (i + 1) + ". " + m.name));
+      const track = el("div", "cl-gtrack");
+      const bar = el("div", "cl-gbar " + st);
+      bar.style.left = (startF * 100) + "%";
+      bar.style.width = (Math.max(0.02, endF - startF) * 100) + "%";
+      bar.title = m.name + " · " + p + "%" + (m.due_date ? " · 到期 " + m.due_date : "");
+      bar.appendChild(el("span", null, p + "%"));
+      track.appendChild(bar); row.appendChild(track); body.appendChild(row);
+    });
+    const tF = Math.min(1, Math.max(0, (today - start) / total));
+    const tl = el("div", "cl-gtoday");
+    tl.style.left = "calc(var(--lw) + (100% - var(--lw)) * " + tF + ")";
+    tl.appendChild(el("span", null, "今天"));
+    body.appendChild(tl);
+    g.appendChild(body);
+    const ax = el("div", "cl-gaxis");
+    ax.appendChild(el("div"));
+    const rng = el("div", "cl-gaxrange");
+    rng.appendChild(el("span", null, P.start_date)); rng.appendChild(el("span", null, P.due_date));
+    ax.appendChild(rng); g.appendChild(ax);
+    c.appendChild(g);
+    const lg = el("div", "cl-legend");
+    lg.innerHTML = '<span class="cl-lg"><i class="bx done"></i>完成</span><span class="cl-lg"><i class="bx doing"></i>進行中</span><span class="cl-lg"><i class="bx todo"></i>未開始</span>';
+    c.appendChild(lg);
+    return c;
+  }
+
   // Minimal RFC-4180-ish CSV parser (handles quotes, embedded commas/newlines).
   function parseCsv(text) {
     const rows = []; let field = "", row = [], inq = false, i = 0;
@@ -416,6 +463,9 @@
       lg.innerHTML = '<span class="cl-lg"><i class="solid"></i>實際</span><span class="cl-lg"><i class="dash"></i>計畫</span><span class="cl-lg"><i class="vt"></i>50% 時間</span>';
       cc.appendChild(lg);
       container.appendChild(cc);
+
+      // gantt (Y axis = each progress axis)
+      container.appendChild(renderGantt(P, ms));
 
       // tasks
       const tc = el("div", "cl-card");
