@@ -82,6 +82,13 @@
 #cl-progress .cl-ic { width: 34px; height: 34px; border-radius: 8px; display: grid; place-items: center; font-family: var(--clm); font-size: 10px; font-weight: 700; color: #fff; }
 #cl-progress .cl-ic.data { background: var(--clt); }
 #cl-progress .cl-ic.slide { background: var(--cla); }
+#cl-progress .cl-ic.doc { background: var(--clf); }
+#cl-progress .cl-legend { display: flex; gap: 18px; margin-top: 10px; font-family: var(--clm); font-size: 11px; color: var(--cls); flex-wrap: wrap; }
+#cl-progress .cl-lg { display: inline-flex; align-items: center; gap: 7px; }
+#cl-progress .cl-lg i { width: 20px; border-top: 2px solid var(--clt); display: inline-block; }
+#cl-progress .cl-lg i.solid { border-top: 3px solid var(--clt); }
+#cl-progress .cl-lg i.dash { border-top: 2px dashed var(--clf); }
+#cl-progress .cl-lg i.vt { border-top: 2px dashed var(--cla); }
 #cl-progress .cl-fn { font-family: var(--clm); font-size: 12px; word-break: break-all; }
 #cl-progress .cl-sub { font-size: 11px; color: var(--cls); margin-top: 2px; }
 #cl-progress .cl-inact { grid-column: 1/3; display: flex; gap: 8px; margin-top: 4px; flex-wrap: wrap; }

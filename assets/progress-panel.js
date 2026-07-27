@@ -58,6 +58,40 @@
   }
   const KL = { data: "數據", slide: "投影片", doc: "文件" };
 
+  // Cumulative progress curve: dashed plan line (0->100 over the whole span) vs
+  // solid actual line (0 at start -> current overall% at today) with an end dot.
+  function curveSvg(startStr, dueStr, curPct) {
+    const W = 660, H = 300, padL = 46, padR = 22, padT = 18, padB = 46;
+    const gx0 = padL, gx1 = W - padR, gy0 = H - padB, gy1 = padT;
+    const start = new Date(startStr), due = new Date(dueStr), today = new Date();
+    const span = Math.max(1, due - start);
+    const tf = Math.min(1, Math.max(0, (today - start) / span));
+    const X = (f) => gx0 + (gx1 - gx0) * f;
+    const Y = (p) => gy0 - (gy0 - gy1) * (p / 100);
+    let s = "";
+    [0, 25, 50, 75, 100].forEach((v) => {
+      s += '<line x1="' + gx0 + '" y1="' + Y(v) + '" x2="' + gx1 + '" y2="' + Y(v) + '" stroke="var(--clgr)" stroke-width="1"/>';
+      s += '<text x="' + (gx0 - 8) + '" y="' + (Y(v) + 4) + '" text-anchor="end" font-size="11" fill="var(--cls)" font-family="var(--clm)">' + v + "</text>";
+    });
+    s += '<line x1="' + X(0.5) + '" y1="' + gy1 + '" x2="' + X(0.5) + '" y2="' + gy0 + '" stroke="var(--cla)" stroke-width="1.5" stroke-dasharray="5 4"/>';
+    s += '<line x1="' + X(0) + '" y1="' + Y(0) + '" x2="' + X(1) + '" y2="' + Y(100) + '" stroke="var(--clf)" stroke-width="2" stroke-dasharray="7 5"/>';
+    s += '<line x1="' + X(0) + '" y1="' + Y(0) + '" x2="' + X(tf) + '" y2="' + Y(curPct) + '" stroke="var(--clt)" stroke-width="3"/>';
+    s += '<circle cx="' + X(tf) + '" cy="' + Y(curPct) + '" r="6" fill="var(--clt)"/>';
+    s += '<text x="' + X(0) + '" y="' + (gy0 + 22) + '" text-anchor="middle" font-size="11" fill="var(--cls)" font-family="var(--clm)">' + startStr + "</text>";
+    s += '<text x="' + X(1) + '" y="' + (gy0 + 22) + '" text-anchor="middle" font-size="11" fill="var(--cls)" font-family="var(--clm)">' + dueStr + "</text>";
+    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    svg.setAttribute("viewBox", "0 0 " + W + " " + H);
+    svg.setAttribute("width", "100%"); svg.style.maxWidth = "660px";
+    svg.innerHTML = s;
+    return svg;
+  }
+  function inboxBadge(type) {
+    const t = String(type || "").toLowerCase();
+    if (t.indexOf("csv") >= 0 || t.indexOf("data") >= 0 || t.indexOf("xrd") >= 0 || t.indexOf("lsv") >= 0) return { cls: "data", txt: (type || "DATA").slice(0, 4).toUpperCase() };
+    if (t.indexOf("ppt") >= 0 || t.indexOf("slide") >= 0) return { cls: "slide", txt: "PPTX" };
+    return { cls: "doc", txt: (type || "DOC").slice(0, 4).toUpperCase() };
+  }
+
   const ymd = (d) => d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
   const addMonths = (n) => { const d = new Date(); d.setMonth(d.getMonth() + n); return ymd(d); };
 
@@ -88,7 +122,7 @@
     const isPI = cfg.role === "admin" || cfg.role === "pi";
     container.id = "cl-progress";
     container.innerHTML = "";
-    let progs = [], myTodos = [], students = [], cur = 0;
+    let progs = [], myTodos = [], students = [], inbox = [], cur = 0;
 
     async function load() {
       progs = await ax.get(
@@ -106,6 +140,7 @@
         (p.milestones || []).forEach((m) => (m.required_outputs || []).sort((a, b) => (a.position || 0) - (b.position || 0)));
       });
       myTodos = await ax.get("todos?select=id,title,done,due_date&order=created_at.asc");
+      inbox = await ax.get("discord_inbox?select=id,student_id,filename,storage_path,type,detected_kind,posted_at,status&status=eq.pending&order=posted_at.desc");
       if (isPI) students = await ax.get("profiles?select=id,name,email,role,active&order=name.asc");
     }
 
@@ -219,7 +254,8 @@
       if (isPI) {
         const del = el("button", "cl-btn ghost danger", "刪除此進度");
         del.addEventListener("click", async () => {
-          if (!confirm("確定刪除「" + P._name + " — " + (P.project || "") + "」?\n會一併移除底下所有里程碑、必要產出與留言,無法復原。")) return;
+          const ans = prompt("確定刪除「" + P._name + " — " + (P.project || "") + "」?\n會一併移除底下所有里程碑、必要產出與留言,無法復原。\n\n若確定,請輸入 DELETE(全大寫)以確認:");
+          if (ans !== "DELETE") { if (ans !== null) alert("未輸入 DELETE,已取消刪除。"); return; }
           del.disabled = true; del.textContent = "刪除中…";
           try { await ax.del("progress?id=eq." + P.id); await load(); cur = 0; render(); }
           catch (e) { del.disabled = false; del.textContent = "刪除此進度"; alert("刪除失敗:" + e.message); }
@@ -237,6 +273,15 @@
       right.appendChild(track);
       const ends = el("div", "cl-ends"); ends.appendChild(el("span", null, "開始 " + P.start_date)); ends.appendChild(el("span", null, "到期 " + P.due_date)); right.appendChild(ends);
       hbox.appendChild(rb); hbox.appendChild(right); hero.appendChild(hbox); container.appendChild(hero);
+
+      // cumulative progress curve (plan vs actual)
+      const cc = el("div", "cl-card");
+      cc.appendChild(el("div", "cl-h", "累積進度曲線 · 計畫 vs 實際"));
+      cc.appendChild(curveSvg(P.start_date, P.due_date, pct));
+      const lg = el("div", "cl-legend");
+      lg.innerHTML = '<span class="cl-lg"><i class="solid"></i>實際</span><span class="cl-lg"><i class="dash"></i>計畫</span><span class="cl-lg"><i class="vt"></i>50% 時間</span>';
+      cc.appendChild(lg);
+      container.appendChild(cc);
 
       // tasks
       const tc = el("div", "cl-card");
@@ -340,6 +385,50 @@
         box.appendChild(att); mc.appendChild(box);
       });
       container.appendChild(mc);
+
+      // Discord upload inbox -> pull a file into a required output (marks it done)
+      const items = inbox.filter((f) => f.student_id === P.student_id);
+      const ic = el("div", "cl-card");
+      const ih = el("div", "cl-h", "Discord 上傳收件匣 · 點選拉進必要產出");
+      const dtag = el("span", "cl-dc", "DISCORD"); dtag.style.order = "-1"; ih.insertBefore(dtag, ih.firstChild);
+      ic.appendChild(ih);
+      ic.appendChild(el("div", "cl-hint", "學生從 Discord 丟檔案零摩擦;指派到某里程碑的必要產出,那一項才算到齊、完成度自動往上跳。"));
+      if (!items.length) ic.appendChild(el("div", "cl-empty", "目前收件匣沒有待處理檔案(學生從 Discord 上傳後會出現在這裡)。"));
+      const targets = [];
+      ms.forEach((m, i) => (m.required_outputs || []).forEach((o) => targets.push({ v: m.id + "|" + o.id, t: String(i + 1).padStart(2, "0") + " " + m.name + " › " + o.label + (o.is_done ? " (已到齊)" : "") })));
+      items.forEach((f) => {
+        const bd = inboxBadge(f.detected_kind || f.type);
+        const row = el("div", "cl-in");
+        row.appendChild(el("div", "cl-ic " + bd.cls, bd.txt));
+        const body = el("div");
+        body.appendChild(el("div", "cl-fn", f.filename));
+        body.appendChild(el("div", "cl-sub", (f.type || "檔案") + " · " + (f.posted_at ? String(f.posted_at).slice(0, 16).replace("T", " ") : "")));
+        const act = el("div", "cl-inact");
+        if (isPI && targets.length) {
+          const sel = el("select");
+          const o0 = el("option", null, "選擇里程碑 › 產出…"); o0.value = ""; sel.appendChild(o0);
+          targets.forEach((t) => { const o = el("option", null, t.t); o.value = t.v; sel.appendChild(o); });
+          const bt = el("button", "cl-btn", "拉進產出 →");
+          bt.addEventListener("click", async () => {
+            if (!sel.value) return;
+            const parts = sel.value.split("|"), mid = parts[0], oid = parts[1];
+            bt.disabled = true;
+            try {
+              await ax.post("attachments", { milestone_id: mid, output_id: oid, uploader_id: cfg.profileId, filename: f.filename, storage_path: f.storage_path, type: f.type, detected_kind: f.detected_kind || null });
+              await ax.patch("required_outputs?id=eq." + oid, { is_done: true });
+              await ax.patch("discord_inbox?id=eq." + f.id, { status: "ingested" });
+              await load(); render();
+            } catch (e) { bt.disabled = false; alert("拉進失敗:" + e.message); }
+          });
+          act.appendChild(sel); act.appendChild(bt);
+        } else if (isPI) {
+          act.appendChild(el("span", "cl-sub", "此進度尚無必要產出可指派,請先在里程碑建立產出。"));
+        } else {
+          act.appendChild(el("span", "cl-sub", "等待指導教授歸檔至必要產出。"));
+        }
+        body.appendChild(act); row.appendChild(body); ic.appendChild(row);
+      });
+      container.appendChild(ic);
 
       // personal todos (owner-only)
       const td = el("div", "cl-card");
