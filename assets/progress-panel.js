@@ -57,6 +57,7 @@
     return s;
   }
   const KL = { data: "數據", slide: "投影片", doc: "文件" };
+  const PROG_LABEL = { masters: "碩班生", project: "專題生", pi: "指導教授" };
 
   // Cumulative progress curve: dashed plan line (0->100 over the whole span) vs
   // solid actual line (0 at start -> current overall% at today) with an end dot.
@@ -196,6 +197,26 @@
     container.innerHTML = "";
     let progs = [], myTodos = [], students = [], inbox = [], cur = 0;
 
+    // Fill a <select> with active members grouped 碩班生 -> 專題生 -> 指導教授
+    // (falls back to an "其他" group when program isn't set yet).
+    function fillStudents(sel, placeholder) {
+      sel.innerHTML = "";
+      const o0 = el("option", null, placeholder); o0.value = ""; sel.appendChild(o0);
+      const groups = { masters: [], project: [], pi: [], other: [] };
+      students.filter((s) => s.active !== false).forEach((s) => {
+        const k = (s.role === "pi" || s.role === "admin") ? "pi" : (s.program === "masters" ? "masters" : s.program === "project" ? "project" : "other");
+        groups[k].push(s);
+      });
+      ["masters", "project", "pi", "other"].forEach((k) => {
+        if (!groups[k].length) return;
+        groups[k].sort((a, b) => String(a.name).localeCompare(String(b.name)));
+        const og = document.createElement("optgroup");
+        og.label = PROG_LABEL[k] || "其他";
+        groups[k].forEach((s) => { const o = el("option", null, s.name); o.value = s.id; og.appendChild(o); });
+        sel.appendChild(og);
+      });
+    }
+
     async function load() {
       progs = await ax.get(
         "progress?select=id,project,start_date,due_date,student_id,profiles(name)," +
@@ -213,7 +234,16 @@
       });
       myTodos = await ax.get("todos?select=id,title,done,due_date&order=created_at.asc");
       inbox = await ax.get("discord_inbox?select=id,student_id,filename,storage_path,type,detected_kind,posted_at,status&status=eq.pending&order=posted_at.desc");
-      if (isPI) students = await ax.get("profiles?select=id,name,email,role,active&order=name.asc");
+      if (isPI) {
+        students = await ax.get("profiles?select=id,name,email,role,active&order=name.asc");
+        // program (碩班/專題/PI) lives in a separate column that may not exist yet;
+        // fetch it defensively so the panel keeps working before the ALTER is run.
+        try {
+          const rows = await ax.get("profiles?select=id,program");
+          const pm = {}; rows.forEach((r) => (pm[r.id] = r.program));
+          students.forEach((s) => (s.program = pm[s.id]));
+        } catch (e) { /* program column not added yet */ }
+      }
     }
 
     // Create a full progress record (progress -> milestones -> required_outputs)
@@ -245,10 +275,7 @@
         return w;
       }
       const stuSel = el("select");
-      const o0 = el("option", null, "選擇學生…"); o0.value = ""; stuSel.appendChild(o0);
-      students.filter((s) => s.active !== false).forEach((s) => {
-        const o = el("option", null, s.name + (s.role && s.role !== "student" ? " (" + s.role + ")" : "")); o.value = s.id; stuSel.appendChild(o);
-      });
+      fillStudents(stuSel, "選擇學生…");
       const tplSel = el("select");
       Object.keys(TEMPLATES).forEach((k) => { const o = el("option", null, TEMPLATES[k].label); o.value = k; tplSel.appendChild(o); });
       const proj = el("input"); proj.type = "text"; proj.placeholder = "專案 / 題目名稱…";
@@ -327,8 +354,7 @@
       function field(labelText, node) { const w = el("label", "cl-fld"); w.appendChild(el("span", "cl-lab", labelText)); w.appendChild(node); return w; }
 
       const stuSel = el("select");
-      const o0 = el("option", null, "選擇目標學生…"); o0.value = ""; stuSel.appendChild(o0);
-      students.filter((s) => s.active !== false).forEach((s) => { const o = el("option", null, s.name + (s.role && s.role !== "student" ? " (" + s.role + ")" : "")); o.value = s.id; stuSel.appendChild(o); });
+      fillStudents(stuSel, "選擇目標學生…");
       const codeSel = el("select");
       const proj = el("input"); proj.type = "text"; proj.placeholder = "專案名稱(可由 progress.csv 帶入)";
       const sd = el("input"); sd.type = "date";
