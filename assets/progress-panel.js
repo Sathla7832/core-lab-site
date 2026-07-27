@@ -1,13 +1,11 @@
-/* CORE Lab Progress panel (step 2a: rich read-only view).
- * Loaded same-origin so the member-page CSP (script-src 'self') allows it.
- * member.js does Firebase auth + the /api/supabase-token bridge, then calls
- * window.CoreLabProgress.mount(container, { supabaseUrl, anonKey, token, role }).
- * All Supabase reads carry the bridge token, so RLS scopes rows to this user.
- * Completion is product-driven: milestone% = done required-outputs / total,
- * overall% = weighted average across milestones. Nothing is self-reported.
+/* CORE Lab Progress — full interactive workspace, same-origin asset.
+ * member.js authenticates (Firebase) + calls the 1b bridge, then:
+ *   window.CoreLabProgress.mount(container, { supabaseUrl, anonKey, token, role, profileId });
+ * All reads/writes carry the bridge token, so Supabase RLS scopes every row.
+ * Completion is product-driven (done required-outputs / total, weighted).
  */
 (function () {
-  const C = 2 * Math.PI * 52; // ring circumference (r=52)
+  const RING = 2 * Math.PI * 52;
 
   function el(tag, cls, text) {
     const n = document.createElement(tag);
@@ -16,163 +14,252 @@
     return n;
   }
 
-  async function sbGet(cfg, path) {
-    const res = await fetch(cfg.supabaseUrl + "/rest/v1/" + path, {
-      headers: { apikey: cfg.anonKey, Authorization: "Bearer " + cfg.token },
+  function api(cfg) {
+    const base = cfg.supabaseUrl + "/rest/v1/";
+    const headers = () => ({
+      apikey: cfg.anonKey,
+      Authorization: "Bearer " + cfg.token,
+      "Content-Type": "application/json",
+      Prefer: "return=representation",
     });
-    if (!res.ok) throw new Error("Supabase read failed (" + res.status + ")");
-    return res.json();
+    return {
+      async get(path) { const r = await fetch(base + path, { headers: headers() }); if (!r.ok) throw new Error("read " + r.status); return r.json(); },
+      async post(path, body) { const r = await fetch(base + path, { method: "POST", headers: headers(), body: JSON.stringify(body) }); if (!r.ok) throw new Error("write " + r.status + " " + (await r.text())); return r.json(); },
+      async patch(path, body) { const r = await fetch(base + path, { method: "PATCH", headers: headers(), body: JSON.stringify(body) }); if (!r.ok) throw new Error("update " + r.status); return r.json(); },
+      async del(path) { const r = await fetch(base + path, { method: "DELETE", headers: headers() }); if (!r.ok) throw new Error("delete " + r.status); },
+    };
   }
 
-  const msPct = (m) => {
-    const outs = m.required_outputs || [];
-    if (!outs.length) return 0;
-    return Math.round((outs.filter((o) => o.is_done).length / outs.length) * 100);
-  };
-  const msStatus = (p) => (p >= 100 ? "done" : p > 0 ? "doing" : "todo");
-  const overallPct = (ms) => {
-    const wsum = ms.reduce((a, m) => a + (m.weight || 0), 0);
-    if (!wsum) return 0;
-    return Math.round(ms.reduce((a, m) => a + (m.weight || 0) * msPct(m) / 100, 0) / wsum * 100);
-  };
   const daysBetween = (a, b) => Math.round((b - a) / 86400000);
+  const msPct = (m) => { const o = m.required_outputs || []; return o.length ? Math.round(o.filter((x) => x.is_done).length / o.length * 100) : 0; };
+  const msStatus = (p) => (p >= 100 ? "done" : p > 0 ? "doing" : "todo");
+  const overall = (ms) => { const w = ms.reduce((a, m) => a + (m.weight || 0), 0); return w ? Math.round(ms.reduce((a, m) => a + (m.weight || 0) * msPct(m) / 100, 0) / w * 100) : 0; };
 
-  function renderRing(pct) {
-    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    svg.setAttribute("width", "132"); svg.setAttribute("height", "132");
-    svg.setAttribute("viewBox", "0 0 132 132");
-    svg.innerHTML =
+  function ring(pct) {
+    const s = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    s.setAttribute("width", "132"); s.setAttribute("height", "132"); s.setAttribute("viewBox", "0 0 132 132");
+    s.innerHTML =
       '<circle cx="66" cy="66" r="52" fill="none" stroke="var(--clgr)" stroke-width="13"/>' +
-      '<circle cx="66" cy="66" r="52" fill="none" stroke="var(--clt)" stroke-width="13" stroke-linecap="round"' +
-      ' transform="rotate(-90 66 66)" stroke-dasharray="' + C.toFixed(1) + '"' +
-      ' stroke-dashoffset="' + (C * (1 - pct / 100)).toFixed(1) + '"/>' +
+      '<circle cx="66" cy="66" r="52" fill="none" stroke="var(--clt)" stroke-width="13" stroke-linecap="round" transform="rotate(-90 66 66)" stroke-dasharray="' + RING.toFixed(1) + '" stroke-dashoffset="' + (RING * (1 - pct / 100)).toFixed(1) + '"/>' +
       '<text x="66" y="64" text-anchor="middle" font-size="30" font-weight="700" fill="var(--cli)" font-family="var(--clm)">' + pct + '%</text>' +
       '<text x="66" y="84" text-anchor="middle" font-size="10.5" fill="var(--cls)" font-family="var(--clm)">產出驅動</text>';
-    return svg;
+    return s;
   }
-
-  function renderProgress(container, prog) {
-    const ms = (prog.milestones || []).slice().sort((a, b) => (a.position || 0) - (b.position || 0));
-    const pct = overallPct(ms);
-    const start = new Date(prog.start_date);
-    const due = new Date(prog.due_date);
-    const today = new Date();
-    const total = Math.max(1, daysBetween(start, due));
-    const used = Math.min(100, Math.max(0, Math.round(daysBetween(start, today) / total * 100)));
-    const left = daysBetween(today, due);
-
-    const card = el("div", "cl-card");
-    const hero = el("div", "cl-hero");
-
-    // left: ring + figures
-    const ringbox = el("div", "cl-ringbox");
-    ringbox.appendChild(renderRing(pct));
-    const figs = el("div");
-    const f1 = el("div"); f1.appendChild(el("div", "cl-lab", "已用時間")); f1.appendChild(el("div", "cl-big", used + "%"));
-    const f2 = el("div"); f2.style.marginTop = "10px";
-    f2.appendChild(el("div", "cl-lab", "距到期"));
-    f2.appendChild(el("div", "cl-big", left >= 0 ? left + " 天" : "已逾期 " + (-left) + " 天"));
-    figs.appendChild(f1); figs.appendChild(f2);
-    ringbox.appendChild(figs);
-
-    // right: name + time track
-    const right = el("div");
-    right.appendChild(el("p", "cl-name", prog._studentName || "成員"));
-    right.appendChild(el("p", "cl-proj", prog.project || ""));
-    const trackH = el("div", "cl-h", "進度 vs 時間軸"); trackH.style.marginTop = "14px";
-    right.appendChild(trackH);
-    const track = el("div", "cl-track");
-    const fill = el("div", "cl-fill"); fill.style.width = used + "%"; track.appendChild(fill);
-    const mkHalf = el("div", "cl-mk half"); mkHalf.style.left = "50%"; mkHalf.appendChild(el("span", null, "50%")); track.appendChild(mkHalf);
-    const mkToday = el("div", "cl-mk today"); mkToday.style.left = used + "%"; mkToday.appendChild(el("span", null, "今天")); track.appendChild(mkToday);
-    const mkDue = el("div", "cl-mk due"); mkDue.style.left = "100%"; mkDue.appendChild(el("span", null, "到期")); track.appendChild(mkDue);
-    right.appendChild(track);
-    const ends = el("div", "cl-ends");
-    ends.appendChild(el("span", null, "開始 " + prog.start_date));
-    ends.appendChild(el("span", null, "到期 " + prog.due_date));
-    right.appendChild(ends);
-
-    hero.appendChild(ringbox); hero.appendChild(right); card.appendChild(hero);
-    container.appendChild(card);
-
-    // milestones
-    const mcard = el("div", "cl-card");
-    mcard.appendChild(el("div", "cl-h", "里程碑 · 產出到齊才算完成"));
-    if (!ms.length) {
-      mcard.appendChild(el("div", "cl-empty", "尚未建立里程碑。"));
-    }
-    ms.forEach((m, i) => {
-      const p = msPct(m), st = msStatus(p);
-      const outs = (m.required_outputs || []).slice().sort((a, b) => (a.position || 0) - (b.position || 0));
-      const box = el("div", "cl-ms");
-      const head = el("div", "cl-mh");
-      const num = el("div"); num.style.fontFamily = "var(--clm)"; num.style.fontSize = "20px"; num.style.fontWeight = "700";
-      num.style.color = st === "done" ? "var(--clgn)" : st === "doing" ? "var(--clt)" : "var(--clf)";
-      num.textContent = st === "todo" ? "–" : p + "%";
-      head.appendChild(num);
-      const mid = el("div");
-      mid.appendChild(el("div", "cl-mn", m.name || "里程碑"));
-      mid.appendChild(el("div", "cl-mo", "必要產出 " + outs.filter((o) => o.is_done).length + "/" + outs.length));
-      head.appendChild(mid);
-      const mm = el("div", "cl-mm");
-      mm.appendChild(el("span", "cl-wt", "權重 " + (m.weight || 0) + "%"));
-      mm.appendChild(el("span", "cl-st " + st, st === "done" ? "完成" : st === "doing" ? "進行中" : "未開始"));
-      mm.appendChild(el("span", "cl-car", "▸"));
-      head.appendChild(mm);
-      box.appendChild(head);
-      const att = el("div", "cl-att");
-      att.appendChild(el("div", "cl-ol", "必要產出（到齊才算完成）"));
-      outs.forEach((o) => {
-        const row = el("div", "cl-or" + (o.is_done ? "" : " miss"));
-        const oc = el("div", "cl-oc " + (o.is_done ? "done" : "miss"), o.is_done ? "✓" : "");
-        row.appendChild(oc);
-        row.appendChild(el("span", null, (o.label || "產出") + (o.is_done ? "" : "（尚缺）")));
-        row.appendChild(el("span", "cl-ok", o.kind || ""));
-        att.appendChild(row);
-      });
-      if (!outs.length) att.appendChild(el("div", "cl-empty", "此里程碑尚未定義必要產出。"));
-      box.appendChild(att);
-      head.addEventListener("click", () => box.classList.toggle("open"));
-      mcard.appendChild(box);
-    });
-    container.appendChild(mcard);
+  function smallRing(pct, st) {
+    const col = st === "done" ? "var(--clgn)" : st === "doing" ? "var(--clt)" : "var(--clf)";
+    const c = 2 * Math.PI * 15;
+    const s = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    s.setAttribute("width", "40"); s.setAttribute("height", "40"); s.setAttribute("viewBox", "0 0 40 40");
+    s.innerHTML =
+      '<circle cx="20" cy="20" r="15" fill="none" stroke="var(--clgr)" stroke-width="4"/>' +
+      '<circle cx="20" cy="20" r="15" fill="none" stroke="' + col + '" stroke-width="4" stroke-linecap="round" transform="rotate(-90 20 20)" stroke-dasharray="' + c.toFixed(1) + '" stroke-dashoffset="' + (c * (1 - pct / 100)).toFixed(1) + '"/>' +
+      '<text x="20" y="24" text-anchor="middle" font-size="10.5" font-weight="700" font-family="var(--clm)" fill="var(--cli)">' + (st === "todo" ? "–" : pct) + '</text>';
+    return s;
   }
+  const KL = { data: "數據", slide: "投影片", doc: "文件" };
 
   async function mount(container, cfg) {
+    const ax = api(cfg);
+    const isPI = cfg.role === "admin" || cfg.role === "pi";
+    container.id = "cl-progress";
     container.innerHTML = "";
-    container.id = container.id || "cl-progress";
-    try {
-      const rows = await sbGet(
-        cfg,
+    let progs = [], myTodos = [], cur = 0;
+
+    async function load() {
+      progs = await ax.get(
         "progress?select=id,project,start_date,due_date,student_id,profiles(name)," +
-        "milestones(id,name,weight,position,due_date,required_outputs(is_done,label,kind,position))" +
+        "milestones(id,name,weight,position,due_date,required_outputs(id,label,kind,is_done,position),comments(id,body,author_role,created_at))," +
+        "tasks(id,title,milestone_id,due_date,priority,status,remind_lead_days)" +
         "&order=due_date.asc"
       );
-      rows.forEach((r) => { r._studentName = (r.profiles && r.profiles.name) || ""; });
-      if (!rows.length) {
-        container.appendChild(el("div", "cl-empty", "目前沒有進度資料。"));
-        return;
-      }
-      // PI (multiple students) gets a selector; a student sees only their own row(s).
-      const top = el("div", "cl-top");
-      const body = el("div");
-      if (rows.length > 1) {
-        const sel = el("select");
-        rows.forEach((r, i) => {
-          const o = el("option", null, (r._studentName || "成員") + " — " + (r.project || ""));
-          o.value = String(i); sel.appendChild(o);
-        });
-        sel.addEventListener("change", () => { body.innerHTML = ""; renderProgress(body, rows[+sel.value]); });
-        const lab = el("span", "cl-lab", "選擇成員 / 專案");
-        const wrap = el("div"); wrap.appendChild(lab); wrap.appendChild(sel);
-        top.appendChild(wrap);
-        container.appendChild(top);
-      }
-      container.appendChild(body);
-      renderProgress(body, rows[0]);
-    } catch (err) {
-      container.appendChild(el("div", "cl-err", "無法載入進度：" + (err && err.message ? err.message : err)));
+      progs.forEach((p) => {
+        p._name = (p.profiles && p.profiles.name) || "成員";
+        (p.milestones || []).sort((a, b) => (a.position || 0) - (b.position || 0));
+        (p.milestones || []).forEach((m) => (m.required_outputs || []).sort((a, b) => (a.position || 0) - (b.position || 0)));
+      });
+      myTodos = await ax.get("todos?select=id,title,done,due_date&order=created_at.asc");
     }
+
+    function dueChip(due, lead, st) {
+      if (st === "done" || !due) return { c: "", cls: "" };
+      const n = daysBetween(new Date(), new Date(due));
+      if (n < 0) return { c: "已逾期 " + (-n) + " 天", cls: "over" };
+      if (n <= (lead || 3)) return { c: (n === 0 ? "今天" : n + " 天後") + "到期", cls: "soon" };
+      return { c: "到期前 " + (lead || 3) + " 天提醒", cls: "" };
+    }
+
+    function render() {
+      container.innerHTML = "";
+      if (!progs.length) { container.appendChild(el("div", "cl-empty", "目前沒有進度資料。")); return; }
+
+      if (progs.length > 1) {
+        const top = el("div", "cl-top");
+        const sel = el("select");
+        progs.forEach((p, i) => { const o = el("option", null, p._name + " — " + (p.project || "")); o.value = String(i); sel.appendChild(o); });
+        sel.value = String(cur);
+        sel.addEventListener("change", () => { cur = +sel.value; render(); });
+        const wrap = el("div"); wrap.appendChild(el("span", "cl-lab", "選擇成員 / 專案")); wrap.appendChild(sel);
+        top.appendChild(wrap); container.appendChild(top);
+      }
+      const P = progs[cur], ms = P.milestones || [], tasks = P.tasks || [];
+      const pct = overall(ms);
+      const start = new Date(P.start_date), due = new Date(P.due_date), today = new Date();
+      const totalD = Math.max(1, daysBetween(start, due));
+      const used = Math.min(100, Math.max(0, Math.round(daysBetween(start, today) / totalD * 100)));
+      const left = daysBetween(today, due);
+
+      // hero
+      const hero = el("div", "cl-card"), hbox = el("div", "cl-hero"), rb = el("div", "cl-ringbox");
+      rb.appendChild(ring(pct));
+      const figs = el("div");
+      const f1 = el("div"); f1.appendChild(el("div", "cl-lab", "已用時間")); f1.appendChild(el("div", "cl-big", used + "%"));
+      const f2 = el("div"); f2.style.marginTop = "10px"; f2.appendChild(el("div", "cl-lab", "距到期")); f2.appendChild(el("div", "cl-big", left >= 0 ? left + " 天" : "已逾期 " + (-left) + " 天"));
+      figs.appendChild(f1); figs.appendChild(f2); rb.appendChild(figs);
+      const right = el("div");
+      const nm = el("div"); nm.style.fontSize = "18px"; nm.style.fontWeight = "800"; nm.textContent = P._name; right.appendChild(nm);
+      right.appendChild(el("div", "cl-sub", P.project || ""));
+      const th = el("div", "cl-h", "進度 vs 時間軸"); th.style.marginTop = "14px"; right.appendChild(th);
+      const track = el("div", "cl-track");
+      const fill = el("div", "cl-fill"); fill.style.width = used + "%"; track.appendChild(fill);
+      [["half", 50, "50%"], ["today", used, "今天"], ["due", 100, "到期"]].forEach(function (t) {
+        const mk = el("div", "cl-mk " + t[0]); mk.style.left = t[1] + "%"; mk.appendChild(el("span", null, t[2])); track.appendChild(mk);
+      });
+      right.appendChild(track);
+      const ends = el("div", "cl-ends"); ends.appendChild(el("span", null, "開始 " + P.start_date)); ends.appendChild(el("span", null, "到期 " + P.due_date)); right.appendChild(ends);
+      hbox.appendChild(rb); hbox.appendChild(right); hero.appendChild(hbox); container.appendChild(hero);
+
+      // tasks
+      const tc = el("div", "cl-card");
+      const th2 = el("div", "cl-h", "指導教授任務分派");
+      const opN = tasks.filter((t) => t.status !== "done").length;
+      th2.appendChild(el("span", "cl-cnt", tasks.length ? (opN + " 項待辦 / 共 " + tasks.length) : "尚無任務"));
+      tc.appendChild(th2);
+      if (!tasks.length) tc.appendChild(el("div", "cl-empty", "目前沒有指派任務"));
+      tasks.forEach((t) => {
+        const d = dueChip(t.due_date, t.remind_lead_days, t.status);
+        const row = el("div", "cl-task " + t.status);
+        const st = el("div", "cl-tst " + t.status, t.status === "done" ? "✓" : t.status === "doing" ? "◐" : "");
+        st.addEventListener("click", async () => {
+          const nxt = t.status === "todo" ? "doing" : t.status === "doing" ? "done" : "todo";
+          try { await ax.patch("tasks?id=eq." + t.id, { status: nxt }); t.status = nxt; render(); } catch (e) { alert("更新失敗：" + e.message); }
+        });
+        row.appendChild(st);
+        const mid = el("div");
+        mid.appendChild(el("div", "cl-tt", t.title));
+        const meta = el("div", "cl-tmeta");
+        meta.appendChild(el("span", "cl-pr " + (t.priority || "med")));
+        const msName = t.milestone_id ? (ms.find((m) => m.id === t.milestone_id) || {}).name : null;
+        if (msName) meta.appendChild(el("span", "cl-tag ms", msName));
+        meta.appendChild(el("span", "cl-tag", "指導教授指派"));
+        if (d.c) meta.appendChild(el("span", "cl-rem " + d.cls, d.c));
+        mid.appendChild(meta); row.appendChild(mid);
+        row.appendChild(el("div", "cl-due " + d.cls, "到期 " + (t.due_date || "未定")));
+        tc.appendChild(row);
+      });
+      if (isPI) {
+        const add = el("div", "cl-add");
+        const ti = el("input"); ti.type = "text"; ti.placeholder = "任務內容…";
+        const dd = el("input"); dd.type = "date";
+        const pr = el("select"); [["high", "高"], ["med", "中"], ["low", "低"]].forEach((x) => { const o = el("option", null, x[1]); o.value = x[0]; if (x[0] === "med") o.selected = true; pr.appendChild(o); });
+        const mm = el("select"); const o0 = el("option", null, "（不綁里程碑）"); o0.value = ""; mm.appendChild(o0);
+        ms.forEach((m) => { const o = el("option", null, m.name); o.value = m.id; mm.appendChild(o); });
+        const bt = el("button", "cl-btn dark", "派工 →");
+        bt.addEventListener("click", async () => {
+          if (!ti.value.trim()) return;
+          try {
+            const rows = await ax.post("tasks", { student_id: P.student_id, assigner_id: cfg.profileId, title: ti.value.trim(), milestone_id: mm.value || null, due_date: dd.value || null, priority: pr.value, status: "todo" });
+            (P.tasks = P.tasks || []).unshift(rows[0]); ti.value = ""; render();
+          } catch (e) { alert("派工失敗：" + e.message); }
+        });
+        [ti, mm, dd, pr, bt].forEach((x) => add.appendChild(x));
+        tc.appendChild(add);
+      }
+      container.appendChild(tc);
+
+      // milestones
+      const mc = el("div", "cl-card");
+      mc.appendChild(el("div", "cl-h", "里程碑 · 產出到齊才算完成"));
+      if (!ms.length) mc.appendChild(el("div", "cl-empty", "尚未建立里程碑。"));
+      ms.forEach((m) => {
+        const p = msPct(m), st = msStatus(p);
+        const outs = m.required_outputs || [], comments = (m.comments || []);
+        const box = el("div", "cl-ms");
+        const head = el("div", "cl-mh");
+        head.appendChild(smallRing(p, st));
+        const mid = el("div"); mid.appendChild(el("div", "cl-mn", m.name)); mid.appendChild(el("div", "cl-mo", "必要產出 " + outs.filter((o) => o.is_done).length + "/" + outs.length)); head.appendChild(mid);
+        const mm = el("div", "cl-mm");
+        if (comments.length) mm.appendChild(el("span", "cl-bn", "💬 " + comments.length));
+        mm.appendChild(el("span", "cl-wt", "權重 " + (m.weight || 0) + "%"));
+        mm.appendChild(el("span", "cl-stt " + st, st === "done" ? "完成" : st === "doing" ? "進行中" : "未開始"));
+        mm.appendChild(el("span", "cl-car", "▸")); head.appendChild(mm);
+        head.addEventListener("click", (e) => { if (!e.target.closest("input,button,.cl-or")) box.classList.toggle("open"); });
+        box.appendChild(head);
+        const att = el("div", "cl-att");
+        att.appendChild(el("div", "cl-ol", "必要產出（點一下切換完成）"));
+        outs.forEach((o) => {
+          const row = el("div", "cl-or" + (o.is_done ? "" : " miss"));
+          row.appendChild(el("div", "cl-oc " + (o.is_done ? "done" : "miss"), o.is_done ? "✓" : ""));
+          row.appendChild(el("span", null, (o.label || "產出") + (o.is_done ? "" : "（尚缺）")));
+          row.appendChild(el("span", "cl-ok", KL[o.kind] || o.kind || ""));
+          row.addEventListener("click", async () => {
+            try { await ax.patch("required_outputs?id=eq." + o.id, { is_done: !o.is_done }); o.is_done = !o.is_done; render(); box.classList.add("open"); } catch (e) { alert("更新失敗：" + e.message); }
+          });
+          att.appendChild(row);
+        });
+        if (!outs.length) att.appendChild(el("div", "cl-empty", "此里程碑尚未定義必要產出。"));
+        att.appendChild(el("div", "cl-ol", "指導教授留言"));
+        comments.sort((a, b) => String(a.created_at).localeCompare(String(b.created_at)));
+        comments.forEach((c) => {
+          const cm = el("div", "cl-cmt");
+          cm.appendChild(el("div", "cl-av " + (c.author_role === "pi" ? "pi" : "stu"), c.author_role === "pi" ? "師" : "生"));
+          const cb = el("div", "cl-cb");
+          cb.appendChild(el("div", "cl-cw", c.author_role === "pi" ? "指導教授" : "學生"));
+          cb.appendChild(el("div", "cl-ct", c.body)); cm.appendChild(cb); att.appendChild(cm);
+        });
+        const cadd = el("div", "cl-cadd");
+        const ci = el("input"); ci.type = "text"; ci.placeholder = isPI ? "以指導教授身分留言…" : "回覆…";
+        const cbtn = el("button", "cl-btn", "送出");
+        cbtn.addEventListener("click", async () => {
+          if (!ci.value.trim()) return;
+          try {
+            const rows = await ax.post("comments", { milestone_id: m.id, author_id: cfg.profileId, author_role: isPI ? "pi" : "student", body: ci.value.trim() });
+            (m.comments = m.comments || []).push(rows[0]); ci.value = ""; render(); box.classList.add("open");
+          } catch (e) { alert("留言失敗：" + e.message); }
+        });
+        cadd.appendChild(ci); cadd.appendChild(cbtn); att.appendChild(cadd);
+        box.appendChild(att); mc.appendChild(box);
+      });
+      container.appendChild(mc);
+
+      // personal todos (owner-only)
+      const td = el("div", "cl-card");
+      td.appendChild(el("div", "cl-h", "我的 Todo · 個人待辦（僅自己可見）"));
+      if (!myTodos.length) td.appendChild(el("div", "cl-empty", "還沒有待辦，加一個吧"));
+      myTodos.forEach((t) => {
+        const row = el("div", "cl-todo " + (t.done ? "done" : ""));
+        const ck = el("div", "cl-ck " + (t.done ? "on" : ""), t.done ? "✓" : "");
+        ck.addEventListener("click", async () => { try { await ax.patch("todos?id=eq." + t.id, { done: !t.done }); t.done = !t.done; render(); } catch (e) { alert(e.message); } });
+        row.appendChild(ck); row.appendChild(el("span", "cl-tx", t.title));
+        if (t.due_date) row.appendChild(el("span", "cl-due", t.due_date));
+        const del = el("span", "cl-del", "×");
+        del.addEventListener("click", async () => { try { await ax.del("todos?id=eq." + t.id); myTodos = myTodos.filter((x) => x.id !== t.id); render(); } catch (e) { alert(e.message); } });
+        row.appendChild(del); td.appendChild(row);
+      });
+      const tadd = el("div", "cl-add");
+      const tin = el("input"); tin.type = "text"; tin.placeholder = "新增個人待辦…";
+      const tbtn = el("button", "cl-btn", "加入");
+      const addTodo = async () => {
+        if (!tin.value.trim()) return;
+        try { const rows = await ax.post("todos", { owner_id: cfg.profileId, title: tin.value.trim() }); myTodos.push(rows[0]); tin.value = ""; render(); } catch (e) { alert(e.message); }
+      };
+      tbtn.addEventListener("click", addTodo);
+      tin.addEventListener("keydown", (e) => { if (e.key === "Enter") addTodo(); });
+      tadd.appendChild(tin); tadd.appendChild(tbtn); td.appendChild(tadd);
+      container.appendChild(td);
+    }
+
+    try { await load(); render(); }
+    catch (err) { container.appendChild(el("div", "cl-err", "無法載入進度：" + (err && err.message ? err.message : err))); }
   }
 
   window.CoreLabProgress = { mount: mount };
