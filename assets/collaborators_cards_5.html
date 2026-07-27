@@ -24,6 +24,11 @@
     -webkit-font-smoothing:antialiased;
   }
   .wrap{max-width:1440px;margin:0 auto;padding:18px 20px 48px;}
+  .collaborator-filters{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 22px;}
+  .filter-button{appearance:none;border:1px solid var(--rule);border-radius:999px;background:var(--paper);color:var(--ink);cursor:pointer;font:700 13px/1.2 inherit;padding:10px 15px;transition:background .2s,border-color .2s,color .2s;}
+  .filter-button:hover,.filter-button:focus-visible{border-color:var(--accent);color:var(--accent);outline:none;}
+  .filter-button.is-active{background:var(--accent);border-color:var(--accent);color:#fff;}
+  .card[hidden]{display:none;}
 
   header.page{border-bottom:2px solid var(--ink);padding-bottom:18px;margin-bottom:14px;}
   header.page h1{font-size:26px;letter-spacing:.04em;margin:0 0 6px;font-weight:700;}
@@ -143,6 +148,13 @@
 </head>
 <body>
 <div class="wrap">
+<nav class="collaborator-filters" aria-label="合作夥伴分類">
+  <button class="filter-button is-active" type="button" data-filter="all" aria-pressed="true">全部（All）</button>
+  <button class="filter-button" type="button" data-filter="university" aria-pressed="false">大學（University）</button>
+  <button class="filter-button" type="button" data-filter="academia-sinica" aria-pressed="false">中央研究院（Academia Sinica）</button>
+  <button class="filter-button" type="button" data-filter="nsrrc" aria-pressed="false">國家同步輻射研究中心（NSRRC）</button>
+  <button class="filter-button" type="button" data-filter="international" aria-pressed="false">海外（International）</button>
+</nav>
 <div class="grid">
 
     <!-- 01 -->
@@ -433,5 +445,48 @@
 
   </div>
 </div>
+<script>
+  (() => {
+    const categories = {
+      'Chen-Hao Wang': 'university',
+      'Li-Chyong Chen': 'university',
+      'Kuei-Hsien Chen': 'academia-sinica',
+      'Chih-Wen Pao': 'nsrrc',
+      'Chun-Hong Kuo': 'university',
+      'Cedric Po-Wen Chung': 'academia-sinica',
+      'Hsiung-Lin Tu': 'academia-sinica',
+      'Jeng-Lung Chen': 'nsrrc',
+      'Ying-Rui Lu': 'nsrrc',
+      'Lo-Yueh Chang': 'nsrrc',
+      'Yu-Chang Lin': 'nsrrc',
+      'Wei-Hsiang Huang': 'nsrrc',
+      'Sun-Tang Chang': 'university',
+      'Lian-Ming Lyu': 'university',
+      'Liang-Ching Hsu': 'university',
+      'Hsin-Chih Huang': 'university',
+      'Vicki Yeung': 'university',
+      'Je-Wei Chang': 'university',
+      'Chia-Che Chang': 'university',
+      'Zhiwei Hu': 'international'
+    };
+    const cards = [...document.querySelectorAll('.card')];
+    cards.forEach((card) => {
+      const name = card.querySelector('.name .en')?.textContent.trim();
+      card.dataset.category = categories[name] || 'other';
+    });
+    const resizeEmbed = () => window.parent.postMessage({ type: 'core-lab-collaborators-resize', height: document.documentElement.scrollHeight }, window.location.origin);
+    document.querySelectorAll('[data-filter]').forEach((button) => button.addEventListener('click', () => {
+      const filter = button.dataset.filter;
+      cards.forEach((card) => { card.hidden = filter !== 'all' && card.dataset.category !== filter; });
+      document.querySelectorAll('[data-filter]').forEach((item) => {
+        const active = item === button;
+        item.classList.toggle('is-active', active);
+        item.setAttribute('aria-pressed', String(active));
+      });
+      requestAnimationFrame(resizeEmbed);
+    }));
+    window.addEventListener('load', resizeEmbed);
+  })();
+</script>
 </body>
 </html>
