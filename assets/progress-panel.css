@@ -118,5 +118,15 @@
 #cl-progress .cl-ct { font-size: 13px; margin-top: 2px; }
 #cl-progress .cl-cadd { display: flex; gap: 8px; margin-top: 10px; }
 #cl-progress .cl-cadd input { flex: 1; }
+#cl-progress .cl-tpl { border-color: var(--clt); background: linear-gradient(180deg, #f4fafb, var(--clg)); }
+#cl-progress .cl-tplgrid { display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 12px; }
+#cl-progress .cl-fld { display: flex; flex-direction: column; gap: 4px; }
+#cl-progress .cl-fld .cl-lab { margin: 0; }
+#cl-progress .cl-fld select, #cl-progress .cl-fld input { width: 100%; }
+#cl-progress .cl-tplbar { display: flex; align-items: center; gap: 12px; margin-top: 14px; flex-wrap: wrap; }
+#cl-progress .cl-tplmsg { font-family: var(--clm); font-size: 12px; color: var(--cls); }
+#cl-progress .cl-tplmsg.ok { color: var(--clgn); }
+#cl-progress .cl-tplmsg.err { color: var(--clr); }
+@media (min-width: 620px) { #cl-progress .cl-tplgrid { grid-template-columns: 1fr 1fr; } }
 #cl-progress .cl-cols { display: grid; grid-template-columns: 1fr; gap: 14px; }
 @media (min-width: 760px) { #cl-progress .cl-hero { grid-template-columns: 340px 1fr; } #cl-progress .cl-cols { grid-template-columns: 1.05fr 1fr; } }

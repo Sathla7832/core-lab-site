@@ -333,7 +333,7 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
           if (!bridgeRes.ok) throw new Error(String(bridge.error || "Progress workspace is unavailable."));
           await ensureProgressAssets();
           await window.CoreLabProgress.mount(mount, {
-            supabaseUrl: bridge.supabaseUrl, anonKey: bridge.anonKey, token: bridge.token, role: bridge.role,
+            supabaseUrl: bridge.supabaseUrl, anonKey: bridge.anonKey, token: bridge.token, role: bridge.role, profileId: bridge.profileId,
           });
           mount.hidden = false;
           if (state) state.hidden = true;

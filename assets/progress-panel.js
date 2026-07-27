@@ -58,12 +58,37 @@
   }
   const KL = { data: "數據", slide: "投影片", doc: "文件" };
 
+  const ymd = (d) => d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+  const addMonths = (n) => { const d = new Date(); d.setMonth(d.getMonth() + n); return ymd(d); };
+
+  // Onboarding templates: pick one and it builds the whole milestone/output tree.
+  const TEMPLATES = {
+    ms_standard: {
+      label: "碩士研究（標準・4 階段）",
+      milestones: [
+        { name: "文獻回顧與題目定義", weight: 20, outputs: [{ label: "文獻整理表", kind: "doc" }, { label: "題目提案", kind: "doc" }] },
+        { name: "實驗設計與前期準備", weight: 20, outputs: [{ label: "實驗規劃書", kind: "doc" }, { label: "材料 / 藥品清單", kind: "doc" }] },
+        { name: "數據蒐集與分析", weight: 40, outputs: [{ label: "原始數據", kind: "data" }, { label: "數據分析報告", kind: "doc" }, { label: "期中報告", kind: "slide" }] },
+        { name: "論文撰寫與口試", weight: 20, outputs: [{ label: "論文初稿", kind: "doc" }, { label: "口試投影片", kind: "slide" }] },
+      ],
+    },
+    ms_electrocat: {
+      label: "電催化專題（合成→鑑定→性能）",
+      milestones: [
+        { name: "文獻回顧與題目定義", weight: 20, outputs: [{ label: "文獻整理表", kind: "doc" }, { label: "題目提案", kind: "doc" }] },
+        { name: "催化劑合成與鑑定", weight: 40, outputs: [{ label: "合成 SOP", kind: "doc" }, { label: "XRD 數據", kind: "data" }, { label: "SEM 影像", kind: "slide" }] },
+        { name: "電化學性能與機制", weight: 40, outputs: [{ label: "LSV 數據", kind: "data" }, { label: "CA 數據", kind: "data" }, { label: "組會報告", kind: "slide" }] },
+      ],
+    },
+    blank: { label: "空白（只建立專案，里程碑自訂）", milestones: [] },
+  };
+
   async function mount(container, cfg) {
     const ax = api(cfg);
     const isPI = cfg.role === "admin" || cfg.role === "pi";
     container.id = "cl-progress";
     container.innerHTML = "";
-    let progs = [], myTodos = [], cur = 0;
+    let progs = [], myTodos = [], students = [], cur = 0;
 
     async function load() {
       progs = await ax.get(
@@ -78,6 +103,75 @@
         (p.milestones || []).forEach((m) => (m.required_outputs || []).sort((a, b) => (a.position || 0) - (b.position || 0)));
       });
       myTodos = await ax.get("todos?select=id,title,done,due_date&order=created_at.asc");
+      if (isPI) students = await ax.get("profiles?select=id,name,email,role,active&order=name.asc");
+    }
+
+    // Create a full progress record (progress -> milestones -> required_outputs)
+    // from a template, so a PI never hand-writes SQL. RLS allows is_pi() writes.
+    async function applyTemplate(studentId, project, start, due, tpl) {
+      const prog = (await ax.post("progress", { student_id: studentId, project: project, start_date: start, due_date: due }))[0];
+      const mss = tpl.milestones || [];
+      const span = Math.max(1, daysBetween(new Date(start), new Date(due)));
+      for (let i = 0; i < mss.length; i++) {
+        const m = mss[i];
+        const mdue = ymd(new Date(new Date(start).getTime() + span * ((i + 1) / mss.length) * 86400000));
+        const mrow = (await ax.post("milestones", { progress_id: prog.id, name: m.name, weight: m.weight, position: i + 1, due_date: mdue }))[0];
+        const outs = (m.outputs || []).map((o, j) => ({ milestone_id: mrow.id, label: o.label, kind: o.kind || "doc", position: j + 1 }));
+        if (outs.length) await ax.post("required_outputs", outs);
+      }
+      return { studentId: studentId, project: project };
+    }
+
+    function renderTemplateCard() {
+      const c = el("div", "cl-card cl-tpl");
+      c.appendChild(el("div", "cl-h", "建立學生進度 · 套用範本"));
+      c.appendChild(el("div", "cl-sub", "選學生 → 選範本 → 一鍵建立整套里程碑與必要產出，不需寫 SQL。"));
+      const grid = el("div", "cl-tplgrid");
+
+      function field(labelText, node) {
+        const w = el("label", "cl-fld");
+        w.appendChild(el("span", "cl-lab", labelText));
+        w.appendChild(node);
+        return w;
+      }
+      const stuSel = el("select");
+      const o0 = el("option", null, "選擇學生…"); o0.value = ""; stuSel.appendChild(o0);
+      students.filter((s) => s.active !== false).forEach((s) => {
+        const o = el("option", null, s.name + (s.role && s.role !== "student" ? " (" + s.role + ")" : "")); o.value = s.id; stuSel.appendChild(o);
+      });
+      const tplSel = el("select");
+      Object.keys(TEMPLATES).forEach((k) => { const o = el("option", null, TEMPLATES[k].label); o.value = k; tplSel.appendChild(o); });
+      const proj = el("input"); proj.type = "text"; proj.placeholder = "專案 / 題目名稱…";
+      const sd = el("input"); sd.type = "date"; sd.value = ymd(new Date());
+      const dd = el("input"); dd.type = "date"; dd.value = addMonths(9);
+
+      grid.appendChild(field("學生", stuSel));
+      grid.appendChild(field("範本", tplSel));
+      grid.appendChild(field("專案名稱", proj));
+      grid.appendChild(field("開始日", sd));
+      grid.appendChild(field("到期日", dd));
+      c.appendChild(grid);
+
+      const bar = el("div", "cl-tplbar");
+      const btn = el("button", "cl-btn dark", "建立進度 →");
+      const msg = el("div", "cl-tplmsg");
+      btn.addEventListener("click", async () => {
+        if (!stuSel.value) { msg.className = "cl-tplmsg err"; msg.textContent = "請先選擇學生。"; return; }
+        if (!proj.value.trim()) { msg.className = "cl-tplmsg err"; msg.textContent = "請輸入專案名稱。"; return; }
+        if (!sd.value || !dd.value) { msg.className = "cl-tplmsg err"; msg.textContent = "請填開始與到期日。"; return; }
+        btn.disabled = true; msg.className = "cl-tplmsg"; msg.textContent = "建立中…";
+        try {
+          const res = await applyTemplate(stuSel.value, proj.value.trim(), sd.value, dd.value, TEMPLATES[tplSel.value]);
+          await load();
+          const idx = progs.findIndex((p) => p.student_id === res.studentId && p.project === res.project);
+          cur = idx >= 0 ? idx : 0;
+          render();
+          const m2 = document.querySelector(".cl-tplmsg");
+          if (m2) { m2.className = "cl-tplmsg ok"; m2.textContent = "已建立 ✓ 已切換到新進度"; }
+        } catch (e) { btn.disabled = false; msg.className = "cl-tplmsg err"; msg.textContent = "建立失敗：" + e.message; }
+      });
+      bar.appendChild(btn); bar.appendChild(msg); c.appendChild(bar);
+      return c;
     }
 
     function dueChip(due, lead, st) {
@@ -90,7 +184,8 @@
 
     function render() {
       container.innerHTML = "";
-      if (!progs.length) { container.appendChild(el("div", "cl-empty", "目前沒有進度資料。")); return; }
+      if (isPI) container.appendChild(renderTemplateCard());
+      if (!progs.length) { container.appendChild(el("div", "cl-empty", isPI ? "目前沒有進度資料。用上面的範本建立第一筆。" : "目前沒有進度資料。")); return; }
 
       if (progs.length > 1) {
         const top = el("div", "cl-top");
