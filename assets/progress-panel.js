@@ -23,7 +23,7 @@
       Prefer: "return=representation",
     });
     return {
-      async get(path) { const r = await fetch(base + path, { headers: headers() }); if (!r.ok) throw new Error("read " + r.status); return r.json(); },
+      async get(path) { const r = await fetch(base + path, { headers: headers() }); if (!r.ok) throw new Error("read " + r.status + " " + (await r.text())); return r.json(); },
       async post(path, body) { const r = await fetch(base + path, { method: "POST", headers: headers(), body: JSON.stringify(body) }); if (!r.ok) throw new Error("write " + r.status + " " + (await r.text())); return r.json(); },
       async patch(path, body) { const r = await fetch(base + path, { method: "PATCH", headers: headers(), body: JSON.stringify(body) }); if (!r.ok) throw new Error("update " + r.status); return r.json(); },
       async del(path) { const r = await fetch(base + path, { method: "DELETE", headers: headers() }); if (!r.ok) throw new Error("delete " + r.status); },
@@ -93,12 +93,15 @@
     async function load() {
       progs = await ax.get(
         "progress?select=id,project,start_date,due_date,student_id,profiles(name)," +
-        "milestones(id,name,weight,position,due_date,required_outputs(id,label,kind,is_done,position),comments(id,body,author_role,created_at))," +
-        "tasks(id,title,milestone_id,due_date,priority,status,remind_lead_days)" +
+        "milestones(id,name,weight,position,due_date,required_outputs(id,label,kind,is_done,position),comments(id,body,author_role,created_at))" +
         "&order=due_date.asc"
       );
+      // tasks has no FK to progress (only student_id / milestone_id), so fetch
+      // separately and attach by student_id (RLS already scopes rows to the user).
+      const allTasks = await ax.get("tasks?select=id,student_id,title,milestone_id,due_date,priority,status,remind_lead_days&order=due_date.asc");
       progs.forEach((p) => {
         p._name = (p.profiles && p.profiles.name) || "成員";
+        p.tasks = allTasks.filter((t) => t.student_id === p.student_id);
         (p.milestones || []).sort((a, b) => (a.position || 0) - (b.position || 0));
         (p.milestones || []).forEach((m) => (m.required_outputs || []).sort((a, b) => (a.position || 0) - (b.position || 0)));
       });
