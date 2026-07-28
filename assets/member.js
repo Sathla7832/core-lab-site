@@ -128,14 +128,19 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
   } else {
     (async () => {
       const sdkVersion = "11.10.0";
-      const [appSdk, authSdk, dbSdk] = await Promise.all([
+      const [appSdk, authSdk] = await Promise.all([
         import(`https://www.gstatic.com/firebasejs/${sdkVersion}/firebase-app.js`),
         import(`https://www.gstatic.com/firebasejs/${sdkVersion}/firebase-auth.js`),
-        import(`https://www.gstatic.com/firebasejs/${sdkVersion}/firebase-firestore.js`),
       ]);
       const app = appSdk.initializeApp(config);
       const auth = authSdk.getAuth(app);
-      const db = dbSdk.getFirestore(app);
+      let dbSdk;
+      let db;
+      const loadDatabase = async () => {
+        if (dbSdk) return;
+        dbSdk = await import(`https://www.gstatic.com/firebasejs/${sdkVersion}/firebase-firestore.js`);
+        db = dbSdk.getFirestore(app);
+      };
       const provider = new authSdk.GoogleAuthProvider();
       provider.setCustomParameters({ prompt: "select_account" });
       let currentIsAdmin = false;
@@ -1274,11 +1279,14 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
           window.location.replace("member-portal.html");
           return;
         }
-        document.querySelector("[data-member-account]")?.removeAttribute("hidden");
-        const name = document.querySelector("[data-member-name]");
-        if (name) name.textContent = user.displayName || user.email || "Signed-in member";
-        const memberRef = dbSdk.doc(db, "members", user.uid);
+        // Firestore is only needed for an authenticated portal session.  Keep
+        // the sign-in screen responsive by fetching it after auth restores.
         try {
+          await loadDatabase();
+          document.querySelector("[data-member-account]")?.removeAttribute("hidden");
+          const name = document.querySelector("[data-member-name]");
+          if (name) name.textContent = user.displayName || user.email || "Signed-in member";
+          const memberRef = dbSdk.doc(db, "members", user.uid);
           const email = normalizeEmail(user.email);
           const inviteRef = email ? dbSdk.doc(db, "memberInvites", email) : null;
           const [inviteSnapshot, initialMemberSnapshot] = await Promise.all([
