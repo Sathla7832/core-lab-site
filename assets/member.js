@@ -1302,6 +1302,20 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
           let memberSnapshot = initialMemberSnapshot;
           if (!memberSnapshot.exists()) {
             await dbSdk.setDoc(memberRef, { email: user.email || "", displayName: user.displayName || "", active: hasInvite, role: "member", createdAt: dbSdk.serverTimestamp() });
+            // Account approval remains in Firestore; this protected backend call
+            // only alerts the administrator that a new account is awaiting review.
+            if (resourceApiUrl) {
+              try {
+                const token = await user.getIdToken();
+                const response = await fetch(`${resourceApiUrl}/api/member-signups`, {
+                  method: "POST",
+                  headers: { Authorization: `Bearer ${token}` },
+                });
+                if (!response.ok) console.warn("Portal signup notification was not delivered.");
+              } catch (error) {
+                console.warn("Portal signup notification failed.", error);
+              }
+            }
             memberSnapshot = await dbSdk.getDoc(memberRef);
           } else if (memberSnapshot.data()?.active !== true && hasInvite) {
             await dbSdk.updateDoc(memberRef, { active: true, updatedAt: dbSdk.serverTimestamp() });
