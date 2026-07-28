@@ -539,6 +539,31 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
         }
       };
 
+      const appendTextWithLinks = (node, value) => {
+        const text = String(value || "");
+        const urlPattern = /https:\/\/[^\s<>"']+/g;
+        let cursor = 0;
+        for (const match of text.matchAll(urlPattern)) {
+          const rawUrl = match[0];
+          const start = match.index ?? 0;
+          if (start > cursor) node.append(document.createTextNode(text.slice(cursor, start)));
+          const url = secureHttpsUrl(rawUrl);
+          if (url) {
+            const link = document.createElement("a");
+            link.href = url;
+            link.target = "_blank";
+            link.rel = "noopener noreferrer";
+            link.className = "member-auto-link";
+            link.textContent = rawUrl;
+            node.append(link);
+          } else {
+            node.append(document.createTextNode(rawUrl));
+          }
+          cursor = start + rawUrl.length;
+        }
+        if (cursor < text.length) node.append(document.createTextNode(text.slice(cursor)));
+      };
+
       const normalizeEmail = (value) => String(value || "").trim().toLowerCase();
       // Domains allowed for pre-approval. To add one, append it inside the parentheses.
       const approvedAddressPattern = /^[A-Za-z0-9._%+\-]+@(gmail\.com|nycu\.edu\.tw)$/;
@@ -855,7 +880,9 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
           const data = item.data();
           const card = document.createElement("article");
           card.className = "member-card";
-          card.append(createText("p", formatDate(data.createdAt), "member-card-meta"), createText("h3", data.title || "Announcement"), createText("p", data.body || ""));
+          const body = createText("p", "");
+          appendTextWithLinks(body, data.body);
+          card.append(createText("p", formatDate(data.createdAt), "member-card-meta"), createText("h3", data.title || "Announcement"), body);
           if (currentIsAdmin) {
             const syncLabel = data.syncStatus === "synced" ? "Discord: Synced" : data.syncStatus === "failed" ? "Discord: Failed" : "Discord: Pending";
             card.append(createText("p", syncLabel, `member-sync-status is-${data.syncStatus || "pending"}`));
