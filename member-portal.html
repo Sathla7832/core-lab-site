@@ -22,7 +22,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/styles.css?v=3e5c888b6f44" />
+  <link rel="stylesheet" href="assets/styles.css?v=2c4b05a4dddf" />
 </head>
 <body>
   <a class="skip-link" href="#main-content">Skip to main content</a>
@@ -69,8 +69,13 @@
         <section class="member-announcements-dashboard" data-member-announcements-dashboard aria-labelledby="member-announcements-heading">
           <div class="member-section-head">
             <div><h2 id="member-announcements-heading">Announcements</h2></div>
+            <div class="member-announcement-controls" aria-label="Announcement carousel controls">
+              <span class="member-announcement-position" data-announcement-position aria-live="polite"></span>
+              <button class="btn btn-secondary member-announcement-nav" type="button" data-announcement-scroll="-1" aria-label="Previous announcement" disabled>&larr;</button>
+              <button class="btn btn-secondary member-announcement-nav" type="button" data-announcement-scroll="1" aria-label="Next announcement" disabled>&rarr;</button>
+            </div>
           </div>
-          <div class="member-card-grid" data-announcement-list><p class="muted">Loading announcements...</p></div>
+          <div id="member-announcement-track" class="member-card-grid member-announcement-track" data-announcement-list tabindex="0" aria-label="Laboratory announcements"><p class="muted">Loading announcements...</p></div>
         </section>
 
         <nav class="member-portal-tabs" role="tablist" aria-label="Member portal sections">
@@ -190,7 +195,7 @@
 
     </div>
   </footer>
-  <script defer src="assets/main.js?v=3e5c888b6f44"></script>
-  <script src="assets/firebase-config.js?v=3e5c888b6f44"></script><script type="module" src="assets/member.js?v=3e5c888b6f44"></script>
+  <script defer src="assets/main.js?v=2c4b05a4dddf"></script>
+  <script src="assets/firebase-config.js?v=2c4b05a4dddf"></script><script type="module" src="assets/member.js?v=2c4b05a4dddf"></script>
 </body>
 </html>

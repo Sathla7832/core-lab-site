@@ -867,6 +867,43 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
       };
       loadMemberCalendars = renderCalendars;
 
+      const announcementTrack = document.querySelector("[data-announcement-list]");
+      const announcementPosition = document.querySelector("[data-announcement-position]");
+      const announcementControls = Array.from(document.querySelectorAll("[data-announcement-scroll]"));
+      const announcementStep = () => {
+        const card = announcementTrack?.querySelector(".member-card");
+        if (!announcementTrack || !card) return 0;
+        const gap = Number.parseFloat(getComputedStyle(announcementTrack).gap || "0");
+        return card.getBoundingClientRect().width + gap;
+      };
+      const updateAnnouncementCarousel = () => {
+        if (!announcementTrack) return;
+        const cards = Array.from(announcementTrack.querySelectorAll(".member-card"));
+        const step = announcementStep();
+        const index = step ? Math.min(cards.length, Math.max(1, Math.round(announcementTrack.scrollLeft / step) + 1)) : 1;
+        const maxScroll = Math.max(0, announcementTrack.scrollWidth - announcementTrack.clientWidth - 2);
+        if (announcementPosition) announcementPosition.textContent = cards.length ? `${index} / ${cards.length}` : "";
+        announcementControls.forEach((control) => {
+          const direction = Number(control.dataset.announcementScroll || 1);
+          control.disabled = !cards.length || (direction < 0 ? announcementTrack.scrollLeft <= 2 : announcementTrack.scrollLeft >= maxScroll);
+        });
+      };
+      announcementControls.forEach((control) => control.addEventListener("click", () => {
+        const step = announcementStep();
+        if (announcementTrack && step) {
+          announcementTrack.scrollBy({ left: Number(control.dataset.announcementScroll || 1) * step, behavior: "smooth" });
+        }
+      }));
+      announcementTrack?.addEventListener("scroll", updateAnnouncementCarousel, { passive: true });
+      announcementTrack?.addEventListener("keydown", (event) => {
+        if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+        const step = announcementStep();
+        if (!step) return;
+        event.preventDefault();
+        announcementTrack.scrollBy({ left: (event.key === "ArrowLeft" ? -1 : 1) * step, behavior: "smooth" });
+      });
+      window.addEventListener("resize", updateAnnouncementCarousel);
+
       const renderAnnouncements = async () => {
         const list = document.querySelector("[data-announcement-list]");
         if (!list) return;
@@ -874,6 +911,7 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
         list.replaceChildren();
         if (snapshot.empty) {
           list.append(createText("p", "No announcements have been posted yet.", "muted"));
+          updateAnnouncementCarousel();
           return;
         }
         snapshot.forEach((item) => {
@@ -920,6 +958,7 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
           }
           list.append(card);
         });
+        requestAnimationFrame(updateAnnouncementCarousel);
       };
 
       // Experiment records are read live from Notion through the sync API, so
