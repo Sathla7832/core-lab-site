@@ -94,12 +94,14 @@ table.read td.val{font-family:Georgia,serif;text-align:right;white-space:nowrap}
 /* 只保留各頁當下要比較的數字。 */
 #a-read tr:nth-child(1),#a-read tr:nth-child(n+7),#b-read tr:nth-child(1),#b-read tr:nth-child(4),#c-read tr:nth-child(-n+4),#d-read tr:nth-child(-n+3),#e-read tr:nth-child(-n+3),#f-read tr:nth-child(n+2):nth-child(-n+5){display:none}
 .minimal-read{margin-top:8px} [hidden]{display:none!important}
+input[type=range]#a-x0,input[type=range]#b-x0,input[type=range]#b-y0,input[type=range]#c-x0,input[type=range]#c-y0,input[type=range]#d-x0,input[type=range]#d-y0,input[type=range]#e-x0,input[type=range]#e-y0{display:none}
+#a-read tr:nth-child(n+4){display:none}
 </style>
 </head>
 <body>
 <header>
   <a href="index.html" style="display:inline-block;font-size:13px;color:#403990;margin-bottom:6px">← 回 CORE Lab 首頁</a> <a href="course.html" style="margin-left:16px;color:#403990;font-size:13px">Course</a> <span aria-current="page" style="margin-left:12px;font-size:13px;font-weight:bold">Ch. 1</span>
-  <h1>一起看看：坡度、曲面和氣體 <small style="font:12px sans-serif;color:var(--muted)">方向白話版 10</small></h1>
+  <h1>一起看看：坡度、曲面和氣體 <small style="font:12px sans-serif;color:var(--muted)">函數與座標版 11</small></h1>
   <div class="sub">微分 → 偏微分 → 方向導數 → 全微分 → <span class="math"><i>V</i>(<i>P</i>,<i>T</i>)</span>　｜　拖曳旋轉．滾輪縮放．← → 換頁</div>
   <nav id="nav"></nav>
 </header>
@@ -745,7 +747,7 @@ const STEPS=[
        it.labels.push(
          {u:x1,v:st.y0,z:f1,text:'實際位置（曲線上）',color:C.amber,font:FONT,dx:95,dy:higher?-30:38},
          {u:x1,v:st.y0,z:estimate,text:'估計位置（切線上）',color:C.red,font:FONT,dx:-95,dy:higher?38:-30});
-       if(Math.abs(error)>(SC.zb-SC.za)*0.025)it.labels.push({u:x1,v:st.y0,z:(f1+estimate)/2,text:'估計差多少：'+fmt(Math.abs(error),3),color:C.green,font:FONT,dx:115,dy:0});
+       if(Math.abs(error)>(SC.zb-SC.za)*0.025)it.labels.push({u:x1,v:st.y0,z:(f1+estimate)/2,text:'實際與估計的差距',color:C.green,font:FONT,dx:115,dy:0});
      }
      it.curves.push({pts:[[st.x0,st.y0,f0],[x1,st.y0,f0]],color:"#9AA6A0",width:1.6,dash:[5,4],noOcclusion:true});
      if(Math.abs(dxe)>0.08)
@@ -759,7 +761,7 @@ const STEPS=[
    const x1=clamp(st.x0+st.dx,SC.ua,SC.ub),dxe=x1-st.x0,f1=o.f(x1);
    const df=m*dxe,Df=f1-f0,err=Df-df;
    const gapNote=document.getElementById("a-gap-explanation");
-   if(gapNote)gapNote.textContent="先看同一個 x 位置：橘點在曲線上，是實際位置；紅點在切線上，是估計位置。綠色虛線連起兩點，只表示估計差多少，不是另一條路，也不是切線。這次相差 "+fmt(Math.abs(err),5)+"。把 Δx 調小，再看看差距。";
+   if(gapNote)gapNote.textContent="先看同一個 x 位置：橘點在曲線上，是實際位置；紅點在切線上，是估計位置。綠色虛線連起兩點，只表示估計差多少，不是另一條路，也不是切線。把 Δx 調小，再看看差距。";
    tbl("a-read",[["f(x₀)",fmt(f0,4),""],
      ["割線斜率 Δf/Δx",fmt(Math.abs(dxe)>1e-9?Df/dxe:NaN),"am"],
      ["切線斜率 f′(x₀)",fmt(m),"hi"],
@@ -1398,12 +1400,12 @@ S.s4.fn=1;S.s4.dx=0.3;S.s4.dy=0.3;
 S.s5.fn=1;S.s5.cx=false;S.s5.cy=false;S.s5.grad=false;S.s5.cont=false;
 S.s6.model=0;S.s6.T=430;S.s6.P=12;S.s6.dT=10;S.s6.dP=0.5;
 S.s7.arrows=false;S.s7.b2=0;
-const minimalControls=[['a-dx'],['b-x0','b-y0'],['c-th'],['d-dx','d-dy'],['e-th'],['f-dT','f-dP'],['g-b1']];
+const minimalControls=[['a-fn','a-x0','a-dx'],['b-fn','b-x0','b-y0'],['c-fn','c-x0','c-y0','c-th'],['d-fn','d-x0','d-y0','d-dx','d-dy'],['e-fn','e-x0','e-y0','e-th'],['f-dT','f-dP'],['g-b1']];
 const minimalHelp=[
- '只改 Δx。把橘點慢慢移近紅點，看割線如何接近切線。Δx = 0 時兩點重合，割線斜率不能用兩點相除；微分看的是靠近 0 的極限。',
- '固定使用 f = xy。一次只動一支滑桿，另一支先不動；這就是偏微分要保持另一個量不變的意思。',
+ '先選函數、輸入觀察點 x₀，再調 Δx。把橘點慢慢移近紅點，看割線如何接近切線。Δx = 0 時兩點重合，割線斜率不能用兩點相除；微分看的是靠近 0 的極限。',
+ '先選函數，輸入觀察點 (x₀, y₀)。一次只改一個座標，另一個先不動；這就是偏微分要保持另一個量不變的意思。',
  '紅箭頭是你要走的方向，綠箭頭是上坡最快的方向。轉動紅箭頭，看看現在是上坡還是下坡。紫色角度是在比較兩個方向，不是山坡傾斜的角度。',
- '起點固定，只改兩個方向的移動距離。兩個距離越小，切平面的估計通常越接近曲面。',
+ '選好函數與觀察點，再改兩個方向的移動距離。兩個距離越小，切平面的估計通常越接近曲面。',
  '只轉方向，觀察切向量一直留在同一張切平面上。',
  '先固定 1 莫耳理想氣體，起點是 430 K、12 bar。只改 ΔT 和 ΔP，看看體積改變多少。',
  '起點、終點和橘色路線固定，只改藍色路線。先看狀態函數，再換成路徑函數比較。'
@@ -1417,7 +1419,7 @@ STEPS.forEach((step,i)=>{
  original=original.replace(table,'');
  if(i===6)for(const id of ['g-state-demo','g-path-demo']){const re=new RegExp('<button id="'+id+'"[^>]*>[\s\S]*?<\/button>');original=original.replace(re,b=>{visible+=b;return '';});}
  if(i===5){original=original.replace(/<button id="f-half"[^>]*>[\s\S]*?<\/button>/,b=>{visible+=b;return '';});}
- step.panel='<h2>動手試一件事</h2><p class="note">'+minimalHelp[i]+'</p>'+visible+'<h2>看這幾個數字</h2><table class="read minimal-read" id="'+tableId+'"></table><div hidden aria-hidden="true">'+original+'</div>';
+ step.panel='<h2>選函數與觀察位置</h2><p class="note">'+minimalHelp[i]+'</p>'+visible+'<h2>看這幾個數字</h2><table class="read minimal-read" id="'+tableId+'"></table><div hidden aria-hidden="true">'+original+'</div>';
  step.lead=minimalHelp[i];
 });
 /* ===================== 主流程 ===================== */
