@@ -1368,7 +1368,7 @@ function drawDirectionGuide(){
   ctx.stroke();const p=point(th+delta/2,r*0.72);ctx.fillStyle='#403990';ctx.fillText('φ',p.x,p.y);
  }
  ctx.fillStyle='#17242B';ctx.fillStyle=C.red;ctx.fillText('紅：你往這裡走',cx,top+36);
- ctx.fillStyle=C.green;ctx.fillText('綠：上坡最快',cx,top+52);
+
  ctx.fillStyle='#17242B';ctx.fillText(gm>1e-9?'兩個方向差 '+fmt(phi,1)+'°':'這一點各方向的坡度都是 0',cx,top+size-34);
  const slope=fx*Math.cos(th)+fy*Math.sin(th);
  const result=gm<1e-9||Math.abs(slope)<1e-8?'當下不升也不降':slope>0?(slope/gm>0.98?'上坡最快':slope/gm<0.15?'稍微上坡':'正在上坡'):(slope/gm< -0.98?'下坡最快':slope/gm> -0.15?'稍微下坡':'正在下坡');
