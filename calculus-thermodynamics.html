@@ -1,0 +1,1398 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="CORE Lab 互動教材：微分、方向導數、切平面、理想氣體定律與狀態函數。">
+<title>一張曲面走完：微分 → 偏微分 → 方向導數 → 全微分 → V(P,T)</title>
+<style>
+:root{
+  --paper:#F7F7F2;--panel:#FFFFFF;--rule:#CBD3CC;--ink:#17242B;--muted:#5E6E72;
+  --blue:#403990;--amber:#C75B2A;--red:#CF3D3E;--green:#3E6B4A;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;height:100vh;display:flex;flex-direction:column;
+  background:var(--paper);color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang TC","Microsoft JhengHei","Noto Sans TC",sans-serif;
+  font-size:15px;line-height:1.5;
+}
+.math{font-family:Georgia,"Times New Roman","Songti TC","Noto Serif TC",serif}
+.math i{font-style:italic}
+header{background:var(--panel);border-bottom:1px solid var(--rule);padding:13px 22px 0;flex:0 0 auto}
+h1{font-family:Georgia,"Songti TC","Noto Serif TC",serif;font-size:18px;font-weight:600;margin:0}
+.sub{color:var(--muted);font-size:12.5px;margin:2px 0 9px}
+nav{display:flex;gap:2px;flex-wrap:wrap}
+nav button{
+  appearance:none;background:none;border:0;border-bottom:3px solid transparent;font:inherit;
+  color:var(--muted);padding:7px 12px 8px;cursor:pointer;display:flex;align-items:baseline;gap:7px;border-radius:4px 4px 0 0
+}
+nav button:hover{background:#F1F3EE;color:var(--ink)}
+nav button .n{
+  font-family:Georgia,serif;font-size:12px;color:#93A09B;border:1px solid var(--rule);border-radius:50%;
+  width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto
+}
+nav button[aria-current="true"]{color:var(--ink);border-bottom-color:var(--red);font-weight:600}
+nav button[aria-current="true"] .n{border-color:var(--red);color:var(--red)}
+nav button:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+main{display:grid;grid-template-columns:minmax(0,1fr) 330px;flex:1 1 auto;min-height:0}
+.stage{padding:14px 16px;display:flex;flex-direction:column;min-width:0}
+.lead{font-size:13.5px;color:var(--muted);margin:0 0 9px;max-width:76ch}
+.lead b{color:var(--ink);font-weight:600}
+.frame{
+  flex:1;position:relative;background:var(--panel);border:1px solid var(--rule);
+  border-radius:3px;min-height:0;overflow:hidden
+}
+#gl{display:block;width:100%;height:100%;touch-action:none;cursor:grab}
+#gl:active{cursor:grabbing}
+.views{position:absolute;left:12px;bottom:12px;display:flex;gap:5px;flex-wrap:wrap}
+.views button{
+  font:inherit;font-size:12.5px;padding:5px 10px;border:1px solid var(--rule);background:rgba(255,255,255,.9);
+  color:var(--ink);border-radius:3px;cursor:pointer
+}
+.views button:hover{background:#EFF2EC}
+.hint{position:absolute;right:12px;bottom:12px;font-size:12px;color:var(--muted);background:rgba(255,255,255,.85);padding:2px 7px;border-radius:3px}
+aside{border-left:1px solid var(--rule);background:var(--panel);padding:15px 17px 30px;overflow-y:auto}
+aside h2{font-family:Georgia,"Songti TC",serif;font-size:14.5px;margin:0 0 11px;font-weight:600}
+.ctl{margin-bottom:12px}
+.ctl label{display:flex;justify-content:space-between;align-items:baseline;font-size:13px;margin-bottom:3px}
+.ctl label .v{font-family:Georgia,serif;color:var(--blue)}
+input[type=range]{width:100%;accent-color:var(--red)}
+.num{
+  width:86px;font-family:Georgia,"Songti TC",serif;font-size:13px;text-align:right;
+  padding:2px 6px;border:1px solid var(--rule);border-radius:3px;background:#fff;color:var(--blue)
+}
+.num:focus{outline:2px solid var(--blue);outline-offset:1px}
+.num::-webkit-outer-spin-button,.num::-webkit-inner-spin-button{opacity:.45}
+.quick{display:flex;gap:4px;flex-wrap:wrap;margin:-6px 0 12px}
+.quick button{
+  font:inherit;font-size:12px;font-family:Georgia,serif;padding:3px 8px;border:1px solid var(--rule);
+  border-radius:3px;background:#fff;cursor:pointer;color:var(--ink)
+}
+.quick button:hover{background:#F1F3EE}
+select{font:inherit;font-size:13px;padding:6px 8px;border:1px solid var(--rule);border-radius:3px;background:#fff;width:100%}
+button.act{font:inherit;font-size:13px;padding:6px 11px;border:1px solid var(--rule);border-radius:3px;background:#fff;cursor:pointer}
+button.act:hover{background:#F1F3EE}
+.checks{display:flex;flex-direction:column;gap:5px;font-size:13px;margin-bottom:12px}
+.checks label{display:flex;gap:7px;align-items:center;cursor:pointer}
+.rule{border:0;border-top:1px solid var(--rule);margin:15px 0}
+table.read{width:100%;border-collapse:collapse;font-size:13px}
+table.read td{padding:3px 0;vertical-align:baseline}
+table.read td.k{color:var(--muted);white-space:nowrap;padding-right:8px}
+table.read td.val{font-family:Georgia,serif;text-align:right;white-space:nowrap}
+.hi{color:var(--red)}.bl{color:var(--blue)}.am{color:var(--amber)}.gr{color:var(--green)}
+.eq{font-family:Georgia,"Songti TC",serif;font-size:14.5px;background:#F3F5F0;border-left:3px solid var(--rule);padding:8px 10px;margin:10px 0;line-height:1.75}
+.note{font-size:12.5px;color:var(--muted);margin-top:9px}
+.note.warn{border-left:3px solid var(--amber);padding-left:9px;color:var(--ink)}
+.note.warn b{color:var(--amber)}
+@media (max-width:900px){
+  body{height:auto;display:block}
+  main{grid-template-columns:1fr}
+  .frame{height:64vh}
+  aside{border-left:0;border-top:1px solid var(--rule)}
+}
+</style>
+</head>
+<body>
+<header>
+  <a href="index.html" style="display:inline-block;font-size:13px;color:#403990;margin-bottom:6px">← 回 CORE Lab 首頁</a>
+  <h1>一起看看：坡度、曲面和氣體 <small style="font:12px sans-serif;color:var(--muted)">方向夾角版 7</small></h1>
+  <div class="sub">微分 → 偏微分 → 方向導數 → 全微分 → <span class="math"><i>V</i>(<i>P</i>,<i>T</i>)</span>　｜　拖曳旋轉．滾輪縮放．← → 換頁</div>
+  <nav id="nav"></nav>
+</header>
+<main>
+  <div class="stage">
+    <p class="lead" id="lead"></p>
+    <div class="frame">
+      <canvas id="gl"></canvas>
+      <div class="views">
+        <button data-v="iso">斜著看</button>
+        <button data-v="top">從上面看</button>
+        <button data-v="fx">看 x 方向</button>
+        <button data-v="fy">看 y 方向</button>
+      </div>
+      <div class="hint" id="hint"></div>
+    </div>
+  </div>
+  <aside id="panel"></aside>
+</main>
+
+<script>
+/* ===================== 基本工具 ===================== */
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const lerp=(a,b,t)=>a+(b-a)*t;
+const fmt=(v,d=3)=>(!isFinite(v)?"—":(Math.abs(v)>=1e4||(Math.abs(v)<1e-3&&v!==0)?v.toExponential(2):v.toFixed(d)));
+const C={ink:"#17242B",muted:"#5E6E72",blue:"#403990",amber:"#C75B2A",red:"#CF3D3E",green:"#3E6B4A"};
+const FONT='12px -apple-system,"PingFang TC","Microsoft JhengHei",sans-serif';
+const FONTM='13px Georgia,"Songti TC",serif';
+const RM=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* ===================== 函數庫 ===================== */
+const FN=[
+ {key:"saddle",label:"f = x·y（像馬鞍）",f:(x,y)=>x*y,fx:(x,y)=>y,fy:(x,y)=>x,fxy:()=>1,rng:[-9,9]},
+ {key:"bowl",label:"f = (x² + 2y²)/4（碗）",f:(x,y)=>(x*x+2*y*y)/4,fx:(x,y)=>x/2,fy:(x,y)=>y,fxy:()=>0,rng:[0,7]},
+ {key:"hill",label:"f = 3·exp(−(x²+y²)/4)（山丘）",
+  f:(x,y)=>3*Math.exp(-(x*x+y*y)/4),fx:(x,y)=>-1.5*x*Math.exp(-(x*x+y*y)/4),
+  fy:(x,y)=>-1.5*y*Math.exp(-(x*x+y*y)/4),fxy:(x,y)=>0.75*x*y*Math.exp(-(x*x+y*y)/4),rng:[0,3]},
+ {key:"wave",label:"f = sin x · cos y（波浪）",f:(x,y)=>Math.sin(x)*Math.cos(y),
+  fx:(x,y)=>Math.cos(x)*Math.cos(y),fy:(x,y)=>-Math.sin(x)*Math.sin(y),
+  fxy:(x,y)=>-Math.cos(x)*Math.sin(y),rng:[-1.15,1.15]},
+ {key:"ridge",label:"f = x·exp(−(x²+y²)/6)（像彎彎的山稜）",
+  f:(x,y)=>3*x*Math.exp(-(x*x+y*y)/6),
+  fx:(x,y)=>3*Math.exp(-(x*x+y*y)/6)*(1-x*x/3),
+  fy:(x,y)=>-x*y*Math.exp(-(x*x+y*y)/6),
+  fxy:(x,y)=>-y*Math.exp(-(x*x+y*y)/6)*(1-x*x/3),rng:[-2.3,2.3]}
+];
+const DOM={a:-3,b:3};
+/* 第 1 頁：經典單變數曲線 y = f(x)。曲面 = 把曲線沿 y 擠出（f 與 y 無關） */
+const F1=[
+ {key:"sq",   label:"f(x) = x²",            f:x=>x*x,            d:x=>2*x,          d2:x=>2,
+  dom:[-3,3],      rng:[-0.6,9.6]},
+ {key:"cub",  label:"f(x) = x³ − 3x",       f:x=>x*x*x-3*x,      d:x=>3*x*x-3,      d2:x=>6*x,
+  dom:[-2.6,2.6],  rng:[-9.5,9.5]},
+ {key:"sin",  label:"f(x) = sin x",         f:x=>Math.sin(x),    d:x=>Math.cos(x),  d2:x=>-Math.sin(x),
+  dom:[-6.283,6.283], rng:[-1.25,1.25]},
+ {key:"exp",  label:"f(x) = eˣ",            f:x=>Math.exp(x),    d:x=>Math.exp(x),  d2:x=>Math.exp(x),
+  dom:[-3,2],      rng:[-0.5,7.8]},
+ {key:"ln",   label:"f(x) = ln x",          f:x=>Math.log(x),    d:x=>1/x,          d2:x=>-1/(x*x),
+  dom:[0.12,3],    rng:[-2.4,1.35]},
+ {key:"rec",  label:"f(x) = 1/x",           f:x=>1/x,            d:x=>-1/(x*x),     d2:x=>2/(x*x*x),
+  dom:[0.3,3],     rng:[-0.2,3.6]},
+ {key:"sqrt", label:"f(x) = √x",            f:x=>Math.sqrt(x),   d:x=>0.5/Math.sqrt(x), d2:x=>-0.25/Math.pow(x,1.5),
+  dom:[0.02,4],    rng:[-0.2,2.15]},
+ {key:"gau",  label:"f(x) = e^(−x²)",       f:x=>Math.exp(-x*x), d:x=>-2*x*Math.exp(-x*x),
+  d2:x=>(4*x*x-2)*Math.exp(-x*x), dom:[-2.6,2.6], rng:[-0.15,1.2]},
+ {key:"logi", label:"f(x) = 1/(1 + e^(−x))", f:x=>1/(1+Math.exp(-x)),
+  d:x=>{const e=Math.exp(-x);return e/Math.pow(1+e,2);},
+  d2:x=>{const e=Math.exp(-x);return e*(e-1)/Math.pow(1+e,3);}, dom:[-6,6], rng:[-0.12,1.12]}
+];
+
+/* 第 7 頁：選一種計算方式 M du + N dv 的可積性與路徑相依 */
+const RJ=8.314, CV=1.5*8.314;   // J/(mol·K)
+const FIELDS=[
+ {key:"xy",label:"M = 2xy，N = x²",ul:"x",vl:"y",zl:"Z",
+  dom:[[-3,3],[-3,3]],decU:2,decV:2,A:[-2,-1.2],B:[2,1.2],
+  M:(x,y)=>2*x*y,N:(x,y)=>x*x,Z:(x,y)=>x*x*y,
+  note:"兩種順序都算出 2x。這個例子可以找到 Z = x²y + C，沿途加起來的結果只看起點和終點。"},
+ {key:"quad",label:"M = 2x + y，N = x + 2y",ul:"x",vl:"y",zl:"Z",
+  dom:[[-3,3],[-3,3]],decU:2,decV:2,A:[-2,-1.5],B:[2,0.6],
+  M:(x,y)=>2*x+y,N:(x,y)=>x+2*y,Z:(x,y)=>x*x+x*y+y*y,
+  note:"兩種順序都算出 1。這個例子可以找到 Z = x² + xy + y² + C，換路線不會改變結果。"},
+ {key:"shear",label:"M = y，N = 0（結果跟路線有關）",ul:"x",vl:"y",zl:"∫ 累積值",
+  dom:[[-3,3],[-3,3]],decU:2,decV:2,A:[-2,-1.2],B:[2,1.2],
+  M:(x,y)=>y,N:()=>0,Z:null,
+  note:"兩種順序算出 1 和 0，不一樣。這個例子沿不同路線走，累積的結果可能不同。"},
+ {key:"rot",label:"M = −y，N = x（結果跟路線有關）",ul:"x",vl:"y",zl:"∫ 累積值",
+  dom:[[-3,3],[-3,3]],decU:2,decV:2,A:[-2,-1.2],B:[2,1.2],
+  M:(x,y)=>-y,N:(x,y)=>x,Z:null,
+  note:"這個例子繞一圈，累積的值等於圈住面積的兩倍；換個繞行方向，正負號也會交換。"},
+ {key:"vortex",label:"M = −y/r²，N = x/r²（原點有洞，不能踩）",ul:"x",vl:"y",zl:"θ",
+  dom:[[-3,3],[-3,3]],decU:2,decV:2,A:[-2,-0.6],B:[2,-0.6],
+  M:(x,y)=>-y/(x*x+y*y),N:(x,y)=>x/(x*x+y*y),Z:(x,y)=>Math.atan2(y,x),
+  note:"這裡的原點像一個不能踩的洞。即使兩種順序在洞外算得一樣，繞洞一圈仍會多出 2π。畫面上角度跳回起點的接縫，不是真的山壁。"},
+ {key:"dq",label:"δq = C_v dT + (RT/V) dV　理想氣體",ul:"V (L)",vl:"T (K)",zl:"∫δq (J/mol)",
+  dom:[[0.5,5],[250,500]],decU:2,decV:0,A:[1,300],B:[4,450],
+  M:(V,T)=>RJ*T/V,N:()=>CV,Z:null,
+  note:"這裡算的是可逆過程的熱量。熱量會跟過程有關，所以用 δq，和狀態函數的 d 不同。"},
+ {key:"ds",label:"dS = (C_v/T) dT + (R/V) dV　理想氣體",ul:"V (L)",vl:"T (K)",zl:"S (J/mol·K)",
+  dom:[[0.5,5],[250,500]],decU:2,decV:0,A:[1,300],B:[4,450],
+  M:(V,T)=>RJ/V,N:(V,T)=>CV/T,Z:(V,T)=>CV*Math.log(T)+RJ*Math.log(V),
+  note:"把可逆過程中每一小段的熱量除以當時的溫度，再加起來，就得到熵的變化。這個例子可以找到熵 S，它是狀態函數。"}
+];
+function pathPts(F,A,B,bulge,n){
+  const [ua,ub]=F.dom[0],[va,vb]=F.dom[1];
+  const ax=(A[0]-ua)/(ub-ua),ay=(A[1]-va)/(vb-va);
+  const bx=(B[0]-ua)/(ub-ua),by=(B[1]-va)/(vb-va);
+  const dx=bx-ax,dy=by-ay,L=Math.hypot(dx,dy)||1,px=-dy/L,py=dx/L;
+  const out=[];
+  for(let i=0;i<=n;i++){
+    const t=i/n,sB=Math.sin(Math.PI*t)*bulge;
+    const X=clamp(ax+dx*t+px*sB,0,1),Y=clamp(ay+dy*t+py*sB,0,1);
+    out.push([ua+X*(ub-ua),va+Y*(vb-va)]);
+  }
+  return out;
+}
+function runInt(F,pts){
+  const acc=[0];
+  for(let i=1;i<pts.length;i++){
+    const du=pts[i][0]-pts[i-1][0],dv=pts[i][1]-pts[i-1][1];
+    const mu=(pts[i][0]+pts[i-1][0])/2,mv=(pts[i][1]+pts[i-1][1])/2;
+    acc.push(acc[i-1]+F.M(mu,mv)*du+F.N(mu,mv)*dv);
+  }
+  return acc;
+}
+function fieldPaths(){
+  const st=S.s7,F=FIELDS[st.fn],n=700;
+  const p1=pathPts(F,st.A,st.B,st.b1,n),p2=pathPts(F,st.A,st.B,st.b2,n);
+  return {F,p1,p2,a1:runInt(F,p1),a2:runInt(F,p2),
+          z0:F.Z?F.Z(st.A[0],st.A[1]):0};
+}
+const R=0.083145;                       // L·bar/(mol·K)
+const IDEAL={V:(P,T)=>Number.isFinite(P)&&Number.isFinite(T)&&P>0&&T>0?R*T/P:NaN,P:(V,T)=>V>0&&T>0?R*T/V:NaN};
+const VDW=(function(){
+  const a=3.640,b=0.04267;              // CO2
+  const Pf=(V,T)=>R*T/(V-b)-a/(V*V);
+  const Tc=8*a/(27*R*b),Pc=a/(27*b*b);
+  return {P:Pf,Tc,Pc,V:(P,T)=>{
+    // This teaching surface deliberately supports only the smooth supercritical branch.
+    if(!Number.isFinite(P)||!Number.isFinite(T)||P<=0||T<=Tc)return NaN;
+    let lo=b*(1+1e-10),hi=Math.max(2*R*T/P,2*b);
+    for(let i=0;i<100&&Pf(hi,T)>P;i++)hi*=2;
+    if(!Number.isFinite(hi)||Pf(hi,T)>P)return NaN;
+    for(let i=0;i<85;i++){const m=(lo+hi)/2;if(Pf(m,T)>P)lo=m;else hi=m;}
+    const v=(lo+hi)/2;
+    return v>b&&Math.abs(Pf(v,T)-P)<1e-8*Math.max(1,P)?v:NaN;
+  }};
+})();
+
+// Bounded second-order differences; invalid model samples remain explicitly unavailable.
+function derivative(f,x,h,lo,hi){
+  if(!Number.isFinite(x)||x<lo||x>hi||!(hi>lo))return NaN;
+  h=Math.min(h,(hi-lo)/4);
+  let value;
+  if(x-h>=lo&&x+h<=hi)value=(f(x+h)-f(x-h))/(2*h);
+  else if(x+2*h<=hi)value=(-3*f(x)+4*f(x+h)-f(x+2*h))/(2*h);
+  else value=(3*f(x)-4*f(x-h)+f(x-2*h))/(2*h);
+  return Number.isFinite(value)?value:NaN;
+}
+function eosSlope(E,P,T){
+  const v=E.V(P,T),a=E===VDW?3.640:0,b=E===VDW?0.04267:0;
+  const pV=-R*T/(v-b)**2+2*a/v**3,pT=R/(v-b);
+  return {v,dVdP:1/pV,dVdT:-pT/pV,dPdT:pT};
+}
+/* ===================== 狀態 ===================== */
+const S={
+ step:0,
+ s1:{fn:0,x0:1.0,y0:0,dx:1.0,sec:true,tan:true},
+ s2:{fn:1,x0:1.2,y0:-0.9},
+ s3:{fn:0,x0:1.2,y0:0.9,th:35,circle:false},
+ s4:{fn:2,x0:0.8,y0:-0.7,dx:0.8,dy:0.7},
+ s5:{fn:4,x0:0.9,y0:-0.7,th:40,plane:true,cx:true,cy:true,cu:true,grad:true,cont:true},
+ s6:{model:0,T:430,P:12,dT:70,dP:8,plane:true,step:true},
+ s7:{fn:0,A:[-2,-1.2],B:[2,1.2],b1:0.34,b2:-0.34,surf:true,arrows:true}
+};
+let cam={yaw:-0.62,pitch:0.50,zoom:0.92};
+const CAMS={iso:{yaw:-0.62,pitch:0.50,zoom:0.92},top:{yaw:0,pitch:1.5566,zoom:1.05},
+            fx:{yaw:0,pitch:0.02,zoom:1.02},fy:{yaw:-1.5708,pitch:0.02,zoom:1.02}};
+
+/* ===================== 場景 ===================== */
+const cv=document.getElementById("gl"),ctx=cv.getContext("2d");
+let W=800,H=600,dragging=false,pending=false;
+function fit(){
+  const r=cv.getBoundingClientRect(),d=window.devicePixelRatio||1;
+  cv.width=Math.max(1,Math.round(r.width*d));cv.height=Math.max(1,Math.round(r.height*d));
+  ctx.setTransform(d,0,0,d,0,0);W=r.width;H=r.height;
+}
+cv.addEventListener("pointerdown",e=>{dragging={x:e.clientX,y:e.clientY};cv.setPointerCapture(e.pointerId);});
+cv.addEventListener("pointermove",e=>{
+  if(!dragging)return;
+  cam.yaw+=(e.clientX-dragging.x)*0.008;
+  cam.pitch=clamp(cam.pitch+(e.clientY-dragging.y)*0.006,-0.03,1.5566);
+  dragging={x:e.clientX,y:e.clientY};schedule();
+});
+cv.addEventListener("pointerup",()=>{dragging=false;schedule();});
+cv.addEventListener("pointercancel",()=>{dragging=false;schedule();});
+cv.addEventListener("wheel",e=>{e.preventDefault();
+  cam.zoom=clamp(cam.zoom*(e.deltaY>0?0.93:1.075),0.4,2.6);schedule();},{passive:false});
+document.querySelectorAll(".views button").forEach(b=>b.onclick=()=>flyTo(CAMS[b.dataset.v]));
+function flyTo(t){
+  if(RM){cam={...t};render();return;}
+  const s={...cam},t0=performance.now();
+  (function tick(now){
+    const k=clamp((now-t0)/550,0,1),e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;
+    cam.yaw=lerp(s.yaw,t.yaw,e);cam.pitch=lerp(s.pitch,t.pitch,e);cam.zoom=lerp(s.zoom,t.zoom,e);
+    render();if(k<1)requestAnimationFrame(tick);
+  })(t0);
+}
+function schedule(){if(pending)return;pending=true;requestAnimationFrame(()=>{pending=false;render();});}
+
+/* 目前場景的座標映射 */
+const AX=1,AY=1,AZ=0.70;
+let SC=null;                            // {ua,ub,va,vb,za,zb,f,...}
+const nx=u=>(((u-SC.ua)/(SC.ub-SC.ua))-0.5)*AX;
+const ny=v=>(((v-SC.va)/(SC.vb-SC.va))-0.5)*AY;
+// 高度保持等比例，不能把超出範圍的直線壓成折線。畫布自行裁掉畫面外的部分。
+const nz=z=>((z-SC.za)/(SC.zb-SC.za)-0.5)*AZ;
+const iu=x=>SC.ua+(x/AX+0.5)*(SC.ub-SC.ua);
+const iv=y=>SC.va+(y/AY+0.5)*(SC.vb-SC.va);
+let VIEW=null;
+function makeView(){
+  const cy=Math.cos(cam.yaw),sy=Math.sin(cam.yaw),cp=Math.cos(cam.pitch),sp=Math.sin(cam.pitch);
+  const s=Math.min(W,H)*cam.zoom;
+  return {
+    p(x,y,z){const a=x*cy-y*sy,b=x*sy+y*cy;
+      return {x:W/2+a*s,y:H/2-(b*sp+z*cp)*s+H*0.04,d:b*cp-z*sp};},
+    t:{x:-sy*cp,y:-cy*cp,z:sp}          // 指向觀察者的單位向量
+  };
+}
+const P3=(u,v,z)=>VIEW.p(nx(u),ny(v),nz(z));
+
+/* 曲面網格快取 */
+const cache={key:null,N:0,Z:null,NZ:null};
+function buildGrid(N){
+  if(cache.key===SC.key&&cache.N===N)return cache;
+  const Z=[],NZ=[];
+  for(let i=0;i<=N;i++){
+    Z[i]=[];NZ[i]=[];
+    const u=lerp(SC.ua,SC.ub,i/N);
+    for(let j=0;j<=N;j++){
+      const v=lerp(SC.va,SC.vb,j/N);
+      const z=SC.f(u,v);Z[i][j]=z;NZ[i][j]=nz(z);
+    }
+  }
+  cache.key=SC.key;cache.N=N;cache.Z=Z;cache.NZ=NZ;
+  return cache;
+}
+/* 由網格做雙線性內插（正規化高度），供遮蔽判斷使用 */
+function nzAt(x,y,g){
+  const N=g.N;
+  const fi=clamp((x/AX+0.5)*N,0,N-1e-6),fj=clamp((y/AY+0.5)*N,0,N-1e-6);
+  const i=Math.floor(fi),j=Math.floor(fj),ti=fi-i,tj=fj-j;
+  const a=g.NZ[i][j],b=g.NZ[i+1][j],c=g.NZ[i][j+1],d=g.NZ[i+1][j+1];
+  return lerp(lerp(a,b,ti),lerp(c,d,ti),tj);
+}
+function visible(u,v,z,g){
+  let x=nx(u),y=ny(v),zz=nz(z);
+  const t=VIEW.t,h=0.022;
+  for(let s=h;s<2.2;s+=h){
+    const X=x+t.x*s,Y=y+t.y*s,Zr=zz+t.z*s;
+    if(Math.abs(X)>AX/2||Math.abs(Y)>AY/2)return true;
+    if(Zr>AZ*0.62)return true;
+    if(nzAt(X,Y,g)>Zr+0.006)return false;
+  }
+  return true;
+}
+
+/* ===================== 著色 ===================== */
+const RAMP=[[0,[212,225,244]],[0.5,[234,235,239]],[1,[250,240,211]]];
+function ramp(t){
+  t=clamp(t,0,1);
+  for(let k=0;k<RAMP.length-1;k++){
+    const a=RAMP[k],b=RAMP[k+1];
+    if(t<=b[0]){const s=(t-a[0])/(b[0]-a[0]||1);
+      return [lerp(a[1][0],b[1][0],s),lerp(a[1][1],b[1][1],s),lerp(a[1][2],b[1][2],s)];}
+  }
+  return RAMP[RAMP.length-1][1];
+}
+function shade(col,dif,spec){
+  // 淡色曲面只用輕微明暗表示起伏，避免背光面變黑。
+  const light=0.90+0.10*dif;
+  return 'rgb('+col.map(v=>Math.round(v*light)).join(',')+')';
+}
+
+/* ===================== 主繪製 ===================== */
+let QUICK=false,QT=null,lastPaint=0;
+function render(){
+  const now=(window.performance&&performance.now)?performance.now():Date.now();
+  QUICK=(now-lastPaint)<170;
+  paint();
+  lastPaint=(window.performance&&performance.now)?performance.now():Date.now();
+  clearTimeout(QT);
+  if(QUICK)QT=setTimeout(()=>{QUICK=false;paint();
+    lastPaint=(window.performance&&performance.now)?performance.now():Date.now();},200);
+}
+function paint(){
+  fit();VIEW=makeView();
+  const st=STEPS[S.step];
+  SC=st.scene();
+  const N=QUICK?46:(window.innerWidth<900?72:108);
+  const g=SC.flat?null:buildGrid(N);
+  ctx.clearRect(0,0,W,H);
+  const items=st.items?st.items():{};
+  drawBase(g,items);
+  if(g)drawSurface(g);
+  drawItems(items,g);
+  drawAxes();
+  if(S.step===2)drawDirectionGuide();
+  st.read&&st.read();
+  document.getElementById("hint").textContent=
+    S.step===5?"紫藍線：溫度不變　橘線：壓力不變":"拖曳轉動圖形・滾輪放大縮小";
+}
+
+function drawBase(g,items){
+  // 底面框線
+  ctx.save();ctx.strokeStyle="#AEB2B8";ctx.lineWidth=1;ctx.setLineDash([1,6]);ctx.lineCap="round";ctx.beginPath();
+  for(let i=0;i<=8;i++){
+    const A=P3(lerp(SC.ua,SC.ub,i/8),SC.va,SC.za),B=P3(lerp(SC.ua,SC.ub,i/8),SC.vb,SC.za);
+    const D=P3(SC.ua,lerp(SC.va,SC.vb,i/8),SC.za),E=P3(SC.ub,lerp(SC.va,SC.vb,i/8),SC.za);
+    ctx.moveTo(A.x,A.y);ctx.lineTo(B.x,B.y);ctx.moveTo(D.x,D.y);ctx.lineTo(E.x,E.y);
+  }
+  ctx.stroke();ctx.restore();
+  if(!items.contours)return;
+  // 底面等高線（由網格 marching squares）
+  const M=56,Zs=[];
+  for(let i=0;i<=M;i++){Zs[i]=[];for(let j=0;j<=M;j++){
+    Zs[i][j]=SC.f(lerp(SC.ua,SC.ub,i/M),lerp(SC.va,SC.vb,j/M));}}
+  const lv=[];for(let k=1;k<14;k++)lv.push(lerp(SC.za,SC.zb,k/14));
+  ctx.save();ctx.strokeStyle="#BABDC2";ctx.lineWidth=0.8;ctx.setLineDash([1,6]);ctx.lineCap="round";ctx.beginPath();
+  for(let i=0;i<M;i++)for(let j=0;j<M;j++){
+    const u0=lerp(SC.ua,SC.ub,i/M),u1=lerp(SC.ua,SC.ub,(i+1)/M);
+    const v0=lerp(SC.va,SC.vb,j/M),v1=lerp(SC.va,SC.vb,(j+1)/M);
+    const q=[Zs[i][j],Zs[i+1][j],Zs[i+1][j+1],Zs[i][j+1]];
+    const pu=[u0,u1,u1,u0],pv=[v0,v0,v1,v1];
+    lv.forEach(L=>{
+      const pts=[];
+      for(let e=0;e<4;e++){const a=q[e],b=q[(e+1)%4];
+        if((a-L)*(b-L)<0){const t=(L-a)/(b-a);
+          pts.push([lerp(pu[e],pu[(e+1)%4],t),lerp(pv[e],pv[(e+1)%4],t)]);}}
+      for(let k=0;k+1<pts.length;k+=2){
+        const A=P3(pts[k][0],pts[k][1],SC.za),B=P3(pts[k+1][0],pts[k+1][1],SC.za);
+        ctx.moveTo(A.x,A.y);ctx.lineTo(B.x,B.y);}
+    });
+  }
+  ctx.stroke();ctx.restore();
+}
+
+function drawSurface(g){
+  const N=g.N,NZ=g.NZ,Z=g.Z;
+  const hx=AX/N,hy=AY/N;
+  const L={x:-0.38,y:-0.66,z:0.65},ll=Math.hypot(L.x,L.y,L.z);
+  L.x/=ll;L.y/=ll;L.z/=ll;
+  const t=VIEW.t,Hv={x:L.x+t.x,y:L.y+t.y,z:L.z+t.z};
+  const hl=Math.hypot(Hv.x,Hv.y,Hv.z);Hv.x/=hl;Hv.y/=hl;Hv.z/=hl;
+  const quads=[];
+  for(let i=0;i<N;i++)for(let j=0;j<N;j++){
+    const x0=(i/N-0.5)*AX,x1=((i+1)/N-0.5)*AX,y0=(j/N-0.5)*AY,y1=((j+1)/N-0.5)*AY;
+    const z00=NZ[i][j],z10=NZ[i+1][j],z11=NZ[i+1][j+1],z01=NZ[i][j+1];
+    const ps=[VIEW.p(x0,y0,z00),VIEW.p(x1,y0,z10),VIEW.p(x1,y1,z11),VIEW.p(x0,y1,z01)];
+    const dzx=((z10-z00)+(z11-z01))/(2*hx),dzy=((z01-z00)+(z11-z10))/(2*hy);
+    const nl=Math.hypot(dzx,dzy,1);
+    const n={x:-dzx/nl,y:-dzy/nl,z:1/nl};
+    const dif=Math.max(0,n.x*L.x+n.y*L.y+n.z*L.z);
+    const sp=Math.pow(Math.max(0,n.x*Hv.x+n.y*Hv.y+n.z*Hv.z),26)*0.30;
+    const zm=(Z[i][j]+Z[i+1][j]+Z[i+1][j+1]+Z[i][j+1])/4;
+    const col=ramp((zm-SC.za)/(SC.zb-SC.za));
+    quads.push({ps,d:(ps[0].d+ps[1].d+ps[2].d+ps[3].d)/4,c:shade(col,dif,sp)});
+  }
+  quads.sort((a,b)=>b.d-a.d);
+  for(const q of quads){
+    const p=q.ps;
+    const cx=(p[0].x+p[1].x+p[2].x+p[3].x)/4,cy=(p[0].y+p[1].y+p[2].y+p[3].y)/4;
+    ctx.fillStyle=q.c;ctx.beginPath();
+    for(let k=0;k<4;k++){                       // 向外撐 0.7px，消除接縫
+      const dx=p[k].x-cx,dy=p[k].y-cy,l=Math.hypot(dx,dy)||1;
+      const X=p[k].x+dx/l*0.7,Y=p[k].y+dy/l*0.7;
+      k?ctx.lineTo(X,Y):ctx.moveTo(X,Y);
+    }
+    ctx.closePath();ctx.fill();
+  }
+}
+
+/* items: {curtains,curves,baseCurves,vectors,plane,points,labels,contours} */
+function drawItems(it,g){
+  (it.curtains||[]).forEach(cu=>{
+    ctx.save();ctx.fillStyle=cu.fill;ctx.beginPath();
+    cu.pts.forEach((p,k)=>{const q=P3(p[0],p[1],p[2]);k?ctx.lineTo(q.x,q.y):ctx.moveTo(q.x,q.y);});
+    for(let k=cu.pts.length-1;k>=0;k--){const p=cu.pts[k],q=P3(p[0],p[1],SC.za);ctx.lineTo(q.x,q.y);}
+    ctx.closePath();ctx.fill();ctx.restore();
+  });
+  (it.baseCurves||[]).forEach(c=>strokePts(c.pts.map(p=>[p[0],p[1],SC.za]),c.color,c.width||2,c.dash));
+  (it.curves||[]).forEach(c=>{
+    if(c.noOcclusion||!g){strokePts(c.pts,c.color,c.width||3,c.dash);return;}
+    let run=[],vis=null;
+    c.pts.forEach(p=>{
+      const v=visible(p[0],p[1],p[2],g);
+      if(vis===null)vis=v;
+      if(v!==vis){run.push(p);flushRun(run,vis,c);run=[p];vis=v;}
+      else run.push(p);
+    });
+    flushRun(run,vis,c);
+  });
+  if(it.plane){
+    const pl=it.plane,su=(SC.ub-SC.ua)*pl.size,sv=(SC.vb-SC.va)*pl.size;
+    const cor=[[-su,-sv],[su,-sv],[su,sv],[-su,sv]].map(d=>
+      P3(pl.u0+d[0],pl.v0+d[1],pl.val+pl.fu*d[0]+pl.fv*d[1]));
+    ctx.save();ctx.fillStyle="rgba(168,58,43,0.12)";ctx.strokeStyle="rgba(168,58,43,0.40)";ctx.lineWidth=1;ctx.setLineDash([5,5]);
+    ctx.beginPath();cor.forEach((q,k)=>k?ctx.lineTo(q.x,q.y):ctx.moveTo(q.x,q.y));
+    ctx.closePath();ctx.fill();ctx.stroke();ctx.restore();
+  }
+  (it.vectors||[]).forEach(v=>{
+    const A=P3(v.a[0],v.a[1],v.a[2]),B=P3(v.b[0],v.b[1],v.b[2]);
+    arrow(A,B,v.color,v.width||2.4);
+  });
+  (it.points||[]).forEach(p=>{
+    const q=P3(p.u,p.v,p.z);
+    ctx.save();ctx.fillStyle=p.color;ctx.strokeStyle="#fff";ctx.lineWidth=2;
+    ctx.beginPath();ctx.arc(q.x,q.y,p.r||6,0,7);ctx.fill();ctx.stroke();ctx.restore();
+  });
+  const labelBoxes=[];
+  (it.labels||[]).forEach(l=>{
+    const q=P3(l.u,l.v,l.z);
+    ctx.save();ctx.font=l.font||FONTM;ctx.textAlign="center";ctx.textBaseline="middle";
+    const w=ctx.measureText(l.text).width;
+    const anchor={x:q.x,y:q.y};
+    q.x=clamp(q.x+(l.dx||0),w/2+12,W-w/2-12);q.y=clamp(q.y+(l.dy||0),22,H-65);
+    for(let k=0;k<12&&labelBoxes.some(b=>Math.abs(q.x-b.x)<(w+b.w)/2+10&&Math.abs(q.y-b.y)<26);k++)q.y=clamp(q.y+28,22,H-65);
+    labelBoxes.push({x:q.x,y:q.y,w});
+    if(l.dx||l.dy){ctx.strokeStyle=l.color||C.ink;ctx.lineWidth=1;ctx.setLineDash([2,3]);ctx.beginPath();ctx.moveTo(anchor.x,anchor.y);ctx.lineTo(q.x,q.y);ctx.stroke();ctx.setLineDash([]);}
+    ctx.fillStyle="rgba(255,255,255,0.82)";
+    ctx.fillRect(q.x-w/2-3,q.y-9,w+6,18);
+    ctx.fillStyle=l.color||C.ink;ctx.fillText(l.text,q.x,q.y);ctx.restore();
+  });
+}
+function flushRun(run,vis,c){
+  if(run.length<2)return;
+  if(vis)strokePts(run,c.color,c.width||3,c.dash);
+  else strokePts(run,c.color,(c.width||3)*0.6,[4,5],0.28);
+}
+function strokePts(pts,color,width,dash,alpha){
+  ctx.save();ctx.strokeStyle=color;ctx.lineWidth=width;ctx.lineJoin="round";
+  if(alpha!==undefined)ctx.globalAlpha=alpha;
+  if(dash)ctx.setLineDash(dash);
+  ctx.beginPath();
+  pts.forEach((p,k)=>{const q=P3(p[0],p[1],p[2]);k?ctx.lineTo(q.x,q.y):ctx.moveTo(q.x,q.y);});
+  if(width>=3){ctx.save();ctx.strokeStyle="rgba(255,255,255,0.92)";ctx.lineWidth=width+2.6;ctx.stroke();ctx.restore();}
+  ctx.stroke();ctx.restore();
+}
+function arrow(A,B,color,width){
+  const dx=B.x-A.x,dy=B.y-A.y,L=Math.hypot(dx,dy);if(L<2)return;
+  const ux=dx/L,uy=dy/L,hl=Math.min(13,L*0.35);
+  ctx.save();ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=width;
+  ctx.beginPath();ctx.moveTo(A.x,A.y);ctx.lineTo(B.x-ux*hl*0.8,B.y-uy*hl*0.8);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(B.x,B.y);
+  ctx.lineTo(B.x-ux*hl-uy*hl*0.4,B.y-uy*hl+ux*hl*0.4);
+  ctx.lineTo(B.x-ux*hl+uy*hl*0.4,B.y-uy*hl-ux*hl*0.4);
+  ctx.closePath();ctx.fill();ctx.restore();
+}
+function drawAxes(){
+  const O=P3(SC.ua,SC.va,SC.za);
+  const ends=[P3(SC.ub,SC.va,SC.za),P3(SC.ua,SC.vb,SC.za),P3(SC.ua,SC.va,SC.zb)];
+  const names=S.step===5?['壓力 P（bar）','溫度 T（K）','體積 V（L）']:[SC.ul,SC.vl,SC.zl];
+  ctx.save();ctx.setLineDash([]);
+  ends.forEach((p,i)=>{
+    // 白邊把黑色主軸和曲面分開。
+    arrow(O,p,'#FFFFFF',6);arrow(O,p,'#111111',3);
+    const dx=p.x-O.x,dy=p.y-O.y,len=Math.hypot(dx,dy)||1;
+    ctx.font='bold 15px "Microsoft JhengHei",sans-serif';
+    const width=ctx.measureText(names[i]).width;
+    const x=clamp(p.x+dx/len*24,width/2+10,W-width/2-10);
+    const y=clamp(p.y+dy/len*24,18,H-56);
+    ctx.fillStyle='rgba(255,255,255,0.96)';ctx.fillRect(x-width/2-5,y-12,width+10,24);
+    ctx.fillStyle='#111111';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(names[i],x,y);
+  });
+  ctx.restore();
+}
+
+/* 曲面上的一條線（沿方向 u），回傳取樣點 */
+function lineOnSurface(x0,y0,ux,uy,smin,smax,n){
+  const out=[];
+  for(let i=0;i<=n;i++){
+    const s=lerp(smin,smax,i/n),x=x0+s*ux,y=y0+s*uy;
+    if(x<SC.ua||x>SC.ub||y<SC.va||y>SC.vb)continue;
+    out.push([x,y,SC.f(x,y)]);
+  }
+  return out;
+}
+/* 切線（在曲面上方的直線），以參數延伸 */
+function tangentLine(x0,y0,ux,uy,slope,f0,smin,smax){
+  const out=[];
+  for(let i=0;i<=40;i++){
+    const s=lerp(smin,smax,i/40),x=x0+s*ux,y=y0+s*uy;
+    if(x<SC.ua||x>SC.ub||y<SC.va||y>SC.vb)continue;
+    out.push([x,y,f0+slope*s]);
+  }
+  return out;
+}
+
+/* ===================== 介面樣板 ===================== */
+function fillSel(id,labels,val,cb){
+  const el=document.getElementById(id);if(!el)return;
+  el.innerHTML=labels.map((l,i)=>'<option value="'+i+'">'+l+'</option>').join("");
+  el.value=val;el.onchange=()=>cb(+el.value);
+}
+function isNum(el){return !!el&&el.tagName==="INPUT";}
+function trimVal(v,d){
+  if(v!==0&&Math.abs(v)<Math.pow(10,-d))return String(+(+v).toPrecision(3));
+  return (+v).toFixed(d);
+}
+function rng(id,vid,val,cb,dec,unit){
+  const el=document.getElementById(id);if(!el)return;
+  const nu=document.getElementById(vid),d=(dec===undefined?2:dec);
+  if(isNum(nu)){nu.step=String(Math.pow(10,-d));nu.min=el.min;nu.max=el.max;}
+  el.value=val;setRange(id,vid,val,dec,unit);
+  el.oninput=()=>{const v=+el.value;setRange(id,vid,v,dec,unit);cb(v);};
+  if(isNum(nu)){
+    const apply=(commit)=>{
+      let v=parseFloat(nu.value);
+      if(!isFinite(v)){if(!commit)return;v=+el.value;}
+      v=clamp(v,parseFloat(el.min),parseFloat(el.max));
+      el.value=v;if(commit)nu.value=trimVal(v,d);cb(v);
+    };
+    nu.oninput=()=>apply(false);
+    nu.onchange=()=>apply(true);
+    nu.onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();apply(true);nu.blur();}};
+  }
+}
+function setRange(id,vid,v,dec,unit){
+  const el=document.getElementById(id);if(el)el.value=v;
+  const t=document.getElementById(vid);if(!t)return;
+  const d=(dec===undefined?2:dec);
+  if(isNum(t)){if(document.activeElement!==t)t.value=trimVal(v,d);}
+  else t.textContent=(+v).toFixed(d)+(unit||"");
+}
+function setBounds(id,vid,min,max,step){
+  const el=document.getElementById(id);if(!el)return;
+  el.min=min;el.max=max;if(step!==undefined)el.step=step;
+  const nu=document.getElementById(vid);
+  if(isNum(nu)){nu.min=min;nu.max=max;}
+}
+function chk(id,val,cb){const el=document.getElementById(id);if(!el)return;
+  el.checked=val;el.onchange=()=>cb(el.checked);}
+function tbl(id,rows){
+  const el=document.getElementById(id);if(!el)return;
+  el.innerHTML=rows.map(r=>'<tr><td class="k">'+r[0]+'</td><td class="val '+(r[2]||"")+'">'+r[1]+'</td></tr>').join("");
+}
+function surfScene(o,keyExtra){
+  return {key:o.key+(keyExtra||""),ua:DOM.a,ub:DOM.b,va:DOM.a,vb:DOM.b,
+          za:o.rng[0],zb:o.rng[1],f:o.f,ul:"x",vl:"y",zl:"f"};
+}
+
+/* ===================== 六個步驟 ===================== */
+const STEPS=[
+{
+ nav:"微分",
+ lead:'<b>紅線像一把靠在曲線旁的直尺。</b>它穿過紅點，方向跟曲線在那裡一樣，叫做「切線」。橘色虛線連著紅點和橘點，叫做「割線」。把 Δx 調小，讓兩點靠近，看看橘線會不會越來越接近紅線。',
+ scene(){
+   const o=F1[S.s1.fn];
+   return {key:"c1_"+o.key,ua:o.dom[0],ub:o.dom[1],va:-1.5,vb:1.5,
+           za:o.rng[0],zb:o.rng[1],f:(x,y)=>o.f(x),ul:"x",vl:"y（高度不隨它改變）",zl:"f"};
+ },
+ panel:`
+  <h2>選曲線，移動看看</h2>
+  <div class="ctl"><label>選一條曲線</label><select id="a-fn"></select></div>
+  <div class="ctl"><label>切點 <span class="math"><i>x</i><sub>0</sub></span>
+      <input class="num" type="number" id="a-x0v"></label>
+    <input type="range" id="a-x0"></div>
+  <div class="ctl"><label>步長 <span class="math">Δ<i>x</i></span>
+      <input class="num" type="number" id="a-dxv"></label>
+    <input type="range" id="a-dx"></div>
+  <div class="quick" id="a-quick"></div>
+  <div class="ctl"><label>薄片位置 <span class="math"><i>y</i><sub>0</sub></span>
+      <input class="num" type="number" id="a-y0v"></label>
+    <input type="range" id="a-y0" min="-1.4" max="1.4" step="0.02"></div>
+  <div class="checks">
+    <label><input type="checkbox" id="a-sec" checked> 割線（連起兩點的直線）</label>
+    <label><input type="checkbox" id="a-tan" checked> 切線（紅點當下的坡度）</label>
+  </div>
+  <button class="act" id="a-anim">讓兩點慢慢靠近</button>
+  <hr class="rule"><h2>現在的數字</h2><table class="read" id="a-read"></table>
+  <div class="eq">d<i>f</i> = <i>f</i>′(<i>x</i><sub>0</sub>) d<i>x</i>　　
+    Δ<i>f</i> − d<i>f</i> ≈ ½ <i>f</i>″(<i>x</i><sub>0</sub>) Δ<i>x</i>²</div>
+  <div class="note">可以直接輸入 0.1、0.01 或 0.001，按輸入鍵或點別處就會更新。步子越小，切線通常估得越準。最後一列把誤差除以 Δx²，讓你看看這個數字會不會慢慢接近固定的值。</div>`,
+ bounds(){
+   const o=F1[S.s1.fn],m=(o.dom[1]-o.dom[0])*0.015;
+   setBounds("a-x0","a-x0v",(o.dom[0]+m).toFixed(3),(o.dom[1]-m).toFixed(3),0.001);
+   const span=(o.dom[1]-o.dom[0])*0.45;
+   setBounds("a-dx","a-dxv",(-span).toFixed(3),span.toFixed(3),0.001);
+   S.s1.x0=clamp(S.s1.x0,o.dom[0]+m,o.dom[1]-m);
+   S.s1.dx=clamp(S.s1.dx,-span,span);
+   setRange("a-x0","a-x0v",S.s1.x0,3);
+   setRange("a-dx","a-dxv",S.s1.dx,3);
+ },
+ init(){
+   fillSel("a-fn",F1.map(o=>o.label),S.s1.fn,v=>{S.s1.fn=v;STEPS[0].bounds();render();});
+   rng("a-x0","a-x0v",S.s1.x0,v=>{S.s1.x0=v;render();},3);
+   rng("a-dx","a-dxv",S.s1.dx,v=>{S.s1.dx=v;render();},3);
+   rng("a-y0","a-y0v",S.s1.y0,v=>{S.s1.y0=v;render();},2);
+   STEPS[0].bounds();
+   const q=document.getElementById("a-quick");
+   if(q){
+     q.innerHTML=[1,0.5,0.1,0.01,0.001].map(v=>'<button data-d="'+v+'">Δx = '+v+'</button>').join("");
+     q.querySelectorAll("button").forEach(b=>b.onclick=()=>{
+       const sg=S.s1.dx<0?-1:1;
+       S.s1.dx=sg*Math.min(+b.dataset.d,Math.abs(+document.getElementById("a-dx").max));
+       setRange("a-dx","a-dxv",S.s1.dx,3);render();});
+   }
+   chk("a-sec",S.s1.sec,v=>{S.s1.sec=v;render();});
+   chk("a-tan",S.s1.tan,v=>{S.s1.tan=v;render();});
+   const b=document.getElementById("a-anim");
+   if(b)b.onclick=()=>{
+     const mx=Math.abs(+document.getElementById("a-dx").max);
+     const start=Math.abs(S.s1.dx)<0.2*mx?mx*0.85:Math.abs(S.s1.dx);
+     const sg=S.s1.dx<0?-1:1,t0=performance.now();
+     (function tick(t){
+       const k=Math.min(1,(t-t0)/2400);
+       S.s1.dx=sg*Math.max(0.002,start*Math.pow(1-k,2.6));
+       setRange("a-dx","a-dxv",S.s1.dx,3);render();
+       if(k<1)requestAnimationFrame(tick);})(t0);
+   };
+ },
+ items(){
+   const o=F1[S.s1.fn],st=S.s1;
+   const curve=lineOnSurface(st.x0,st.y0,1,0,SC.ua-st.x0,SC.ub-st.x0,220);
+   const f0=o.f(st.x0),m=o.d(st.x0);
+   const x1=clamp(st.x0+st.dx,SC.ua,SC.ub),dxe=x1-st.x0,f1=o.f(x1);
+   const it={contours:false,
+     curtains:[{pts:curve,fill:"rgba(31,92,122,0.13)"}],
+     curves:[{pts:curve,color:C.blue,width:3.2}],
+     points:[{u:st.x0,v:st.y0,z:f0,color:C.red}],labels:[]};
+   if(st.tan)it.curves.push({pts:tangentLine(st.x0,st.y0,1,0,m,f0,SC.ua-st.x0,SC.ub-st.x0),
+     color:C.red,width:2.4,noOcclusion:true});
+   if(st.sec&&Math.abs(dxe)>1e-6){
+     const sec=(f1-f0)/dxe;
+     it.curves.push({pts:tangentLine(st.x0,st.y0,1,0,sec,f0,SC.ua-st.x0,SC.ub-st.x0),
+       color:C.amber,width:2,dash:[7,5],noOcclusion:true});
+     it.points.push({u:x1,v:st.y0,z:f1,color:C.amber,r:5});
+     it.curves.push({pts:[[x1,st.y0,f0+m*dxe],[x1,st.y0,f1]],color:C.green,width:4.5,noOcclusion:true});
+     it.curves.push({pts:[[st.x0,st.y0,f0],[x1,st.y0,f0]],color:"#9AA6A0",width:1.6,dash:[5,4],noOcclusion:true});
+     if(Math.abs(dxe)>0.08)
+       it.labels.push({u:(st.x0+x1)/2,v:st.y0,z:f0,text:"Δx",color:C.muted,font:FONT});
+   }
+   return it;
+ },
+ read(){
+   const o=F1[S.s1.fn],st=S.s1;
+   const f0=o.f(st.x0),m=o.d(st.x0);
+   const x1=clamp(st.x0+st.dx,SC.ua,SC.ub),dxe=x1-st.x0,f1=o.f(x1);
+   const df=m*dxe,Df=f1-f0,err=Df-df;
+   tbl("a-read",[["f(x₀)",fmt(f0,4),""],
+     ["割線斜率 Δf/Δx",fmt(Math.abs(dxe)>1e-9?Df/dxe:NaN),"am"],
+     ["切線斜率 f′(x₀)",fmt(m),"hi"],
+     ["df = f′(x₀)Δx",fmt(df,5),"hi"],
+     ["Δf（實際變化）",fmt(Df,5),"am"],
+     ["Δf − df",fmt(err,6),"gr"],
+     ["½f″(x₀)Δx²",fmt(0.5*o.d2(st.x0)*dxe*dxe,6),"gr"],
+     ["誤差 ÷ Δx²",fmt(Math.abs(dxe)>1e-9?err/(dxe*dxe):NaN,4),""]]);
+ }
+},
+{
+ nav:"偏微分",
+ lead:'<b>想像你站在一座小山上。</b>往左右走，和往前後走，坡度可能不同。藍色那片固定 y，只改 x；橘色那片固定 x，只改 y。這樣一次只看一個方向的變化，叫做「偏微分」。公式右下角的小字，就是提醒你哪個量要保持不變。',
+ scene(){return surfScene(FN[S.s2.fn]);},
+ panel:`
+  <h2>動手調整</h2>
+  <div class="ctl"><label>曲面</label><select id="b-fn"></select></div>
+  <div class="ctl"><label><span class="math"><i>x</i><sub>0</sub></span><input class="num" type="number" id="b-x0v"></label>
+    <input type="range" id="b-x0" min="-2.8" max="2.8" step="0.02"></div>
+  <div class="ctl"><label><span class="math"><i>y</i><sub>0</sub></span><input class="num" type="number" id="b-y0v"></label>
+    <input type="range" id="b-y0" min="-2.8" max="2.8" step="0.02"></div>
+  <hr class="rule"><h2>現在的數字</h2><table class="read" id="b-read"></table>
+  <div class="eq"><span class="bl">(∂<i>f</i>/∂<i>x</i>)<sub><i>y</i></sub></span>：藍薄片上的斜率<br>
+    <span class="am">(∂<i>f</i>/∂<i>y</i>)<sub><i>x</i></sub></span>：橘薄片上的斜率</div>
+  <div class="note">按「看 x 方向」或「看 y 方向」，比較兩條曲線。偏微分公式裡的小字，會告訴你哪個量保持不變。</div>`,
+ init(){
+   fillSel("b-fn",FN.map(o=>o.label),S.s2.fn,v=>{S.s2.fn=v;render();});
+   rng("b-x0","b-x0v",S.s2.x0,v=>{S.s2.x0=v;render();},2);
+   rng("b-y0","b-y0v",S.s2.y0,v=>{S.s2.y0=v;render();},2);
+ },
+ items(){
+   const o=FN[S.s2.fn],st=S.s2,f0=o.f(st.x0,st.y0);
+   const cx=lineOnSurface(st.x0,st.y0,1,0,SC.ua-st.x0,SC.ub-st.x0,150);
+   const cy=lineOnSurface(st.x0,st.y0,0,1,SC.va-st.y0,SC.vb-st.y0,150);
+   return {
+     contours:true,
+     curtains:[{pts:cx,fill:"rgba(31,92,122,0.12)"},{pts:cy,fill:"rgba(169,102,12,0.12)"}],
+     curves:[{pts:cx,color:C.blue,width:3.2},{pts:cy,color:C.amber,width:3.2},
+       {pts:tangentLine(st.x0,st.y0,1,0,o.fx(st.x0,st.y0),f0,-1.4,1.4),color:C.red,width:2.4,noOcclusion:true},
+       {pts:tangentLine(st.x0,st.y0,0,1,o.fy(st.x0,st.y0),f0,-1.4,1.4),color:C.red,width:2.4,noOcclusion:true}],
+     points:[{u:st.x0,v:st.y0,z:f0,color:C.red}]
+   };
+ },
+ read(){
+   const o=FN[S.s2.fn],st=S.s2;
+   tbl("b-read",[["f(x₀,y₀)",fmt(o.f(st.x0,st.y0)),""],
+     ["(∂f/∂x)_y",fmt(o.fx(st.x0,st.y0)),"bl"],
+     ["(∂f/∂y)_x",fmt(o.fy(st.x0,st.y0)),"am"],
+     ["∂²f/∂x∂y = ∂²f/∂y∂x",fmt(o.fxy(st.x0,st.y0)),"gr"]]);
+ }
+},
+{
+ nav:"方向導數",
+ lead:'<b>換個方向走，坡度會怎麼變？</b>轉動 θ，就能選你要走的方向。「方向導數」就是這個方向的坡度。綠色箭頭叫做「梯度」，它指向上坡最快的方向；如果這裡是平的，就沒有唯一的最快方向。',
+ scene(){return surfScene(FN[S.s3.fn]);},
+ panel:`
+  <h2>動手調整</h2>
+  <div class="ctl"><label>曲面</label><select id="c-fn"></select></div>
+  <div class="ctl"><label>方向角 <span class="math">θ</span>（°）<input class="num" type="number" id="c-thv"></label>
+    <input type="range" id="c-th" min="0" max="360" step="1"></div>
+  <div class="ctl"><label><span class="math"><i>x</i><sub>0</sub></span><input class="num" type="number" id="c-x0v"></label>
+    <input type="range" id="c-x0" min="-2.6" max="2.6" step="0.02"></div>
+  <div class="ctl"><label><span class="math"><i>y</i><sub>0</sub></span><input class="num" type="number" id="c-y0v"></label>
+    <input type="range" id="c-y0" min="-2.6" max="2.6" step="0.02"></div>
+  <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">
+    <button class="act" id="c-g">朝上坡最快的方向</button>
+    <button class="act" id="c-c">朝當下不升高的方向</button>
+    <button class="act" id="c-s">轉一圈</button>
+  </div>
+  <div class="checks"><label><input type="checkbox" id="c-circle" checked> 顯示各方向坡度的圓形圖</label></div>
+  <hr class="rule"><h2>現在的數字</h2><table class="read" id="c-read"></table>
+  <div class="eq"><i>D</i><sub><b>u</b></sub><i>f</i> = <i>f<sub>x</sub></i>cos θ + <i>f<sub>y</sub></i>sin θ = |∇<i>f</i>| cos φ</div>
+  <div class="note">朝著等高線的方向，當下的坡度是 0。等高線就是把一樣高的地方連起來的線，像地圖上的山坡線。</div>`,
+ init(){
+   fillSel("c-fn",FN.map(o=>o.label),S.s3.fn,v=>{S.s3.fn=v;render();});
+   rng("c-th","c-thv",S.s3.th,v=>{S.s3.th=v;render();},0,"°");
+   rng("c-x0","c-x0v",S.s3.x0,v=>{S.s3.x0=v;render();},2);
+   rng("c-y0","c-y0v",S.s3.y0,v=>{S.s3.y0=v;render();},2);
+   chk("c-circle",S.s3.circle,v=>{S.s3.circle=v;render();});
+   const o=()=>FN[S.s3.fn];
+   const set=a=>{S.s3.th=(a+360)%360;setRange("c-th","c-thv",S.s3.th,0,"°");render();};
+   const g=document.getElementById("c-g"),c=document.getElementById("c-c"),s=document.getElementById("c-s");
+   if(g)g.onclick=()=>set(Math.atan2(o().fy(S.s3.x0,S.s3.y0),o().fx(S.s3.x0,S.s3.y0))*180/Math.PI);
+   if(c)c.onclick=()=>set(Math.atan2(o().fy(S.s3.x0,S.s3.y0),o().fx(S.s3.x0,S.s3.y0))*180/Math.PI+90);
+   if(s)s.onclick=()=>{const a0=S.s3.th,t0=performance.now();
+     (function tick(t){const k=Math.min(1,(t-t0)/4200);set(a0+k*360);
+       if(k<1)requestAnimationFrame(tick);})(t0);};
+ },
+ items(){
+   const o=FN[S.s3.fn],st=S.s3,th=st.th*Math.PI/180;
+   const ux=Math.cos(th),uy=Math.sin(th);
+   const f0=o.f(st.x0,st.y0),fx=o.fx(st.x0,st.y0),fy=o.fy(st.x0,st.y0);
+   const Du=fx*ux+fy*uy,gm=Math.hypot(fx,fy);
+   const cu=lineOnSurface(st.x0,st.y0,ux,uy,-5,5,220);
+   const it={
+     contours:true,
+     curtains:[{pts:cu,fill:"rgba(168,58,43,0.12)"}],
+     curves:[{pts:cu,color:C.red,width:3.2},
+             {pts:tangentLine(st.x0,st.y0,ux,uy,Du,f0,-1.5,1.5),color:C.ink,width:2.2,noOcclusion:true}],
+     baseCurves:[],
+     vectors:[{a:[st.x0,st.y0,SC.za],b:[clamp(st.x0+ux*1.15,SC.ua,SC.ub),clamp(st.y0+uy*1.15,SC.va,SC.vb),SC.za],color:C.red}],
+     points:[{u:st.x0,v:st.y0,z:f0,color:C.red}]
+   };
+   if(gm>1e-6){
+     const s=Math.min(1.5,1.5/gm);
+     it.vectors.push({a:[st.x0,st.y0,SC.za],
+       b:[clamp(st.x0+fx*s,SC.ua,SC.ub),clamp(st.y0+fy*s,SC.va,SC.vb),SC.za],color:C.green});
+   }
+   if(st.circle&&gm>1e-6){
+     const sc=Math.min(1.4/gm,1.4/Math.max(gm,0.2)),pts=[];
+     for(let i=0;i<=180;i++){
+       const a=i/180*2*Math.PI,d=(fx*Math.cos(a)+fy*Math.sin(a))*sc;
+       pts.push([clamp(st.x0+d*Math.cos(a),SC.ua,SC.ub),clamp(st.y0+d*Math.sin(a),SC.va,SC.vb)]);
+     }
+     it.baseCurves.push({pts,color:C.green,width:1.8,dash:[5,4]});
+     it.baseCurves.push({pts:[[st.x0,st.y0],[clamp(st.x0+Du*sc*ux,SC.ua,SC.ub),clamp(st.y0+Du*sc*uy,SC.va,SC.vb)]],
+       color:C.red,width:2.6});
+   }
+   return it;
+ },
+ read(){
+   const o=FN[S.s3.fn],st=S.s3,th=st.th*Math.PI/180;
+   const fx=o.fx(st.x0,st.y0),fy=o.fy(st.x0,st.y0);
+   const Du=fx*Math.cos(th)+fy*Math.sin(th),gm=Math.hypot(fx,fy);
+   tbl("c-read",[["∂f/∂x（θ=0°）",fmt(fx),"bl"],["∂f/∂y（θ=90°）",fmt(fy),"am"],
+     ["|∇f|",fmt(gm),"gr"],["∇f 方向",fmt((Math.atan2(fy,fx)*180/Math.PI+360)%360,1)+"°","gr"],
+     ["D_u f",fmt(Du),"hi"]]);
+ }
+},
+{
+ nav:"全微分",
+ lead:'<b>把一張平板放在曲面上的紅點。</b>平板跟曲面在這一點的坡度相同，叫做「切平面」。藍色和橘色線段是在平板上算出的高度變化，加起來就是 df。真正的曲面可能高一點或低一點，綠線就是兩者的差。試著把移動的距離縮小。',
+ scene(){return surfScene(FN[S.s4.fn]);},
+ panel:`
+  <h2>動手調整</h2>
+  <div class="ctl"><label>曲面</label><select id="d-fn"></select></div>
+  <div class="ctl"><label><span class="math">d<i>x</i></span><input class="num" type="number" id="d-dxv"></label>
+    <input type="range" id="d-dx" min="-1.6" max="1.6" step="0.01"></div>
+  <div class="ctl"><label><span class="math">d<i>y</i></span><input class="num" type="number" id="d-dyv"></label>
+    <input type="range" id="d-dy" min="-1.6" max="1.6" step="0.01"></div>
+  <div class="ctl"><label><span class="math"><i>x</i><sub>0</sub></span><input class="num" type="number" id="d-x0v"></label>
+    <input type="range" id="d-x0" min="-2.4" max="2.4" step="0.02"></div>
+  <div class="ctl"><label><span class="math"><i>y</i><sub>0</sub></span><input class="num" type="number" id="d-y0v"></label>
+    <input type="range" id="d-y0" min="-2.4" max="2.4" step="0.02"></div>
+  <hr class="rule"><h2>現在的數字</h2><table class="read" id="d-read"></table>
+  <div class="eq">d<i>f</i> = <span class="bl"><i>f<sub>x</sub></i>d<i>x</i></span> + <span class="am"><i>f<sub>y</sub></i>d<i>y</i></span>　
+    Δ<i>f</i> − d<i>f</i> = <span class="gr">誤差通常隨步長的平方縮小</span></div>
+  <div class="note">在這張平板上，先走左右再走前後，或交換順序，最後的高度都一樣。這裡把兩個方向的變化相加，是因為平板的坡度固定；它本身不是混合偏導相等的證明。</div>`,
+ init(){
+   fillSel("d-fn",FN.map(o=>o.label),S.s4.fn,v=>{S.s4.fn=v;render();});
+   rng("d-dx","d-dxv",S.s4.dx,v=>{S.s4.dx=v;render();},2);
+   rng("d-dy","d-dyv",S.s4.dy,v=>{S.s4.dy=v;render();},2);
+   rng("d-x0","d-x0v",S.s4.x0,v=>{S.s4.x0=v;render();},2);
+   rng("d-y0","d-y0v",S.s4.y0,v=>{S.s4.y0=v;render();},2);
+ },
+ items(){
+   const o=FN[S.s4.fn],st=S.s4;
+   const x0=st.x0,y0=st.y0,f0=o.f(x0,y0);
+   const fx=o.fx(x0,y0),fy=o.fy(x0,y0);
+   const x1=clamp(x0+st.dx,SC.ua,SC.ub),y1=clamp(y0+st.dy,SC.va,SC.vb);
+   const dx=x1-x0,dy=y1-y0,df=fx*dx+fy*dy,Df=o.f(x1,y1)-f0;
+   return {
+     contours:true,
+     plane:{u0:x0,v0:y0,fu:fx,fv:fy,val:f0,size:0.16},
+     curves:[
+       {pts:[[x0,y0,f0],[x1,y0,f0]],color:C.blue,width:2.4,dash:[6,4],noOcclusion:true},
+       {pts:[[x1,y0,f0],[x1,y0,f0+fx*dx]],color:C.blue,width:4,noOcclusion:true},
+       {pts:[[x1,y0,f0+fx*dx],[x1,y1,f0+fx*dx]],color:C.amber,width:2.4,dash:[6,4],noOcclusion:true},
+       {pts:[[x1,y1,f0+fx*dx],[x1,y1,f0+df]],color:C.amber,width:4,noOcclusion:true},
+       {pts:[[x1,y1,f0+df],[x1,y1,f0+Df]],color:C.green,width:4.5,noOcclusion:true},
+       {pts:lineOnSurface(x0,y0,dx,dy,0,1,60),color:C.red,width:3}
+     ],
+     baseCurves:[{pts:[[x0,y0],[x1,y0],[x1,y1]],color:"#9AA6A0",width:1.6,dash:[5,4]}],
+     vectors:[{a:[x0,y0,SC.za],b:[x1,y1,SC.za],color:C.red,width:2.2}],
+     labels:[
+       {u:x1,v:y0,z:f0+fx*dx/2,text:"f_x dx",color:C.blue,font:FONT},
+       {u:x1,v:y1,z:f0+fx*dx+fy*dy/2,text:"f_y dy",color:C.amber,font:FONT},
+       {u:x1,v:y1,z:f0+(df+Df)/2,text:"Δf − df",color:C.green,font:FONT}
+     ],
+     points:[{u:x0,v:y0,z:f0,color:C.red},{u:x1,v:y1,z:o.f(x1,y1),color:C.ink,r:5}]
+   };
+ },
+ read(){
+   const o=FN[S.s4.fn],st=S.s4,x0=st.x0,y0=st.y0;
+   const x1=clamp(x0+st.dx,SC.ua,SC.ub),y1=clamp(y0+st.dy,SC.va,SC.vb);
+   const dx=x1-x0,dy=y1-y0,fx=o.fx(x0,y0),fy=o.fy(x0,y0);
+   const df=fx*dx+fy*dy,Df=o.f(x1,y1)-o.f(x0,y0);
+   tbl("d-read",[["f_x dx",fmt(fx*dx),"bl"],["f_y dy",fmt(fy*dy),"am"],
+     ["df（用平板估算）",fmt(df),"hi"],["Δf（曲面的實際變化）",fmt(Df),""],
+     ["Δf − df",fmt(Df-df,4),"gr"],
+     ["相對誤差",fmt(Math.abs(Df)>1e-9?Math.abs((Df-df)/Df)*100:0,2)+" %",""]]);
+ }
+},
+{
+ nav:"一起看",
+ lead:'<b>現在把前面看過的東西放在一起。</b>先只留一片彩色薄片，再慢慢加回其他圖形。淡紅色平板是切平面，四周的淡色虛線只是平板邊框，不是切線。綠色箭頭指出上坡最快的方向。轉動方向時，平板不動，但你走的那個方向，坡度可能不同。',
+ scene(){return surfScene(FN[S.s5.fn]);},
+ panel:`
+  <h2>動手調整</h2>
+  <div class="ctl"><label>曲面</label><select id="e-fn"></select></div>
+  <div class="ctl"><label><span class="math"><i>x</i><sub>0</sub></span><input class="num" type="number" id="e-x0v"></label>
+    <input type="range" id="e-x0" min="-2.6" max="2.6" step="0.02"></div>
+  <div class="ctl"><label><span class="math"><i>y</i><sub>0</sub></span><input class="num" type="number" id="e-y0v"></label>
+    <input type="range" id="e-y0" min="-2.6" max="2.6" step="0.02"></div>
+  <div class="ctl"><label>方向角 <span class="math">θ</span>（°）<input class="num" type="number" id="e-thv"></label>
+    <input type="range" id="e-th" min="0" max="360" step="1"></div>
+  <div class="checks">
+    <label><input type="checkbox" id="e-plane" checked> 切平面（全微分）</label>
+    <label><input type="checkbox" id="e-cx" checked> <span style="color:#403990">固定 y 的薄片</span></label>
+    <label><input type="checkbox" id="e-cy" checked> <span style="color:#C75B2A">固定 x 的薄片</span></label>
+    <label><input type="checkbox" id="e-cu" checked> <span style="color:#CF3D3E">方向 u 的薄片</span></label>
+    <label><input type="checkbox" id="e-grad" checked> <span style="color:#3E6B4A">上坡最快的箭頭</span></label>
+    <label><input type="checkbox" id="e-cont" checked> 底面等高線</label>
+  </div>
+  <hr class="rule"><h2>現在的數字</h2><table class="read" id="e-read"></table>
+  <div class="note">試著轉動 θ。平板沒有動，但不同方向的坡度會改變。公式 ∇f·u 就是在算你選的方向有多陡。</div>`,
+ init(){
+   fillSel("e-fn",FN.map(o=>o.label),S.s5.fn,v=>{S.s5.fn=v;render();});
+   rng("e-x0","e-x0v",S.s5.x0,v=>{S.s5.x0=v;render();},2);
+   rng("e-y0","e-y0v",S.s5.y0,v=>{S.s5.y0=v;render();},2);
+   rng("e-th","e-thv",S.s5.th,v=>{S.s5.th=v;render();},0,"°");
+   ["plane","cx","cy","cu","grad","cont"].forEach(k=>
+     chk("e-"+k,S.s5[k],v=>{S.s5[k]=v;render();}));
+ },
+ items(){
+   const o=FN[S.s5.fn],st=S.s5,th=st.th*Math.PI/180;
+   const ux=Math.cos(th),uy=Math.sin(th);
+   const f0=o.f(st.x0,st.y0),fx=o.fx(st.x0,st.y0),fy=o.fy(st.x0,st.y0);
+   const Du=fx*ux+fy*uy,gm=Math.hypot(fx,fy);
+   const it={contours:st.cont,curtains:[],curves:[],baseCurves:[],vectors:[],
+             points:[{u:st.x0,v:st.y0,z:f0,color:C.red}],
+             plane:st.plane?{u0:st.x0,v0:st.y0,fu:fx,fv:fy,val:f0,size:0.15}:null};
+   if(st.cx){const c=lineOnSurface(st.x0,st.y0,1,0,SC.ua-st.x0,SC.ub-st.x0,150);
+     it.curtains.push({pts:c,fill:"rgba(31,92,122,0.11)"});it.curves.push({pts:c,color:C.blue,width:3});}
+   if(st.cy){const c=lineOnSurface(st.x0,st.y0,0,1,SC.va-st.y0,SC.vb-st.y0,150);
+     it.curtains.push({pts:c,fill:"rgba(169,102,12,0.11)"});it.curves.push({pts:c,color:C.amber,width:3});}
+   if(st.cu){const c=lineOnSurface(st.x0,st.y0,ux,uy,-5,5,220);
+     it.curtains.push({pts:c,fill:"rgba(168,58,43,0.11)"});it.curves.push({pts:c,color:C.red,width:3});
+     it.curves.push({pts:tangentLine(st.x0,st.y0,ux,uy,Du,f0,-1.4,1.4),color:C.ink,width:2.2,noOcclusion:true});}
+   if(st.grad&&gm>1e-6){
+     const s=Math.min(1.5,1.5/gm);
+     it.vectors.push({a:[st.x0,st.y0,SC.za],b:[clamp(st.x0+fx*s,SC.ua,SC.ub),clamp(st.y0+fy*s,SC.va,SC.vb),SC.za],color:C.green});
+     it.vectors.push({a:[st.x0,st.y0,SC.za],b:[clamp(st.x0+ux*1.15,SC.ua,SC.ub),clamp(st.y0+uy*1.15,SC.va,SC.vb),SC.za],color:C.red,width:2});
+   }
+   return it;
+ },
+ read(){
+   const o=FN[S.s5.fn],st=S.s5,th=st.th*Math.PI/180;
+   const fx=o.fx(st.x0,st.y0),fy=o.fy(st.x0,st.y0);
+   tbl("e-read",[["f",fmt(o.f(st.x0,st.y0)),""],["∂f/∂x",fmt(fx),"bl"],["∂f/∂y",fmt(fy),"am"],
+     ["D_u f",fmt(fx*Math.cos(th)+fy*Math.sin(th)),"hi"],["|∇f|",fmt(Math.hypot(fx,fy)),"gr"]]);
+ }
+},
+{
+ nav:"熱力學 V(P,T)",
+ lead:'<b>氣體變熱，又被壓緊，體積會怎麼變？</b>這裡用 P 表示壓力、T 表示溫度、V 表示體積。橘線是壓力不變時的體積變化，紫藍線是溫度不變時的體積變化。藍、橘線段算出大約的體積變化 dV；曲面上的實際變化是 ΔV。綠線告訴你兩者差多少。',
+ scene(){const m=S.s6.model;
+   const E=m===0?IDEAL:VDW;
+   return {key:"eos"+m,ua:2,ub:40,va:310,vb:600,za:0,zb:m===0?25.5:25.5,
+           f:(P,T)=>E.V(P,T),ul:"P (bar)",vl:"T (K)",zl:"V (L)"};},
+ panel:`
+  <h2>狀態方程</h2>
+  <div class="ctl"><select id="f-model">
+    <option>理想氣體　PV = nRT</option><option>范德瓦耳斯氣體（二氧化碳）</option></select></div>
+  <div class="ctl"><label>溫度 <span class="math"><i>T</i></span>（K）<input class="num" type="number" id="f-Tv"></label>
+    <input type="range" id="f-T" min="315" max="595" step="1"></div>
+  <div class="ctl"><label>壓力 <span class="math"><i>P</i></span>（bar）<input class="num" type="number" id="f-Pv"></label>
+    <input type="range" id="f-P" min="2.5" max="39" step="0.1"></div>
+  <div class="ctl"><label>這次改變量 <span class="math">Δ<i>T</i></span>（K）<input class="num" type="number" id="f-dTv"></label>
+    <input type="range" id="f-dT" min="-120" max="120" step="1"></div>
+  <div class="ctl"><label>這次改變量 <span class="math">Δ<i>P</i></span>（bar）<input class="num" type="number" id="f-dPv"></label>
+    <input type="range" id="f-dP" min="-15" max="15" step="0.1"></div>
+  <div class="checks">
+    <label><input type="checkbox" id="f-plane" checked> 切平面（dV）</label>
+    <label><input type="checkbox" id="f-step" checked> 顯示兩段估計與實際差距</label>
+  </div>
+  <hr class="rule"><h2>兩條線怎麼看？</h2>
+  <div class="note" id="f-laws" aria-live="polite"></div>
+  <div class="quick"><button id="f-isotherm-view">看等溫線：V–P</button><button id="f-isobar-view">看等壓線：V–T</button></div>
+  <div class="note">先按上面的按鈕，從正面看一條線。紫藍色是等溫線；橘色是等壓線。紅點是兩條線共同經過的狀態。</div>
+  <hr class="rule"><h2>體積會改變多少？</h2><table class="read" id="f-read"></table>
+  <div class="eq">d<i>V</i> = <span class="am">(∂<i>V</i>/∂<i>T</i>)<sub><i>P</i></sub></span>d<i>T</i> +
+    <span class="bl">(∂<i>V</i>/∂<i>P</i>)<sub><i>T</i></sub></span>d<i>P</i> = <i>V</i>(α d<i>T</i> − κ<sub><i>T</i></sub> d<i>P</i>)</div>
+  <hr class="rule"><h2>換個順序算看看</h2><table class="read" id="f-read2"></table>
+  <div class="note">這裡固定使用 1 莫耳氣體。α 表示溫度增加時，體積改變的比例；κT 表示壓力增加時，體積縮小的比例。下面的公式比較兩種計算順序，數字應該很接近，但只看數字還不算證明。</div>
+  <div class="note" id="f-plain" aria-live="polite"></div>
+  <div class="quick"><button id="f-half">把這一步縮小一半</button></div>
+  <div class="note warn"><b>這裡先看只有一種相的氣體。</b>溫度最低設為 315 K。如果冷到氣體和液體一起出現，只知道溫度和壓力，還不知道體積；也要知道液體和氣體各有多少。低於臨界溫度，不代表每一個狀態都不能算。</div>`,
+ init(){
+   document.getElementById('f-isotherm-view').onclick=()=>flyTo(CAMS.fx);
+   document.getElementById('f-isobar-view').onclick=()=>flyTo(CAMS.fy);
+   const m=document.getElementById("f-model");
+   if(m){m.selectedIndex=S.s6.model;m.onchange=()=>{S.s6.model=m.selectedIndex;render();};}
+   rng("f-T","f-Tv",S.s6.T,v=>{S.s6.T=v;render();},0," K");
+   rng("f-P","f-Pv",S.s6.P,v=>{S.s6.P=v;render();},1," bar");
+   rng("f-dT","f-dTv",S.s6.dT,v=>{S.s6.dT=v;render();},0," K");
+   rng("f-dP","f-dPv",S.s6.dP,v=>{S.s6.dP=v;render();},1," bar");
+   document.getElementById("f-half").onclick=()=>{S.s6.dP*=0.5;S.s6.dT*=0.5;go(5);};
+   chk("f-plane",S.s6.plane,v=>{S.s6.plane=v;render();});
+   chk("f-step",S.s6.step,v=>{S.s6.step=v;render();});
+ },
+ items(){
+   const st=S.s6,E=st.model===0?IDEAL:VDW,V=(p,T)=>E.V(p,T);
+   const v0=V(st.P,st.T),hT=0.5,hP=0.05;
+   const {dVdT,dVdP}=eosSlope(E,st.P,st.T);
+   const isoT=[],isoP=[];
+   for(let i=0;i<=160;i++){const p=lerp(SC.ua,SC.ub,i/160);isoT.push([p,st.T,V(p,st.T)]);}
+   for(let i=0;i<=160;i++){const T=lerp(SC.va,SC.vb,i/160);isoP.push([st.P,T,V(st.P,T)]);}
+   const it={
+     contours:false,
+     curtains:[{pts:isoT,fill:"rgba(31,92,122,0.11)"},{pts:isoP,fill:"rgba(169,102,12,0.11)"}],
+     curves:[{pts:isoT,color:C.blue,width:4.5},{pts:isoP,color:C.amber,width:4.5}],
+     points:[{u:st.P,v:st.T,z:v0,color:C.red}],
+     plane:st.plane?{u0:st.P,v0:st.T,fu:dVdP,fv:dVdT,val:v0,size:0.15}:null,
+     labels:[
+       {u:lerp(SC.ua,SC.ub,0.72),v:st.T,z:V(lerp(SC.ua,SC.ub,0.72),st.T),text:'等溫線：T = '+fmt(st.T,0)+' K 不變',color:C.blue,font:FONT,dx:-55,dy:52},
+       {u:st.P,v:lerp(SC.va,SC.vb,0.82),z:V(st.P,lerp(SC.va,SC.vb,0.82)),text:'等壓線：P = '+fmt(st.P,1)+' bar 不變',color:C.amber,font:FONT,dx:65,dy:-55}
+     ]
+   };
+   if(st.step){
+     const P1=clamp(st.P+st.dP,SC.ua,SC.ub),T1=clamp(st.T+st.dT,SC.va,SC.vb);
+     const dP=P1-st.P,dT=T1-st.T,dV=dVdP*dP+dVdT*dT,DV=V(P1,T1)-v0;
+     it.curves.push(
+       {pts:[[st.P,st.T,v0],[P1,st.T,v0]],color:C.blue,width:2.2,dash:[6,4],noOcclusion:true},
+       {pts:[[P1,st.T,v0],[P1,st.T,v0+dVdP*dP]],color:C.blue,width:4,noOcclusion:true},
+       {pts:[[P1,st.T,v0+dVdP*dP],[P1,T1,v0+dVdP*dP]],color:C.amber,width:2.2,dash:[6,4],noOcclusion:true},
+       {pts:[[P1,T1,v0+dVdP*dP],[P1,T1,v0+dV]],color:C.amber,width:4,noOcclusion:true},
+       {pts:[[P1,T1,v0+dV],[P1,T1,v0+DV]],color:C.green,width:4.5,noOcclusion:true});
+     it.points.push({u:P1,v:T1,z:V(P1,T1),color:C.ink,r:5});
+     it.labels.push({u:P1,v:st.T,z:v0+dVdP*dP/2,text:"(∂V/∂P)ΔP",color:C.blue,font:FONT,dx:-85,dy:28},
+                    {u:P1,v:T1,z:v0+dVdP*dP+dVdT*dT/2,text:"(∂V/∂T)ΔT",color:C.amber,font:FONT,dx:85,dy:-28});
+   }
+   return it;
+ },
+ read(){
+   const st=S.s6,E=st.model===0?IDEAL:VDW,V=(p,T)=>E.V(p,T);
+   const hT=0.5,hP=0.05,v0=V(st.P,st.T);
+   const {dVdT,dVdP}=eosSlope(E,st.P,st.T);
+   const {dPdT}=eosSlope(E,st.P,st.T);
+   const m1=derivative(p=>eosSlope(E,p,st.T).dVdT,st.P,hP,SC.ua,SC.ub);
+   const m2=derivative(t=>eosSlope(E,st.P,t).dVdP,st.T,hT,SC.va,SC.vb);
+   const P1=clamp(st.P+st.dP,SC.ua,SC.ub),T1=clamp(st.T+st.dT,SC.va,SC.vb);
+   const dV=dVdP*(P1-st.P)+dVdT*(T1-st.T),DV=V(P1,T1)-v0;
+   const laws=document.getElementById('f-laws');
+   if(laws)laws.innerHTML=st.model===0?
+     '<b>理想氣體：PV = nRT</b><br>這裡固定 n = 1 mol，溫度 T 用 K。<p style="color:var(--blue)"><b>紫藍色等溫線｜波以耳定律</b><br>溫度不變，PV = nRT = '+fmt(R*st.T,3)+' L·bar。壓力變成 2 倍，體積就變成一半。V 和 P 成反比，所以 V–P 圖是一條彎曲的雙曲線。</p><p style="color:var(--amber)"><b>橘色等壓線｜查理定律</b><br>壓力不變，V/T = nR/P = '+fmt(R/st.P,5)+' L/K。絕對溫度變成 2 倍，體積就變成 2 倍。V 和 T 成正比，所以 V–T 圖是直線。這張圖沒有畫到 0 K；理想氣體的直線延長後才會通過原點。</p>':
+     '<b>目前是范德瓦耳斯模型。</b><br>紫藍色仍是等溫線，橘色仍是等壓線；但 PV 和 V/T 不再各自保持固定，因此不能直接套用波以耳與查理定律的精確比例。切回「理想氣體」，就能對照 PV = nRT。';
+   document.getElementById('f-plain').textContent=
+     '壓力不變，溫度升高 1 K（相當於升高攝氏 1 度），體積大約增加 '+fmt(dVdT,4)+' L（'+fmt(100*dVdT/v0,3)+'%）；溫度不變，壓力增加 1 bar，體積大約減少 '+fmt(-dVdP,4)+' L（'+fmt(-100*dVdP/v0,3)+'%）。這是用現在的坡度估算的，改變太多就可能不準。這次壓力改變 ΔP = '+fmt(P1-st.P,2)+' bar、ΔT = '+fmt(T1-st.T,2)+' K。超出圖形範圍時，這一步會停在邊界。按「把這一步縮小一半」，看看誤差 ΔV − dV 有沒有變小。';
+   tbl("f-read",[["V",fmt(v0)+" L",""],
+     ["(∂V/∂T)_P",fmt(dVdT,4)+" L/K","am"],["(∂V/∂P)_T",fmt(dVdP,4)+" L/bar","bl"],
+     ["α = (1/V)(∂V/∂T)_P",fmt(dVdT/v0,5)+" K⁻¹","am"],
+     ["κ_T = −(1/V)(∂V/∂P)_T",fmt(-dVdP/v0,5)+" bar⁻¹","bl"],
+     ["dV（用平板估算）",fmt(dV,4)+" L","hi"],["ΔV（實際變化）",fmt(DV,4)+" L",""],
+     ["ΔV − dV",fmt(DV-dV,4)+" L","gr"]]);
+   tbl("f-read2",[["∂/∂P[(∂V/∂T)_P]",fmt(m1,5),"gr"],["∂/∂T[(∂V/∂P)_T]",fmt(m2,5),"gr"],
+     ["兩種順序是否接近",Math.abs(m1-m2)<1e-3*Math.max(1e-3,Math.abs(m1))?"✓":"兩者還有差距",""],
+     ["(∂P/∂T)_V",fmt(dPdT,4)+" bar/K",""],
+     ["(∂P/∂T)_V(∂T/∂V)_P(∂V/∂P)_T",fmt(dPdT*(1/dVdT)*dVdP,4),"hi"]]
+     .concat(st.model===1?[["二氧化碳的模型臨界點","模型 T_c = "+fmt(VDW.Tc,2)+" K，P_c = "+fmt(VDW.Pc,2)+" bar","am"],
+       ["目前 T − T_c",fmt(st.T-VDW.Tc,1)+" K",st.T-VDW.Tc<20?"hi":""]]:[]));
+ }
+},
+{
+ nav:"換條路走",
+ lead:'<b>從同一個起點走到同一個終點，換條路會有差嗎？</b>藍線和橘線走不同的路，沿途把變化一點一點加起來，這叫做「路徑積分」。終點如果一高一低，就表示這次算出的結果跟路線有關。兩條路一樣高，還不能保證所有路都一樣。',
+ scene(){
+   const st=S.s7,P=fieldPaths(),F=P.F;
+   let lo=Infinity,hi=-Infinity;
+   const push=z=>{if(z<lo)lo=z;if(z>hi)hi=z;};
+   P.a1.forEach(a=>push(P.z0+a));P.a2.forEach(a=>push(P.z0+a));
+   const showSurf=!!(F.Z&&st.surf);
+   if(showSurf){
+     for(let i=0;i<=24;i++)for(let j=0;j<=24;j++)
+       push(F.Z(lerp(F.dom[0][0],F.dom[0][1],i/24),lerp(F.dom[1][0],F.dom[1][1],j/24)));
+   }
+   if(!isFinite(lo)||lo===hi){lo=-1;hi=1;}
+   const pad=(hi-lo)*0.08;lo-=pad;hi+=pad;
+   return {key:"F"+F.key+(showSurf?"S":"P")+lo.toFixed(2)+hi.toFixed(2),
+     ua:F.dom[0][0],ub:F.dom[0][1],va:F.dom[1][0],vb:F.dom[1][1],
+     za:lo,zb:hi,f:(u,v)=>(F.Z?F.Z(u,v):0),flat:!showSurf,
+     ul:F.ul,vl:F.vl,zl:F.zl};
+ },
+ panel:`
+  <h2>怎麼分：狀態函數與路徑函數？</h2>
+  <div class="note"><b>想像從山腳走到山頂。</b><br>高度差只看起點和終點，像「狀態函數的變化」。走了多遠要看你走哪條路，像「路徑函數」。熱力學裡，熱量和功也常叫「過程量」。</div>
+  <ol style="padding-left:22px;font-size:13px;line-height:1.8">
+    <li><b>先固定同一個起點和終點。</b>熱力學要固定完整的狀態，不能只說溫度一樣。</li>
+    <li><b>換一條路，再算一次。</b>只要找到兩條合法路線的結果確實不同，就能說它跟路線有關。用電腦算時，要先排除計算誤差。</li>
+    <li><b>兩條路相同，先別急著下結論。</b>要證明是狀態函數的變化，必須對所有合法路線都成立；可以用下面的公式方法。</li>
+  </ol>
+  <details class="note"><summary style="cursor:pointer;color:var(--blue)">用公式怎麼判斷？點開看</summary>
+    <p>假設每一小步算的是 ω = M du + N dv。</p>
+    <p><b>方法一：找出 Z。</b>如果能找到整個範圍都適用、每個位置只有一個值的 Z，而且 ∂Z/∂u = M、∂Z/∂v = N，就有 ω = dZ。沿途加起來一定是 Z(B) − Z(A)。Z 就是狀態函數。</p>
+    <p><b>方法二：比較兩個偏導。</b>算 ∂M/∂v 和 ∂N/∂u。若它們在某處不同，就不是全微分。若處處相同，還要確認範圍沒有洞（單連通開區域），而且 M、N 的一階偏導連續，才能保證找到全域的 Z。</p>
+    <p><b>方法三：繞一圈回到起點。</b>狀態函數回到原狀，總變化一定是 0，所以 ∮dZ = 0。找到一圈不是 0，就知道跟路線有關；只有一圈等於 0，還不夠。每一條合法封閉路線都等於 0，才是完整的判斷。</p>
+  </details>
+  <div class="note"><b>熱力學例子</b><br>內能 U、焓 H、熵 S、吉布斯自由能 G 是狀態函數。熱量 Q 和功 W 跟過程有關，通常寫成 δQ、δW。熵的變化可以用可逆路徑的 ∫δQ<sub>rev</sub>/T 計算；不能隨便把不可逆過程的熱量除以溫度就當成熵變。</div>
+  <h2>選個例子，自己試</h2>
+  <div class="quick"><button id="g-state-demo">看狀態函數</button><button id="g-path-demo">看路徑函數</button><button id="g-hole-demo">看看有洞的例外</button></div>
+  <div class="note" id="g-explain" aria-live="polite"></div>
+  <h2>選一種計算方式</h2>
+  <div class="ctl"><select id="g-fn"></select></div>
+  <div class="ctl"><label>起點 <span class="math">A</span> 的第一座標
+      <input class="num" type="number" id="g-Auv"></label><input type="range" id="g-Au"></div>
+  <div class="ctl"><label>起點 <span class="math">A</span> 的第二座標
+      <input class="num" type="number" id="g-Avv"></label><input type="range" id="g-Av"></div>
+  <div class="ctl"><label>終點 <span class="math">B</span> 的第一座標
+      <input class="num" type="number" id="g-Buv"></label><input type="range" id="g-Bu"></div>
+  <div class="ctl"><label>終點 <span class="math">B</span> 的第二座標
+      <input class="num" type="number" id="g-Bvv"></label><input type="range" id="g-Bv"></div>
+  <div class="ctl"><label>路徑 1 彎曲度
+      <input class="num" type="number" id="g-b1v"></label>
+    <input type="range" id="g-b1" min="-0.6" max="0.6" step="0.01"></div>
+  <div class="ctl"><label>路徑 2 彎曲度
+      <input class="num" type="number" id="g-b2v"></label>
+    <input type="range" id="g-b2" min="-0.6" max="0.6" step="0.01"></div>
+  <div class="checks">
+    <label><input type="checkbox" id="g-surf" checked> 顯示 Z 的曲面（有提供時）</label>
+    <label><input type="checkbox" id="g-arr" checked> 顯示地面上的方向箭頭 (M, N)</label>
+  </div>
+  <hr class="rule"><h2>換路線會有差嗎？</h2><table class="read" id="g-read"></table>
+  <div class="eq">如果範圍裡沒有洞（單連通開區域），M、N 的一階偏導都連續（C¹），而且每一點都符合：<br>∂<i>M</i>/∂<i>v</i> = ∂<i>N</i>/∂<i>u</i>　⟺　<i>M</i>d<i>u</i> + <i>N</i>d<i>v</i> 是某個 <i>Z</i> 的全微分</div>
+  <hr class="rule"><h2>路徑積分</h2><table class="read" id="g-read2"></table>
+  <div class="note" id="g-note"></div>
+  <div class="note warn"><b>公式相同，不代表一定只有氣體或只有液體。</b>氣體和液體一起出現時，內能 U 和熵 S 仍然是狀態函數。要選對描述它們的量，不能只靠這張表來判斷有幾種相。</div>`,
+ bounds(){
+   const F=FIELDS[S.s7.fn],d0=F.dom[0],d1=F.dom[1];
+   const s0=((d0[1]-d0[0])/300).toFixed(4),s1=((d1[1]-d1[0])/300).toFixed(4);
+   setBounds("g-Au","g-Auv",d0[0],d0[1],s0);setBounds("g-Bu","g-Buv",d0[0],d0[1],s0);
+   setBounds("g-Av","g-Avv",d1[0],d1[1],s1);setBounds("g-Bv","g-Bvv",d1[0],d1[1],s1);
+   const st=S.s7;
+   st.A=[clamp(st.A[0],d0[0],d0[1]),clamp(st.A[1],d1[0],d1[1])];
+   st.B=[clamp(st.B[0],d0[0],d0[1]),clamp(st.B[1],d1[0],d1[1])];
+   rng("g-Au","g-Auv",st.A[0],v=>{st.A[0]=v;render();},F.decU);
+   rng("g-Av","g-Avv",st.A[1],v=>{st.A[1]=v;render();},F.decV);
+   rng("g-Bu","g-Buv",st.B[0],v=>{st.B[0]=v;render();},F.decU);
+   rng("g-Bv","g-Bvv",st.B[1],v=>{st.B[1]=v;render();},F.decV);
+ },
+ init(){
+   fillSel("g-fn",FIELDS.map(o=>o.label),S.s7.fn,v=>{
+     S.s7.fn=v;const F=FIELDS[v];
+     S.s7.A=F.A.slice();S.s7.B=F.B.slice();
+     STEPS[6].bounds();render();});
+   const demo=index=>{const F=FIELDS[index];S.s7.fn=index;S.s7.A=F.A.slice();S.s7.B=F.B.slice();S.s7.b1=0.34;S.s7.b2=-0.34;go(6);};
+   document.getElementById('g-state-demo').onclick=()=>demo(0);
+   document.getElementById('g-path-demo').onclick=()=>demo(2);
+   document.getElementById('g-hole-demo').onclick=()=>demo(4);
+   STEPS[6].bounds();
+   rng("g-b1","g-b1v",S.s7.b1,v=>{S.s7.b1=v;render();},2);
+   rng("g-b2","g-b2v",S.s7.b2,v=>{S.s7.b2=v;render();},2);
+   chk("g-surf",S.s7.surf,v=>{S.s7.surf=v;render();});
+   chk("g-arr",S.s7.arrows,v=>{S.s7.arrows=v;render();});
+ },
+ items(){
+   const st=S.s7,P=fieldPaths(),F=P.F;
+   const lift=(pts,acc)=>pts.map((p,i)=>[p[0],p[1],P.z0+acc[i]]);
+   const c1=lift(P.p1,P.a1),c2=lift(P.p2,P.a2);
+   const e1=c1[c1.length-1],e2=c2[c2.length-1];
+   const it={contours:!!(F.Z&&st.surf),curves:[],baseCurves:[],vectors:[],points:[],labels:[]};
+   if(st.arrows){
+     const n=11,su=(SC.ub-SC.ua),sv=(SC.vb-SC.va);
+     let mx=1e-9;const cells=[];
+     for(let i=1;i<n;i++)for(let j=1;j<n;j++){
+       const u=SC.ua+su*i/n,v=SC.va+sv*j/n;
+       const m=F.M(u,v),nn=F.N(u,v);
+       if(!isFinite(m)||!isFinite(nn))continue;
+       const mag=Math.hypot(m/su,nn/sv);
+       if(mag>1e3)continue;
+       mx=Math.max(mx,mag);cells.push([u,v,m,nn,mag]);
+     }
+     cells.forEach(c=>{
+       const k=0.055/mx*Math.min(1,c[4]/mx*3+0.18);
+       it.vectors.push({a:[c[0],c[1],SC.za],
+         b:[clamp(c[0]+c[2]/su*k*su,SC.ua,SC.ub),clamp(c[1]+c[3]/sv*k*sv,SC.va,SC.vb),SC.za],
+         color:"#8FA69B",width:1.3});
+     });
+   }
+   it.baseCurves.push({pts:P.p1,color:C.blue,width:1.8,dash:[5,4]},
+                      {pts:P.p2,color:C.amber,width:1.8,dash:[5,4]});
+   it.curves.push({pts:c1,color:C.blue,width:3.4,noOcclusion:true},
+                  {pts:c2,color:C.amber,width:3.4,noOcclusion:true});
+   it.curves.push({pts:[[st.A[0],st.A[1],SC.za],[st.A[0],st.A[1],P.z0]],color:"#9AA6A0",width:1.4,dash:[4,4],noOcclusion:true},
+                  {pts:[[st.B[0],st.B[1],SC.za],[st.B[0],st.B[1],Math.min(e1[2],e2[2])]],color:"#9AA6A0",width:1.4,dash:[4,4],noOcclusion:true});
+   const gap=Math.abs(e1[2]-e2[2]);
+   if(gap>(SC.zb-SC.za)*0.004){
+     it.curves.push({pts:[e1,e2],color:C.green,width:5,noOcclusion:true});
+     it.labels.push({u:st.B[0],v:st.B[1],z:(e1[2]+e2[2])/2,text:"∮ = "+fmt(P.a1[P.a1.length-1]-P.a2[P.a2.length-1],3),color:C.green,font:FONT});
+   }else{
+     it.labels.push({u:st.B[0],v:st.B[1],z:e1[2],text:"∮ = 0",color:C.green,font:FONT});
+   }
+   it.points.push({u:st.A[0],v:st.A[1],z:P.z0,color:C.red,r:6},
+                  {u:st.B[0],v:st.B[1],z:e1[2],color:C.blue,r:5},
+                  {u:st.B[0],v:st.B[1],z:e2[2],color:C.amber,r:5});
+   it.labels.push({u:st.A[0],v:st.A[1],z:SC.za,text:"A",color:C.red,font:FONT},
+                  {u:st.B[0],v:st.B[1],z:SC.za,text:"B",color:C.ink,font:FONT});
+   return it;
+ },
+ read(){
+   const st=S.s7,P=fieldPaths(),F=P.F;
+   const hu=(F.dom[0][1]-F.dom[0][0])*2e-4,hv=(F.dom[1][1]-F.dom[1][0])*2e-4;
+   const mu=(st.A[0]+st.B[0])/2,mv=(st.A[1]+st.B[1])/2;
+   const dMdv=derivative(v=>F.M(mu,v),mv,hv,...F.dom[1]);
+   const dNdu=derivative(u=>F.N(u,mv),mu,hu,...F.dom[0]);
+   let worst=0,rel=0;
+   const samp=[];
+   for(let i=1;i<10;i++)for(let j=1;j<10;j++){
+     const u=lerp(F.dom[0][0],F.dom[0][1],i/10),v=lerp(F.dom[1][0],F.dom[1][1],j/10);
+     const m=F.M(u,v),nn=F.N(u,v);
+     if(!isFinite(m)||!isFinite(nn))continue;
+     samp.push({u,v,mag:Math.hypot(m,nn)});
+   }
+   const mags=samp.map(o=>o.mag).sort((x,y)=>x-y);
+   const med=mags.length?mags[Math.floor(mags.length/2)]:1;   // 以中位數界定「正常」量級
+   samp.forEach(o=>{
+     if(o.mag>100*med+1e-9)return;                            // 丟掉奇點附近的取樣
+     const a=(F.M(o.u,o.v+hv)-F.M(o.u,o.v-hv))/(2*hv),
+           b=(F.N(o.u+hu,o.v)-F.N(o.u-hu,o.v))/(2*hu);
+     if(!isFinite(a)||!isFinite(b))return;
+     worst=Math.max(worst,Math.abs(a-b));
+     rel=Math.max(rel,Math.abs(a-b)/(1+Math.max(Math.abs(a),Math.abs(b))));
+   });
+   const ok=rel<1e-5;
+   const I1=P.a1[P.a1.length-1],I2=P.a2[P.a2.length-1];
+   const loopBig=Math.abs(I1-I2)>1e-3*(1+Math.max(Math.abs(I1),Math.abs(I2)));
+   tbl("g-read",[["∂M/∂v（AB 中點）",fmt(dMdv,4),"bl"],["∂N/∂u（AB 中點）",fmt(dNdu,4),"am"],
+     ["差值",fmt(dMdv-dNdu,4),"hi"],
+     ["抽查位置的最大差距",fmt(worst,4),""],
+     ["比較結果",ok?(loopBig?"附近相同，繞一圈卻有差":"抽查相同，還不能當作證明"):"有差，會跟路線有關",ok&&!loopBig?"gr":"hi"]]);
+   tbl("g-read2",[["I₁（藍路徑）",fmt(I1,4),"bl"],["I₂（橘路徑）",fmt(I2,4),"am"],
+     ["∮ = I₁ − I₂",fmt(I1-I2,4),"gr"],
+     ["Z(B) − Z(A)",F.Z?fmt(F.Z(st.B[0],st.B[1])-F.Z(st.A[0],st.A[1]),4):"沒有可用的單一 Z",F.Z?"":"hi"]]);
+   const explanation=document.getElementById('g-explain');
+   if(explanation){
+     const proven=['xy','quad','ds'].includes(F.key);
+     const kind=proven?'這個例子有全域的 Z，所以是狀態函數的變化。':F.key==='vortex'?'這個範圍的原點有洞，找不到全域單值的 Z。畫出的角度曲面有接縫，不能拿它當全域的證明。':'這個例子不是全微分，結果可能跟路線有關。';
+     explanation.textContent=kind+' 目前兩條路的差是 '+fmt(I1-I2,5)+'。'+(loopBig?(proven?'這次數值和已知公式不一致，需留意積分誤差。':'這次選的兩條路算出不同結果；讀數仍含數值誤差。'):'這次兩條路的數字很接近；單靠這一次比較，還不能判斷所有路。');
+   }
+   const nt=document.getElementById("g-note");
+   if(nt)nt.textContent=F.note;
+ }
+}];
+
+
+/* 切向量使用曲面的解析偏導；縮放三個分量時使用同一倍率。 */
+function tangentGeometry(i){
+ if(i===0){const st=S.s1,o=F1[st.fn];return {u:st.x0,v:st.y0,z:o.f(st.x0),fu:o.d(st.x0),fv:0};}
+ if(i===5){const st=S.s6,E=st.model===0?IDEAL:VDW,a=eosSlope(E,st.P,st.T);return {u:st.P,v:st.T,z:a.v,fu:a.dVdP,fv:a.dVdT};}
+ const st=S['s'+(i+1)],o=FN[st.fn];return {u:st.x0,v:st.y0,z:o.f(st.x0,st.y0),fu:o.fx(st.x0,st.y0),fv:o.fy(st.x0,st.y0)};
+}
+function addTangentArrow(it,g,du,dv,name,color,dy){
+ const dz=g.fu*du+g.fv*dv;
+ const length=Math.hypot(du/(SC.ub-SC.ua),dv/(SC.vb-SC.va),dz/(SC.zb-SC.za));
+ if(!Number.isFinite(length)||length===0)return;
+ const k=0.16/length;
+ const end=[g.u+k*du,g.v+k*dv,g.z+k*dz];
+ it.vectors.push({a:[g.u,g.v,g.z],b:end,color,width:3.6});
+ it.labels.push({u:end[0],v:end[1],z:end[2],text:name,color,font:FONT,dx:35,dy});
+}
+STEPS.forEach((step,i)=>{
+ if(i===6){step.panel='<div class="note"><b>這一頁看路徑積分。</b>彩色線是沿途累積的結果，不是切線；顯示的 Z 曲面也不是切平面。</div>'+step.panel;return;}
+ const original=step.items;
+ step.items=function(){
+  const it=original.call(this),g=tangentGeometry(i);
+  it.vectors=it.vectors||[];it.labels=it.labels||[];
+  if(i===0){if(S.s1.tan)addTangentArrow(it,g,1,0,'切向量（沿切線）',C.red,-30);}
+  else if(i===2){const th=S.s3.th*Math.PI/180;addTangentArrow(it,g,Math.cos(th),Math.sin(th),'方向 u 的切向量',C.ink,-32);}
+  else{
+   if(i!==4||S.s5.cx)addTangentArrow(it,g,1,0,i===5?'等溫線的切向量':'x 方向的切向量',C.blue,34);
+   if(i!==4||S.s5.cy)addTangentArrow(it,g,0,1,i===5?'等壓線的切向量':'y 方向的切向量',C.amber,-34);
+   if(i===4&&S.s5.cu){const th=S.s5.th*Math.PI/180;addTangentArrow(it,g,Math.cos(th),Math.sin(th),'方向 u 的切向量',C.ink,-64);}
+  }
+  if(it.plane){
+   const p=it.plane,du=(SC.ub-SC.ua)*p.size*0.65,dv=-(SC.vb-SC.va)*p.size*0.65;
+   it.labels.push({u:p.u0+du,v:p.v0+dv,z:p.val+p.fu*du+p.fv*dv,text:'切平面（淡紅色平板）',color:C.red,font:FONT,dx:-65,dy:-45});
+  }
+  return it;
+ };
+ const formula=i===5?'V切 = V₀ + (∂V/∂P)T,₀ (P − P₀) + (∂V/∂T)P,₀ (T − T₀)':'z切 = f(x₀,y₀) + fₓ(x₀,y₀)(x − x₀) + fᵧ(x₀,y₀)(y − y₀)';
+ const description=i===0?'紅色直線是切線，箭頭是沿著它的切向量。這頁沒有另外畫切平面。':i===1?'兩個箭頭從同一個曲面上的點出發，分別沿著兩條切線。這頁沒有另外畫切平面。':i===2?'曲面上的箭頭是切向量；地面上的箭頭只表示往哪裡走，兩者不同。這頁沒有另外畫切平面。':'曲面上的箭頭是切向量。淡紅色平板是切平面，四周虛線只是它的邊框。藍橘階梯是把高度變化拆開來看，不是切線。';
+ step.panel='<div class="note"><b>先認清圖形</b><br>'+description+'</div>'+step.panel;
+ if(i>=3)step.panel+='<details class="note"><summary>為什麼這張平板是切平面？</summary><p>'+formula+'</p><p>把起點代進去，平板和曲面會碰在同一點。兩個方向的坡度也都用曲面在起點的偏導數，所以任何方向的當下坡度都相同。</p><p>切平面不必整張貼在曲面上，也可能穿過曲面。重點是接觸點的位置和坡度相同。箭頭為了看清楚有縮放長度，方向沒有改變。</p></details>';
+});
+
+
+function drawDirectionGuide(){
+ const st=S.s3,o=FN[st.fn],th=st.th*Math.PI/180;
+ const fx=o.fx(st.x0,st.y0),fy=o.fy(st.x0,st.y0),gm=Math.hypot(fx,fy),ga=Math.atan2(fy,fx);
+ const delta=Math.atan2(Math.sin(ga-th),Math.cos(ga-th)),phi=Math.abs(delta)*180/Math.PI;
+ const size=Math.min(230,W-20,H-85),left=W-size-10,top=10;
+ const cx=left+size/2,cy=top+size/2+5,r=size*0.30;
+ ctx.save();ctx.fillStyle='rgba(255,255,255,0.97)';ctx.fillRect(left,top,size,size);
+ ctx.strokeStyle='#BCC1C7';ctx.lineWidth=1;ctx.strokeRect(left,top,size,size);
+ ctx.font='12px "Microsoft JhengHei",sans-serif';ctx.fillStyle='#17242B';ctx.textAlign='center';
+ ctx.fillText('從上面看：紅色 u、綠色 ∇f',cx,top+19);
+ const point=(a,l)=>({x:cx+Math.cos(a)*l,y:cy-Math.sin(a)*l});
+ arrow({x:cx,y:cy},point(0,r+12),'#777777',1);
+ ctx.fillStyle='#555555';ctx.fillText('x',cx+r+16,cy+15);
+ arrow({x:cx,y:cy},point(th,r),C.red,3);
+ if(gm>1e-9){
+  arrow({x:cx,y:cy},point(ga,r),C.green,3);
+  ctx.strokeStyle='#403990';ctx.lineWidth=2.5;ctx.beginPath();
+  for(let k=0;k<=48;k++){const p=point(th+delta*k/48,r*0.52);k?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y);}
+  ctx.stroke();const p=point(th+delta/2,r*0.72);ctx.fillStyle='#403990';ctx.fillText('φ',p.x,p.y);
+ }
+ ctx.fillStyle='#17242B';ctx.fillText('θ = '+fmt(st.th,0)+'°（x 軸到紅箭頭）',cx,top+size-34);
+ ctx.fillText(gm>1e-9?'φ = '+fmt(phi,1)+'°（紅箭頭到綠箭頭）':'梯度為 0：φ 沒有定義，方向導數為 0',cx,top+size-14);
+ ctx.restore();
+}
+STEPS[2].panel='<div class="note"><b>沿紅色方向走，算出來就是方向導數。</b><br>紅色箭頭 u：你選的方向。綠色箭頭 ∇f：上坡最快的方向。兩者之間是 φ。滑桿 θ 則是從 x 軸量到紅箭頭，這是另一個角。</div>'+STEPS[2].panel;
+const directionRead=STEPS[2].read;
+STEPS[2].read=function(){directionRead.call(this);
+ const o=FN[S.s3.fn],st=S.s3,fx=o.fx(st.x0,st.y0),fy=o.fy(st.x0,st.y0),gm=Math.hypot(fx,fy),th=st.th*Math.PI/180;
+ const phi=gm>1e-9?Math.acos(clamp((fx*Math.cos(th)+fy*Math.sin(th))/gm,-1,1))*180/Math.PI:NaN;
+ const table=document.getElementById('c-read');if(table)table.innerHTML+='<tr><td>φ（紅、綠箭頭夾角）</td><td>'+ (Number.isFinite(phi)?fmt(phi,1)+'°':'梯度為 0，角度沒有定義')+'</td></tr>';
+};
+// 地面箭頭只縮放長度，不分別夾住座標，以免改變方向。
+const directionItems=STEPS[2].items;
+STEPS[2].items=function(){const it=directionItems.call(this),st=S.s3,o=FN[st.fn],th=st.th*Math.PI/180;
+ const fx=o.fx(st.x0,st.y0),fy=o.fy(st.x0,st.y0),gm=Math.hypot(fx,fy);
+ it.vectors=it.vectors.filter(v=>v.width===3.6);
+ const add=(x,y,color)=>{let l=1.1;for(const [p,d,lo,hi] of [[st.x0,x,SC.ua,SC.ub],[st.y0,y,SC.va,SC.vb]])if(d!==0)l=Math.min(l,0.95*(d>0?hi-p:lo-p)/d);it.vectors.push({a:[st.x0,st.y0,SC.za],b:[st.x0+x*l,st.y0+y*l,SC.za],color,width:3});};
+ add(Math.cos(th),Math.sin(th),C.red);if(gm>1e-9)add(fx/gm,fy/gm,C.green);
+ return it;
+};
+/* ===================== 主流程 ===================== */
+const navEl=document.getElementById("nav"),leadEl=document.getElementById("lead"),panelEl=document.getElementById("panel");
+navEl.innerHTML=STEPS.map((s,i)=>'<button data-i="'+i+'"><span class="n">'+(i+1)+'</span>'+s.nav+'</button>').join("");
+navEl.querySelectorAll("button").forEach(b=>b.onclick=()=>go(+b.dataset.i));
+function go(i){
+  S.step=i;
+  cam=i===5?{yaw:-0.85,pitch:0.58,zoom:0.82}:{...CAMS.iso};
+  navEl.querySelectorAll("button").forEach((b,k)=>b.setAttribute("aria-current",k===i?"true":"false"));
+  leadEl.innerHTML=STEPS[i].lead;
+  const prompts=["把橘點移近紅點，看看兩條直線。","保持 y 不動，再試試保持 x 不動。","轉個方向，猜猜哪邊最陡。","把兩個移動距離縮小，看看綠線。","先關掉幾個圖形，再一個一個打開。","先猜體積會變大還是變小，再看數字。","把路線彎一點，看看終點高度。"];
+  panelEl.innerHTML='<div class="note"><b>試試看：</b>'+prompts[i]+'</div><div class="quick"><button id="reset-view">回到原本的角度</button></div>'+STEPS[i].panel;
+  document.getElementById('reset-view').onclick=()=>flyTo(i===5?{yaw:-0.85,pitch:0.58,zoom:0.82}:CAMS.iso);
+  STEPS[i].init&&STEPS[i].init();
+  cache.key=null;
+  render();
+}
+window.addEventListener("resize",()=>{clearTimeout(window._rt);window._rt=setTimeout(render,80);});
+window.addEventListener("keydown",e=>{
+  if(e.target.tagName==="INPUT"||e.target.tagName==="SELECT")return;
+  if(e.key==="ArrowRight")go(Math.min(STEPS.length-1,S.step+1));
+  if(e.key==="ArrowLeft")go(Math.max(0,S.step-1));
+});
+go(0);
+</script>
+</body>
+</html>
