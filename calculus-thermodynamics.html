@@ -410,7 +410,7 @@ function paint(){
   if(g)drawSurface(g);
   drawItems(items,g);
   drawAxes();
-  if(S.step===2)drawDirectionGuide();
+
   st.read&&st.read();
   document.getElementById("hint").textContent=
     S.step===5?"紫藍線：溫度不變　橘線：壓力不變":"拖曳轉動圖形・滾輪放大縮小";
