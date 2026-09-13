@@ -102,7 +102,7 @@ input[type=range]#a-x0,input[type=range]#b-x0,input[type=range]#b-y0,input[type=
 <body>
 <header>
   <a href="index.html" style="display:inline-block;font-size:13px;color:#403990;margin-bottom:6px">← 回 CORE Lab 首頁</a> <a href="course.html" style="margin-left:16px;color:#403990;font-size:13px">Course</a> <span aria-current="page" style="margin-left:12px;font-size:13px;font-weight:bold">Ch. 1</span>
-  <h1>一起看看：坡度、曲面和氣體 <small style="font:12px sans-serif;color:var(--muted)">氣體定律操作版 13</small></h1>
+  <h1>一起看看：坡度、曲面和氣體 <small style="font:12px sans-serif;color:var(--muted)">全微分剖面版 14</small></h1>
   <div class="sub">微分 → 偏微分 → 方向導數 → 全微分 → <span class="math"><i>V</i>(<i>P</i>,<i>T</i>)</span>　｜　拖曳旋轉．滾輪縮放．← → 換頁</div>
   <nav id="nav"></nav>
 </header>
@@ -408,6 +408,7 @@ function paint(){
   const items=st.items?st.items():{};
   drawBase(g,items);
   if(g)drawSurface(g);
+  if(S.step===3)drawTotalMesh();
   drawItems(items,g);
   drawAxes();
 
@@ -468,7 +469,7 @@ function drawSurface(g){
     const dif=Math.max(0,n.x*L.x+n.y*L.y+n.z*L.z);
     const sp=Math.pow(Math.max(0,n.x*Hv.x+n.y*Hv.y+n.z*Hv.z),26)*0.30;
     const zm=(Z[i][j]+Z[i+1][j]+Z[i+1][j+1]+Z[i][j+1])/4;
-    const col=ramp((zm-SC.za)/(SC.zb-SC.za));
+    const col=S.step===3?[224,226,228]:ramp((zm-SC.za)/(SC.zb-SC.za));
     quads.push({ps,d:(ps[0].d+ps[1].d+ps[2].d+ps[3].d)/4,c:shade(col,dif,sp)});
   }
   quads.sort((a,b)=>b.d-a.d);
@@ -509,9 +510,16 @@ function drawItems(it,g){
     const pl=it.plane,su=(SC.ub-SC.ua)*pl.size,sv=(SC.vb-SC.va)*pl.size;
     const cor=[[-su,-sv],[su,-sv],[su,sv],[-su,sv]].map(d=>
       P3(pl.u0+d[0],pl.v0+d[1],pl.val+pl.fu*d[0]+pl.fv*d[1]));
-    ctx.save();ctx.fillStyle="rgba(168,58,43,0.12)";ctx.strokeStyle="rgba(168,58,43,0.40)";ctx.lineWidth=1;ctx.setLineDash([5,5]);
+    ctx.save();ctx.fillStyle=S.step===3?"rgba(109,191,213,0.48)":"rgba(168,58,43,0.12)";ctx.strokeStyle=S.step===3?"#549CAE":"rgba(168,58,43,0.40)";ctx.lineWidth=1;ctx.setLineDash([5,5]);
     ctx.beginPath();cor.forEach((q,k)=>k?ctx.lineTo(q.x,q.y):ctx.moveTo(q.x,q.y));
     ctx.closePath();ctx.fill();ctx.stroke();ctx.restore();
+    if(S.step===3){
+      const F=(u,v)=>pl.val+pl.fu*(u-pl.u0)+pl.fv*(v-pl.v0);
+      for(let j=0;j<=10;j++){const u=pl.u0-su+2*su*j/10,v=pl.v0-sv+2*sv*j/10;
+        strokePts([[u,pl.v0-sv,F(u,pl.v0-sv)],[u,pl.v0+sv,F(u,pl.v0+sv)]],'#609AAA',0.65);
+        strokePts([[pl.u0-su,v,F(pl.u0-su,v)],[pl.u0+su,v,F(pl.u0+su,v)]],'#609AAA',0.65);
+      }
+    }
   }
   (it.vectors||[]).forEach(v=>{
     const A=P3(v.a[0],v.a[1],v.a[2]),B=P3(v.b[0],v.b[1],v.b[2]);
@@ -1443,6 +1451,46 @@ STEPS.forEach((step,i)=>{
  step.panel='<h2>選函數與觀察位置</h2><p class="note">'+minimalHelp[i]+'</p>'+visible+'<h2>看這幾個數字</h2><table class="read minimal-read" id="'+tableId+'"></table><div hidden aria-hidden="true">'+original+'</div>';
  step.lead=minimalHelp[i];
 });
+
+function drawTotalMesh(){
+ for(let i=0;i<=20;i++){
+  const u=lerp(SC.ua,SC.ub,i/20),v=lerp(SC.va,SC.vb,i/20),a=[],b=[];
+  for(let j=0;j<=70;j++){const x=lerp(SC.ua,SC.ub,j/70),y=lerp(SC.va,SC.vb,j/70);a.push([u,y,SC.f(u,y)]);b.push([x,v,SC.f(x,v)]);}
+  // 依曲面遮蔽判斷畫網格，不把背面的格線當成前景。
+  for(const pts of [a,b]){let run=[];for(const p of pts){if(visible(...p,buildGrid(QUICK?46:108)))run.push(p);else{if(run.length>1)strokePts(run,'#A4AAAF',0.6);run=[];}}if(run.length>1)strokePts(run,'#A4AAAF',0.6);}
+ }
+}
+S.s4.view=2;S.s4.fn=2;S.s4.x0=0.8;S.s4.y0=-0.7;
+STEPS[3].lead='先用藍、綠曲線看兩個方向的坡度。兩條黑色切線通過同一個點，一起決定淡藍色切平面。';
+STEPS[3].panel=
+ '<h2>全微分：從兩條切線看一個平面</h2><div class="ctl"><label>選擇曲面</label><select id="total-fn"></select></div>'+
+ '<div class="ctl"><label>觀察點 x₀<input class="num" id="total-x" type="number" min="-2.4" max="2.4" step="0.1"></label></div>'+
+ '<div class="ctl"><label>觀察點 y₀<input class="num" id="total-y" type="number" min="-2.4" max="2.4" step="0.1"></label></div>'+
+ '<div class="quick"><button id="total-one">1. 看 x 方向</button><button id="total-two">2. 加上 y 方向</button><button id="total-plane">3. 看切平面</button></div>'+
+ '<div class="note" id="total-note"></div><div class="eq" id="total-equation"></div>'+
+ '<details class="note"><summary>偏導數從哪裡來？</summary><p>先固定 y = y₀，只沿 x 方向看：</p><p>fₓ(x₀,y₀) = lim〔f(x₀+h,y₀) − f(x₀,y₀)〕/h，h → 0。</p><p>換成固定 x = x₀，就得到 fᵧ。兩條切線相交，就能決定一個平面；曲面可微時，這個平面就是切平面。</p></details>';
+STEPS[3].init=function(){
+ fillSel('total-fn',FN.map(o=>o.label),S.s4.fn,v=>{S.s4.fn=v;render();});
+ for(const axis of ['x','y']){const input=document.getElementById('total-'+axis);input.value=S.s4[axis+'0'];input.onchange=()=>{const n=Number(input.value);if(Number.isFinite(n))S.s4[axis+'0']=clamp(n,-2.4,2.4);input.value=S.s4[axis+'0'];render();};}
+ ['one','two','plane'].forEach((name,i)=>document.getElementById('total-'+name).onclick=()=>{S.s4.view=i;flyTo(i===0?CAMS.fx:CAMS.iso);render();});
+};
+STEPS[3].scene=function(){const sc=surfScene(FN[S.s4.fn]);sc.zl='z';return sc;};
+STEPS[3].items=function(){
+ const st=S.s4,o=FN[st.fn],x=st.x0,y=st.y0,z=o.f(x,y),fx=o.fx(x,y),fy=o.fy(x,y);
+ const it={contours:false,curves:[],points:[{u:x,v:y,z,color:'#E69E43',r:6},{u:x,v:y,z:SC.za,color:'#E69E43',r:4}],labels:[],vectors:[]};
+ it.curves.push({pts:lineOnSurface(x,y,1,0,SC.ua-x,SC.ub-x,180),color:'#347BC5',width:3.5});
+ it.curves.push({pts:tangentLine(x,y,1,0,fx,z,-2,2),color:'#111111',width:2.8,noOcclusion:true});
+ it.labels.push({u:x+0.7,v:y,z:z+fx*0.7,text:'x 方向切線：斜率 fₓ(x₀,y₀)',color:'#347BC5'});
+ if(st.view>=1){it.curves.push({pts:lineOnSurface(x,y,0,1,SC.va-y,SC.vb-y,180),color:'#408867',width:3.5},{pts:tangentLine(x,y,0,1,fy,z,-2,2),color:'#111111',width:2.8,noOcclusion:true});it.labels.push({u:x,v:y+0.7,z:z+fy*0.7,text:'y 方向切線：斜率 fᵧ(x₀,y₀)',color:'#408867'});}
+ it.curves.push({pts:[[x,y,SC.za],[x,y,z]],color:'#626970',width:1.5,dash:[3,5],noOcclusion:true});
+ if(st.view===2){it.plane={u0:x,v0:y,val:z,fu:fx,fv:fy,size:0.24};it.labels.push({u:x,v:y,z,text:'淡藍色切平面：通過觀察點，兩方向坡度相同',color:'#357F94'});}
+ return it;
+};
+STEPS[3].read=function(){const v=S.s4.view;
+ document.getElementById('total-note').textContent=['固定 y，只看藍色剖面曲線。黑線是它在橘點的切線。','再固定 x，看綠色剖面曲線。兩條黑色切線都通過同一個橘點。','淡藍色平板包含這兩條切線。它估計的是橘點附近的高度變化，不必整張貼住曲面。'][v];
+ document.getElementById('total-equation').innerHTML=v===0?'dy = 0 時：dz = fₓ(x₀,y₀) dx':v===1?'x 方向：dz = fₓ dx（dy = 0）<br>y 方向：dz = fᵧ dy（dx = 0）':'全微分：dz = fₓ(x₀,y₀) dx + fᵧ(x₀,y₀) dy<br><br>切平面：z切 = z₀ + fₓ(x₀,y₀)(x − x₀) + fᵧ(x₀,y₀)(y − y₀)';
+};
+
 /* ===================== 主流程 ===================== */
 const navEl=document.getElementById("nav"),leadEl=document.getElementById("lead"),panelEl=document.getElementById("panel");
 navEl.innerHTML=STEPS.map((s,i)=>'<button data-i="'+i+'"><span class="n">'+(i+1)+'</span>'+s.nav+'</button>').join("");
