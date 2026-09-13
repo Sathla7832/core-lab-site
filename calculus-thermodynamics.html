@@ -102,7 +102,7 @@ input[type=range]#a-x0,input[type=range]#b-x0,input[type=range]#b-y0,input[type=
 <body>
 <header>
   <a href="index.html" style="display:inline-block;font-size:13px;color:#403990;margin-bottom:6px">← 回 CORE Lab 首頁</a> <a href="course.html" style="margin-left:16px;color:#403990;font-size:13px">Course</a> <span aria-current="page" style="margin-left:12px;font-size:13px;font-weight:bold">Ch. 1</span>
-  <h1>一起看看：坡度、曲面和氣體 <small style="font:12px sans-serif;color:var(--muted)">編號標示版 12</small></h1>
+  <h1>一起看看：坡度、曲面和氣體 <small style="font:12px sans-serif;color:var(--muted)">氣體定律操作版 13</small></h1>
   <div class="sub">微分 → 偏微分 → 方向導數 → 全微分 → <span class="math"><i>V</i>(<i>P</i>,<i>T</i>)</span>　｜　拖曳旋轉．滾輪縮放．← → 換頁</div>
   <nav id="nav"></nav>
 </header>
@@ -1413,14 +1413,14 @@ S.s4.fn=1;S.s4.dx=0.3;S.s4.dy=0.3;
 S.s5.fn=1;S.s5.cx=false;S.s5.cy=false;S.s5.grad=false;S.s5.cont=false;
 S.s6.model=0;S.s6.T=430;S.s6.P=12;S.s6.dT=10;S.s6.dP=0.5;
 S.s7.arrows=false;S.s7.b2=0;
-const minimalControls=[['a-fn','a-x0','a-dx'],['b-fn','b-x0','b-y0'],['c-fn','c-x0','c-y0','c-th'],['d-fn','d-x0','d-y0','d-dx','d-dy'],['e-fn','e-x0','e-y0','e-th'],['f-dT','f-dP'],['g-b1']];
+const minimalControls=[['a-fn','a-x0','a-dx'],['b-fn','b-x0','b-y0'],['c-fn','c-x0','c-y0','c-th'],['d-fn','d-x0','d-y0','d-dx','d-dy'],['e-fn','e-x0','e-y0','e-th'],['f-T','f-P','f-dT','f-dP'],['g-b1']];
 const minimalHelp=[
  '先選函數、輸入觀察點 x₀，再調 Δx。把橘點慢慢移近紅點，看割線如何接近切線。Δx = 0 時兩點重合，割線斜率不能用兩點相除；微分看的是靠近 0 的極限。',
  '先選函數，輸入觀察點 (x₀, y₀)。一次只改一個座標，另一個先不動；這就是偏微分要保持另一個量不變的意思。',
  '紅箭頭是你要走的方向，綠箭頭是上坡最快的方向。轉動紅箭頭，看看現在是上坡還是下坡。紫色角度是在比較兩個方向，不是山坡傾斜的角度。',
  '選好函數與觀察點，再改兩個方向的移動距離。兩個距離越小，切平面的估計通常越接近曲面。',
  '只轉方向，觀察切向量一直留在同一張切平面上。',
- '先固定 1 莫耳理想氣體，起點是 430 K、12 bar。只改 ΔT 和 ΔP，看看體積改變多少。',
+ '固定 1 莫耳理想氣體。T、P 決定紅點的位置；ΔT、ΔP 是從紅點再改變多少。先只改一個量，就能看清楚紅點沿哪條線移動。',
  '起點、終點和橘色路線固定，只改藍色路線。先看狀態函數，再換成路徑函數比較。'
 ];
 const minimalTables=['a-read','b-read','c-read','d-read','e-read','f-read','g-read2'];
@@ -1428,6 +1428,14 @@ STEPS.forEach((step,i)=>{
  let original=step.panel,visible='';
  const ids=minimalControls[i];
  original=original.replace(/<div class="ctl">[\s\S]*?<\/div>/g,block=>{if(ids.some(id=>block.includes('id="'+id+'"'))){visible+=block;return '';}return block;});
+ if(i===5){
+   for(const id of ['f-isotherm-view','f-isobar-view']){
+     const button=new RegExp('<button id="'+id+'"[^>]*>[\s\S]*?<\/button>');original=original.replace(button,b=>{visible+=b;return '';});
+   }
+   const lawBox='<div class="note" id="f-laws" aria-live="polite"></div>';
+   original=original.replace(lawBox,'');
+   visible+='<h2>定律就在這兩條線上</h2><div class="note"><b>只改 P，保持 T 不變：</b>紅點沿紫藍色等溫線移動。加壓時體積變小，減壓時體積變大，這就是波以耳定律。<br><br><b>只改 T，保持 P 不變：</b>紅點沿橘色等壓線移動。升溫時體積變大，降溫時體積變小，這就是查理定律。<br><br>兩個量一起改時，紅點通常不會留在原本任一條線上；要一起用 PV = nRT 計算。ΔT、ΔP 用來比較切平面的估計，不是定律裡的 T、P 本身。</div>'+lawBox;
+ }
  const tableId=minimalTables[i],table=new RegExp('<table[^>]*id="'+tableId+'"[^>]*><\/table>');
  original=original.replace(table,'');
  if(i===6)for(const id of ['g-state-demo','g-path-demo']){const re=new RegExp('<button id="'+id+'"[^>]*>[\s\S]*?<\/button>');original=original.replace(re,b=>{visible+=b;return '';});}
