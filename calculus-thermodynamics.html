@@ -96,7 +96,7 @@ table.read td.val{font-family:Georgia,serif;text-align:right;white-space:nowrap}
 <body>
 <header>
   <a href="index.html" style="display:inline-block;font-size:13px;color:#403990;margin-bottom:6px">← 回 CORE Lab 首頁</a>
-  <h1>一起看看：坡度、曲面和氣體 <small style="font:12px sans-serif;color:var(--muted)">方向夾角版 7</small></h1>
+  <h1>一起看看：坡度、曲面和氣體 <small style="font:12px sans-serif;color:var(--muted)">估計差距標示版 8</small></h1>
   <div class="sub">微分 → 偏微分 → 方向導數 → 全微分 → <span class="math"><i>V</i>(<i>P</i>,<i>T</i>)</span>　｜　拖曳旋轉．滾輪縮放．← → 換頁</div>
   <nav id="nav"></nav>
 </header>
@@ -675,6 +675,7 @@ const STEPS=[
     <label><input type="checkbox" id="a-tan" checked> 切線（紅點當下的坡度）</label>
   </div>
   <button class="act" id="a-anim">讓兩點慢慢靠近</button>
+  <div class="note" id="a-gap-explanation" aria-live="polite"></div>
   <hr class="rule"><h2>現在的數字</h2><table class="read" id="a-read"></table>
   <div class="eq">d<i>f</i> = <i>f</i>′(<i>x</i><sub>0</sub>) d<i>x</i>　　
     Δ<i>f</i> − d<i>f</i> ≈ ½ <i>f</i>″(<i>x</i><sub>0</sub>) Δ<i>x</i>²</div>
@@ -733,7 +734,16 @@ const STEPS=[
      it.curves.push({pts:tangentLine(st.x0,st.y0,1,0,sec,f0,SC.ua-st.x0,SC.ub-st.x0),
        color:C.amber,width:2,dash:[7,5],noOcclusion:true});
      it.points.push({u:x1,v:st.y0,z:f1,color:C.amber,r:5});
-     it.curves.push({pts:[[x1,st.y0,f0+m*dxe],[x1,st.y0,f1]],color:C.green,width:4.5,noOcclusion:true});
+     if(st.tan){
+       const estimate=f0+m*dxe,error=f1-estimate;
+       it.points.push({u:x1,v:st.y0,z:estimate,color:C.red,r:5});
+       it.curves.push({pts:[[x1,st.y0,estimate],[x1,st.y0,f1]],color:C.green,width:3,dash:[3,4],noOcclusion:true});
+       const higher=f1>=estimate;
+       it.labels.push(
+         {u:x1,v:st.y0,z:f1,text:'實際位置（曲線上）',color:C.amber,font:FONT,dx:95,dy:higher?-30:38},
+         {u:x1,v:st.y0,z:estimate,text:'估計位置（切線上）',color:C.red,font:FONT,dx:-95,dy:higher?38:-30});
+       if(Math.abs(error)>(SC.zb-SC.za)*0.025)it.labels.push({u:x1,v:st.y0,z:(f1+estimate)/2,text:'估計差多少：'+fmt(Math.abs(error),3),color:C.green,font:FONT,dx:115,dy:0});
+     }
      it.curves.push({pts:[[st.x0,st.y0,f0],[x1,st.y0,f0]],color:"#9AA6A0",width:1.6,dash:[5,4],noOcclusion:true});
      if(Math.abs(dxe)>0.08)
        it.labels.push({u:(st.x0+x1)/2,v:st.y0,z:f0,text:"Δx",color:C.muted,font:FONT});
@@ -745,12 +755,14 @@ const STEPS=[
    const f0=o.f(st.x0),m=o.d(st.x0);
    const x1=clamp(st.x0+st.dx,SC.ua,SC.ub),dxe=x1-st.x0,f1=o.f(x1);
    const df=m*dxe,Df=f1-f0,err=Df-df;
+   const gapNote=document.getElementById("a-gap-explanation");
+   if(gapNote)gapNote.textContent="先看同一個 x 位置：橘點在曲線上，是實際位置；紅點在切線上，是估計位置。綠色虛線連起兩點，只表示估計差多少，不是另一條路，也不是切線。這次相差 "+fmt(Math.abs(err),5)+"。把 Δx 調小，再看看差距。";
    tbl("a-read",[["f(x₀)",fmt(f0,4),""],
      ["割線斜率 Δf/Δx",fmt(Math.abs(dxe)>1e-9?Df/dxe:NaN),"am"],
      ["切線斜率 f′(x₀)",fmt(m),"hi"],
      ["df = f′(x₀)Δx",fmt(df,5),"hi"],
      ["Δf（實際變化）",fmt(Df,5),"am"],
-     ["Δf − df",fmt(err,6),"gr"],
+     ["實際 − 估計（有正負）",fmt(err,6),"gr"],
      ["½f″(x₀)Δx²",fmt(0.5*o.d2(st.x0)*dxe*dxe,6),"gr"],
      ["誤差 ÷ Δx²",fmt(Math.abs(dxe)>1e-9?err/(dxe*dxe):NaN,4),""]]);
  }
