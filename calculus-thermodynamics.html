@@ -91,12 +91,15 @@ table.read td.val{font-family:Georgia,serif;text-align:right;white-space:nowrap}
   .frame{height:64vh}
   aside{border-left:0;border-top:1px solid var(--rule)}
 }
+/* 只保留各頁當下要比較的數字。 */
+#a-read tr:nth-child(1),#a-read tr:nth-child(n+7),#b-read tr:nth-child(1),#b-read tr:nth-child(4),#c-read tr:nth-child(-n+4),#d-read tr:nth-child(-n+3),#e-read tr:nth-child(-n+3),#f-read tr:nth-child(n+2):nth-child(-n+5){display:none}
+.minimal-read{margin-top:8px} [hidden]{display:none!important}
 </style>
 </head>
 <body>
 <header>
   <a href="index.html" style="display:inline-block;font-size:13px;color:#403990;margin-bottom:6px">← 回 CORE Lab 首頁</a> <a href="course.html" style="margin-left:16px;color:#403990;font-size:13px">Course</a> <span aria-current="page" style="margin-left:12px;font-size:13px;font-weight:bold">Ch. 1</span>
-  <h1>一起看看：坡度、曲面和氣體 <small style="font:12px sans-serif;color:var(--muted)">估計差距標示版 8</small></h1>
+  <h1>一起看看：坡度、曲面和氣體 <small style="font:12px sans-serif;color:var(--muted)">精簡教學版 9</small></h1>
   <div class="sub">微分 → 偏微分 → 方向導數 → 全微分 → <span class="math"><i>V</i>(<i>P</i>,<i>T</i>)</span>　｜　拖曳旋轉．滾輪縮放．← → 換頁</div>
   <nav id="nav"></nav>
 </header>
@@ -524,7 +527,7 @@ function drawItems(it,g){
     q.x=clamp(q.x+(l.dx||0),w/2+12,W-w/2-12);q.y=clamp(q.y+(l.dy||0),22,H-65);
     for(let k=0;k<12&&labelBoxes.some(b=>Math.abs(q.x-b.x)<(w+b.w)/2+10&&Math.abs(q.y-b.y)<26);k++)q.y=clamp(q.y+28,22,H-65);
     labelBoxes.push({x:q.x,y:q.y,w});
-    if(l.dx||l.dy){ctx.strokeStyle=l.color||C.ink;ctx.lineWidth=1;ctx.setLineDash([2,3]);ctx.beginPath();ctx.moveTo(anchor.x,anchor.y);ctx.lineTo(q.x,q.y);ctx.stroke();ctx.setLineDash([]);}
+    if(!l.noLeader&&(l.dx||l.dy)){ctx.strokeStyle=l.color||C.ink;ctx.lineWidth=1;ctx.setLineDash([2,3]);ctx.beginPath();ctx.moveTo(anchor.x,anchor.y);ctx.lineTo(q.x,q.y);ctx.stroke();ctx.setLineDash([]);}
     ctx.fillStyle="rgba(255,255,255,0.82)";
     ctx.fillRect(q.x-w/2-3,q.y-9,w+6,18);
     ctx.fillStyle=l.color||C.ink;ctx.fillText(l.text,q.x,q.y);ctx.restore();
@@ -1314,7 +1317,7 @@ function addTangentArrow(it,g,du,dv,name,color,dy){
  const k=0.16/length;
  const end=[g.u+k*du,g.v+k*dv,g.z+k*dz];
  it.vectors.push({a:[g.u,g.v,g.z],b:end,color,width:3.6});
- it.labels.push({u:end[0],v:end[1],z:end[2],text:name,color,font:FONT,dx:35,dy});
+ it.labels.push({u:end[0],v:end[1],z:end[2],text:name,color,font:FONT,dx:12,dy:dy<0?-22:22,noLeader:true});
 }
 STEPS.forEach((step,i)=>{
  if(i===6){step.panel='<div class="note"><b>這一頁看路徑積分。</b>彩色線是沿途累積的結果，不是切線；顯示的 Z 曲面也不是切平面。</div>'+step.panel;return;}
@@ -1382,6 +1385,37 @@ STEPS[2].items=function(){const it=directionItems.call(this),st=S.s3,o=FN[st.fn]
  add(Math.cos(th),Math.sin(th),C.red);if(gm>1e-9)add(fx/gm,fy/gm,C.green);
  return it;
 };
+
+// 每頁只留下理解這個概念需要的操作；公式與模型維持原本的計算。
+S.s1.fn=0;S.s1.x0=1;S.s1.y0=0;S.s1.dx=0.3;
+S.s2.fn=0;S.s2.x0=1;S.s2.y0=1;
+S.s3.fn=0;S.s3.x0=1.2;S.s3.y0=0.6;S.s3.circle=false;
+S.s4.fn=1;S.s4.dx=0.3;S.s4.dy=0.3;
+S.s5.fn=1;S.s5.cx=false;S.s5.cy=false;S.s5.grad=false;S.s5.cont=false;
+S.s6.model=0;S.s6.T=430;S.s6.P=12;S.s6.dT=10;S.s6.dP=0.5;
+S.s7.arrows=false;S.s7.b2=0;
+const minimalControls=[['a-dx'],['b-x0','b-y0'],['c-th'],['d-dx','d-dy'],['e-th'],['f-dT','f-dP'],['g-b1']];
+const minimalHelp=[
+ '只改 Δx。把橘點慢慢移近紅點，看割線如何接近切線。Δx = 0 時兩點重合，割線斜率不能用兩點相除；微分看的是靠近 0 的極限。',
+ '固定使用 f = xy。一次只動一支滑桿，另一支先不動；這就是偏微分要保持另一個量不變的意思。',
+ '起點固定，只轉動方向 θ。看紅、綠箭頭的夾角 φ，以及這個方向的坡度。',
+ '起點固定，只改兩個方向的移動距離。兩個距離越小，切平面的估計通常越接近曲面。',
+ '只轉方向，觀察切向量一直留在同一張切平面上。',
+ '先固定 1 莫耳理想氣體，起點是 430 K、12 bar。只改 ΔT 和 ΔP，看看體積改變多少。',
+ '起點、終點和橘色路線固定，只改藍色路線。先看狀態函數，再換成路徑函數比較。'
+];
+const minimalTables=['a-read','b-read','c-read','d-read','e-read','f-read','g-read2'];
+STEPS.forEach((step,i)=>{
+ let original=step.panel,visible='';
+ const ids=minimalControls[i];
+ original=original.replace(/<div class="ctl">[\s\S]*?<\/div>/g,block=>{if(ids.some(id=>block.includes('id="'+id+'"'))){visible+=block;return '';}return block;});
+ const tableId=minimalTables[i],table=new RegExp('<table[^>]*id="'+tableId+'"[^>]*><\/table>');
+ original=original.replace(table,'');
+ if(i===6)for(const id of ['g-state-demo','g-path-demo']){const re=new RegExp('<button id="'+id+'"[^>]*>[\s\S]*?<\/button>');original=original.replace(re,b=>{visible+=b;return '';});}
+ if(i===5){original=original.replace(/<button id="f-half"[^>]*>[\s\S]*?<\/button>/,b=>{visible+=b;return '';});}
+ step.panel='<h2>動手試一件事</h2><p class="note">'+minimalHelp[i]+'</p>'+visible+'<h2>看這幾個數字</h2><table class="read minimal-read" id="'+tableId+'"></table><div hidden aria-hidden="true">'+original+'</div>';
+ step.lead=minimalHelp[i];
+});
 /* ===================== 主流程 ===================== */
 const navEl=document.getElementById("nav"),leadEl=document.getElementById("lead"),panelEl=document.getElementById("panel");
 navEl.innerHTML=STEPS.map((s,i)=>'<button data-i="'+i+'"><span class="n">'+(i+1)+'</span>'+s.nav+'</button>').join("");
