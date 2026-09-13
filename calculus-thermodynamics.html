@@ -96,18 +96,20 @@ table.read td.val{font-family:Georgia,serif;text-align:right;white-space:nowrap}
 .minimal-read{margin-top:8px} [hidden]{display:none!important}
 input[type=range]#a-x0,input[type=range]#b-x0,input[type=range]#b-y0,input[type=range]#c-x0,input[type=range]#c-y0,input[type=range]#d-x0,input[type=range]#d-y0,input[type=range]#e-x0,input[type=range]#e-y0{display:none}
 #a-read tr:nth-child(n+4){display:none}
+.diagram-key{display:flex;flex-wrap:wrap;gap:6px 18px;padding:8px 10px;margin-bottom:8px;background:#fff;border:1px solid #d5d9df;font-size:13px;line-height:1.7}.diagram-key:empty{display:none}.diagram-key b{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border:2px solid currentColor;border-radius:50%;margin-right:6px}
 </style>
 </head>
 <body>
 <header>
   <a href="index.html" style="display:inline-block;font-size:13px;color:#403990;margin-bottom:6px">← 回 CORE Lab 首頁</a> <a href="course.html" style="margin-left:16px;color:#403990;font-size:13px">Course</a> <span aria-current="page" style="margin-left:12px;font-size:13px;font-weight:bold">Ch. 1</span>
-  <h1>一起看看：坡度、曲面和氣體 <small style="font:12px sans-serif;color:var(--muted)">函數與座標版 11</small></h1>
+  <h1>一起看看：坡度、曲面和氣體 <small style="font:12px sans-serif;color:var(--muted)">編號標示版 12</small></h1>
   <div class="sub">微分 → 偏微分 → 方向導數 → 全微分 → <span class="math"><i>V</i>(<i>P</i>,<i>T</i>)</span>　｜　拖曳旋轉．滾輪縮放．← → 換頁</div>
   <nav id="nav"></nav>
 </header>
 <main>
   <div class="stage">
     <p class="lead" id="lead"></p>
+    <div id="diagram-key" class="diagram-key" aria-label="圖上編號說明"></div>
     <div class="frame">
       <canvas id="gl"></canvas>
       <div class="views">
@@ -520,9 +522,20 @@ function drawItems(it,g){
     ctx.save();ctx.fillStyle=p.color;ctx.strokeStyle="#fff";ctx.lineWidth=2;
     ctx.beginPath();ctx.arc(q.x,q.y,p.r||6,0,7);ctx.fill();ctx.stroke();ctx.restore();
   });
+  const key=document.getElementById("diagram-key");
+  if(key)key.innerHTML="";
   const labelBoxes=[];
-  (it.labels||[]).forEach(l=>{
+  (it.labels||[]).forEach((l,index)=>{
     const q=P3(l.u,l.v,l.z);
+    if(S.step===3||S.step===4||S.step===5){
+      const number=index+1,color=l.color||C.ink;
+      if(key){const item=document.createElement('span');item.style.color=color;const badge=document.createElement('b');badge.textContent=number;item.appendChild(badge);item.appendChild(document.createTextNode(l.text));key.appendChild(item);}
+      const a={x:q.x,y:q.y};let x=clamp(q.x+24,16,W-16),y=clamp(q.y-24,18,H-65);
+      const candidates=[];for(const radius of [28,48,70,95])for(let j=0;j<12;j++)candidates.push({x:clamp(a.x+radius*Math.cos(j*Math.PI/6),16,W-16),y:clamp(a.y+radius*Math.sin(j*Math.PI/6),18,H-65)});
+      const free=candidates.find(p=>labelBoxes.every(b=>Math.hypot(p.x-b.x,p.y-b.y)>30));if(free){x=free.x;y=free.y;}
+      labelBoxes.push({x,y});ctx.save();ctx.setLineDash([]);ctx.strokeStyle='#777';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(x,y);ctx.stroke();
+      ctx.fillStyle='#fff';ctx.strokeStyle=color;ctx.lineWidth=2;ctx.beginPath();ctx.arc(x,y,11,0,Math.PI*2);ctx.fill();ctx.stroke();ctx.font='bold 12px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillStyle=color;ctx.fillText(number,x,y);ctx.restore();return;
+    }
     ctx.save();ctx.font=l.font||FONTM;ctx.textAlign="center";ctx.textBaseline="middle";
     const w=ctx.measureText(l.text).width;
     const anchor={x:q.x,y:q.y};
@@ -937,9 +950,9 @@ const STEPS=[
      baseCurves:[{pts:[[x0,y0],[x1,y0],[x1,y1]],color:"#9AA6A0",width:1.6,dash:[5,4]}],
      vectors:[{a:[x0,y0,SC.za],b:[x1,y1,SC.za],color:C.red,width:2.2}],
      labels:[
-       {u:x1,v:y0,z:f0+fx*dx/2,text:"f_x dx",color:C.blue,font:FONT},
-       {u:x1,v:y1,z:f0+fx*dx+fy*dy/2,text:"f_y dy",color:C.amber,font:FONT},
-       {u:x1,v:y1,z:f0+(df+Df)/2,text:"Δf − df",color:C.green,font:FONT}
+       {u:x1,v:y0,z:f0+fx*dx/2,text:"x 方向的高度變化 fₓ dx",color:C.blue,font:FONT},
+       {u:x1,v:y1,z:f0+fx*dx+fy*dy/2,text:"y 方向的高度變化 fᵧ dy",color:C.amber,font:FONT},
+       {u:x1,v:y1,z:f0+(df+Df)/2,text:"曲面與平板的高度差 Δf − df",color:C.green,font:FONT}
      ],
      points:[{u:x0,v:y0,z:f0,color:C.red},{u:x1,v:y1,z:o.f(x1,y1),color:C.ink,r:5}]
    };
