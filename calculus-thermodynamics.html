@@ -1558,6 +1558,21 @@ function taylorNote(twoVariables){
 STEPS[0].panel+=taylorNote(false);
 STEPS[3].panel+=taylorNote(true);
 
+
+const gasItemsWithPlane=STEPS[5].items;
+STEPS[5].items=function(){
+ const it=gasItemsWithPlane.call(this),st=S.s6,v=empiricalVolume(st.P,st.T);
+ // V = Constant*T/P；兩方向偏導在紅點求值。
+ // 依壓力限制平板寬度，避免低壓時放大成遮住整張圖的牆。
+ const size=Math.min(0.10,0.22*st.P/(SC.ub-SC.ua));
+ it.plane={u0:st.P,v0:st.T,val:v,fu:-v/st.P,fv:v/st.T,size};
+ if(!(it.points||[]).some(p=>p.u===st.P&&p.v===st.T))it.points.push({u:st.P,v:st.T,z:v,color:C.red,r:6});
+ return it;
+};
+const gasReadWithPlane=STEPS[5].read;
+STEPS[5].read=function(){gasReadWithPlane.call(this);const key=document.getElementById('diagram-key');if(key)key.innerHTML+='<span style="color:#A83A2B">淡紅色平板：紅點的切平面</span>';};
+STEPS[5].panel+='<section class="note" style="padding:12px;border-left:3px solid #A83A2B;background:#f8f5f3"><b>為什麼要用泰勒展開？</b><p>切平面用紅點的兩個坡度，快速估計附近的體積變化。泰勒展開把「這個估計」和「剩下的誤差」分開，讓我們知道近似省略了什麼。</p><div class="eq">ΔV = dV + 餘項<br>dV = Vₚ ΔP + Vₜ ΔT</div><p>這裡取 dP = ΔP、dT = ΔT；兩個偏導都在紅點計算。淡紅色平板就是一次近似，真正的體積仍在曲面上。</p><details><summary>看誤差從哪裡來</summary><div class="eq">ΔV = VₚΔP + VₜΔT<br>+ ½[Vₚₚ(ΔP)² + 2VₚₜΔPΔT + Vₜₜ(ΔT)²]<br>+ 更高階的餘項</div><p>本頁的光滑模型符合二階展開條件。二階項告訴我們曲面偏離平板的情形，也包含壓力與溫度一起改變的影響。步子夠小、導數沒有變得太大時，一次近似通常夠用；改變較大時，可保留更多項，或直接計算端點的體積差。</p><p>建立切平面本身只需要可微；泰勒展開的用途是進一步分析近似誤差，不是證明切平面存在的必要步驟。它也不能取代前面從實驗規律推導方程式的過程。</p></details></section>';
+
 /* ===================== 主流程 ===================== */
 const navEl=document.getElementById("nav"),leadEl=document.getElementById("lead"),panelEl=document.getElementById("panel");
 navEl.innerHTML=STEPS.map((s,i)=>'<button data-i="'+i+'"><span class="n">'+(i+1)+'</span>'+s.nav+'</button>').join("");
