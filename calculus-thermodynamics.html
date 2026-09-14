@@ -99,10 +99,12 @@ input[type=range]#a-x0,input[type=range]#b-x0,input[type=range]#b-y0,input[type=
 .diagram-key{display:flex;flex-wrap:wrap;gap:6px 18px;padding:8px 10px;margin-bottom:8px;background:#fff;border:1px solid #d5d9df;font-size:13px;line-height:1.7}.diagram-key:empty{display:none}.diagram-key b{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border:2px solid currentColor;border-radius:50%;margin-right:6px}
 #panel .ctl:has(#f-dT),#panel .ctl:has(#f-dP),#f-half{display:none}#f-read tr:nth-child(n+2){display:none}
 </style>
+<script>if(new URLSearchParams(location.search).get('embed')==='1')document.documentElement.classList.add('course-embedded');</script>
+<style>.course-embedded body{height:auto}.course-embedded header>a,.course-embedded header>span,.course-embedded header>h1,.course-embedded header>.sub{display:none}.course-embedded main{height:760px;flex:none}.course-embedded header{padding:8px 12px 0}@media(max-width:900px){.course-embedded main{height:auto}.course-embedded .frame{height:520px;flex:none}.course-embedded .stage{padding:10px}.course-embedded aside{overflow:visible}}</style>
 </head>
 <body>
 <header>
-  <a href="index.html" style="display:inline-block;font-size:13px;color:#403990;margin-bottom:6px">← 回 CORE Lab 首頁</a> <a href="course.html" style="margin-left:16px;color:#403990;font-size:13px">Course</a> <span aria-current="page" style="margin-left:12px;font-size:13px;font-weight:bold">Ch. 1</span>
+  <a href="index.html" style="display:inline-block;font-size:13px;color:#403990;margin-bottom:6px">← 回 CORE Lab 首頁</a> <a href="course.html" style="margin-left:16px;color:#403990;font-size:13px">Course</a> <span aria-current="page" style="margin-left:12px;font-size:13px;font-weight:bold">微分與熱力學</span>
   <h1>一起看看：坡度、曲面和氣體 <small style="font:12px sans-serif;color:var(--muted)">實驗規律推導版 16</small></h1>
   <div class="sub">微分 → 偏微分 → 方向導數 → 全微分 → <span class="math"><i>V</i>(<i>P</i>,<i>T</i>)</span>　｜　拖曳旋轉．滾輪縮放．← → 換頁</div>
   <nav id="nav"></nav>
@@ -1601,5 +1603,11 @@ window.addEventListener("keydown",e=>{
 });
 go(0);
 </script>
-</body>
+<script>
+if(document.documentElement.classList.contains('course-embedded')){
+ let pendingHeight=false;
+ function sendCourseHeight(){if(pendingHeight)return;pendingHeight=true;requestAnimationFrame(()=>{pendingHeight=false;parent.postMessage({type:'course-height',height:Math.ceil(document.body.getBoundingClientRect().height)+4},location.origin);});}
+ new ResizeObserver(sendCourseHeight).observe(document.body);window.addEventListener('load',sendCourseHeight);sendCourseHeight();
+}
+</script></body>
 </html>
