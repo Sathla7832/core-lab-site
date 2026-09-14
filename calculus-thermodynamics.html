@@ -97,12 +97,13 @@ table.read td.val{font-family:Georgia,serif;text-align:right;white-space:nowrap}
 input[type=range]#a-x0,input[type=range]#b-x0,input[type=range]#b-y0,input[type=range]#c-x0,input[type=range]#c-y0,input[type=range]#d-x0,input[type=range]#d-y0,input[type=range]#e-x0,input[type=range]#e-y0{display:none}
 #a-read tr:nth-child(n+4){display:none}
 .diagram-key{display:flex;flex-wrap:wrap;gap:6px 18px;padding:8px 10px;margin-bottom:8px;background:#fff;border:1px solid #d5d9df;font-size:13px;line-height:1.7}.diagram-key:empty{display:none}.diagram-key b{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border:2px solid currentColor;border-radius:50%;margin-right:6px}
+#panel .ctl:has(#f-dT),#panel .ctl:has(#f-dP),#f-half{display:none}#f-read tr:nth-child(n+2){display:none}
 </style>
 </head>
 <body>
 <header>
   <a href="index.html" style="display:inline-block;font-size:13px;color:#403990;margin-bottom:6px">← 回 CORE Lab 首頁</a> <a href="course.html" style="margin-left:16px;color:#403990;font-size:13px">Course</a> <span aria-current="page" style="margin-left:12px;font-size:13px;font-weight:bold">Ch. 1</span>
-  <h1>一起看看：坡度、曲面和氣體 <small style="font:12px sans-serif;color:var(--muted)">全微分剖面版 14</small></h1>
+  <h1>一起看看：坡度、曲面和氣體 <small style="font:12px sans-serif;color:var(--muted)">熱力學清晰版 15</small></h1>
   <div class="sub">微分 → 偏微分 → 方向導數 → 全微分 → <span class="math"><i>V</i>(<i>P</i>,<i>T</i>)</span>　｜　拖曳旋轉．滾輪縮放．← → 換頁</div>
   <nav id="nav"></nav>
 </header>
@@ -1428,7 +1429,7 @@ const minimalHelp=[
  '紅箭頭是你要走的方向，綠箭頭是上坡最快的方向。轉動紅箭頭，看看現在是上坡還是下坡。紫色角度是在比較兩個方向，不是山坡傾斜的角度。',
  '選好函數與觀察點，再改兩個方向的移動距離。兩個距離越小，切平面的估計通常越接近曲面。',
  '只轉方向，觀察切向量一直留在同一張切平面上。',
- '固定 1 莫耳理想氣體。T、P 決定紅點的位置；ΔT、ΔP 是從紅點再改變多少。先只改一個量，就能看清楚紅點沿哪條線移動。',
+ '固定 1 莫耳理想氣體，只調整溫度 T 和壓力 P。一次改一個量，觀察紅點如何沿曲線移動。',
  '起點、終點和橘色路線固定，只改藍色路線。先看狀態函數，再換成路徑函數比較。'
 ];
 const minimalTables=['a-read','b-read','c-read','d-read','e-read','f-read','g-read2'];
@@ -1442,7 +1443,7 @@ STEPS.forEach((step,i)=>{
    }
    const lawBox='<div class="note" id="f-laws" aria-live="polite"></div>';
    original=original.replace(lawBox,'');
-   visible+='<h2>定律就在這兩條線上</h2><div class="note"><b>只改 P，保持 T 不變：</b>紅點沿紫藍色等溫線移動。加壓時體積變小，減壓時體積變大，這就是波以耳定律。<br><br><b>只改 T，保持 P 不變：</b>紅點沿橘色等壓線移動。升溫時體積變大，降溫時體積變小，這就是查理定律。<br><br>兩個量一起改時，紅點通常不會留在原本任一條線上；要一起用 PV = nRT 計算。ΔT、ΔP 用來比較切平面的估計，不是定律裡的 T、P 本身。</div>'+lawBox;
+   visible+='<h2>定律就在這兩條線上</h2><div class="note"><b>只改 P，保持 T 不變：</b>紅點沿紫藍色等溫線移動。加壓時體積變小，減壓時體積變大，這就是波以耳定律。<br><br><b>只改 T，保持 P 不變：</b>紅點沿橘色等壓線移動。升溫時體積變大，降溫時體積變小，這就是查理定律。<br><br>兩個量一起改時，紅點通常不會留在原本任一條線上；要一起用 PV = nRT 計算。</div>'+lawBox;
  }
  const tableId=minimalTables[i],table=new RegExp('<table[^>]*id="'+tableId+'"[^>]*><\/table>');
  original=original.replace(table,'');
@@ -1490,6 +1491,19 @@ STEPS[3].read=function(){const v=S.s4.view;
  document.getElementById('total-note').textContent=['固定 y，只看藍色剖面曲線。黑線是它在橘點的切線。','再固定 x，看綠色剖面曲線。兩條黑色切線都通過同一個橘點。','淡藍色平板包含這兩條切線。它估計的是橘點附近的高度變化，不必整張貼住曲面。'][v];
  document.getElementById('total-equation').innerHTML=v===0?'dy = 0 時：dz = fₓ(x₀,y₀) dx':v===1?'x 方向：dz = fₓ dx（dy = 0）<br>y 方向：dz = fᵧ dy（dx = 0）':'全微分：dz = fₓ(x₀,y₀) dx + fᵧ(x₀,y₀) dy<br><br>切平面：z切 = z₀ + fₓ(x₀,y₀)(x − x₀) + fᵧ(x₀,y₀)(y − y₀)';
 };
+
+
+// 熱力學圖只保留狀態點與兩條氣體定律曲線。
+STEPS[5].items=function(){
+ const st=S.s6,E=st.model===0?IDEAL:VDW,V=(p,t)=>E.V(p,t);
+ const vp=[],vt=[];
+ for(let i=0;i<=180;i++){const p=lerp(SC.ua,SC.ub,i/180),t=lerp(SC.va,SC.vb,i/180);vp.push([p,st.T,V(p,st.T)]);vt.push([st.P,t,V(st.P,t)]);}
+ const side=cam.pitch<0.06,onlyP=side&&Math.abs(cam.yaw)<0.06,onlyT=side&&Math.abs(cam.yaw+Math.PI/2)<0.06;
+ return {contours:false,curtains:[],curves:[...(!onlyT?[{pts:vp,color:C.blue,width:4,noOcclusion:true}]:[]),...(!onlyP?[{pts:vt,color:C.amber,width:4,noOcclusion:true}]:[])],points:[{u:st.P,v:st.T,z:V(st.P,st.T),color:C.red,r:6}],labels:[],vectors:[]};
+};
+const gasRead=STEPS[5].read;
+STEPS[5].read=function(){gasRead.call(this);const key=document.getElementById('diagram-key');if(key)key.innerHTML='<span style="color:#403990">等溫線：T = '+fmt(S.s6.T,0)+' K</span><span style="color:#C75B2A">等壓線：P = '+fmt(S.s6.P,1)+' bar</span>';};
+STEPS[5].lead='紅點是目前的狀態。保持溫度不變、只改壓力，看等溫線；保持壓力不變、只改溫度，看等壓線。';
 
 /* ===================== 主流程 ===================== */
 const navEl=document.getElementById("nav"),leadEl=document.getElementById("lead"),panelEl=document.getElementById("panel");
