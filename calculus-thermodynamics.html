@@ -1549,6 +1549,15 @@ STEPS[5].read=function(){
  el.innerHTML+='<p class="note">這些比例是稀薄氣體的近似規律，不能精確涵蓋所有真實氣體或相變。圖形展示兩條規律如何相容，不是另一份實驗證明。</p><a href="https://openstax.org/books/chemistry/pages/9-2-relating-pressure-volume-amount-and-temperature-the-ideal-gas-law" target="_blank" rel="noopener">定律與推導參考</a>';
 };
 
+
+function taylorNote(twoVariables){
+ const linear=twoVariables?'df = fₓ Δx + fᵧ Δy':'df = f′(x₀) Δx';
+ const quadratic=twoVariables?'R₁ = ½[fₓₓ(Δx)² + 2fₓᵧΔxΔy + fᵧᵧ(Δy)²] + o(‖h‖²)':'R₁ = ½f″(x₀)(Δx)² + o((Δx)²)';
+ return '<section class="note" style="border-left:3px solid #403990;padding:10px 12px;background:#f5f6fa"><b>實際變化和微分差在哪裡？</b><p>Δf 是沿'+(twoVariables?'曲面':'曲線')+'走後的實際高度變化；df 是用起點的'+(twoVariables?'切平面':'切線')+'估計的高度變化。</p><div class="eq">Δf = df + R₁<br>'+linear+'</div><p>R₁ 就是「實際 − 估計」。在這裡，我們把 dx 設為 Δx'+(twoVariables?'、dy 設為 Δy':'')+'，用同一段位移比較。'+(twoVariables?'平板':'直線')+'和'+(twoVariables?'曲面':'曲線')+'可能有落差，也可能剛好相同。</p><details><summary style="cursor:pointer">為什麼小範圍通常估得準？</summary><p>函數可微時，位移縮小，誤差相對於位移長度會趨近 0。若二階偏導（單變數則是二階導數）在附近連續，泰勒公式進一步給出：</p><div class="eq">'+quadratic+'</div><p>所有導數都在起點計算。'+(twoVariables?'h = (Δx, Δy)，‖h‖ 是位移長度。':'')+'o 表示比所列平方尺度更小的餘項；只需二階展開，不必假設無窮級數收斂。</p><p>因此，在二階導數有界的局部範圍，線性估計的絕對誤差是 O(‖h‖²)。把位移減半，主導的二階誤差通常約剩四分之一；若二階項為 0，誤差可能更小。這不是每次都恰好四分之一。</p><p><b>小誤差不等於小相對誤差。</b>例如 f(x)=x²，在 x₀=0 時 df=0，但 Δf=(Δx)²。絕對差距雖小，df 仍沒抓到實際變化。是否夠準，要看導數大小和需要的精度。</p></details></section>';
+}
+STEPS[0].panel+=taylorNote(false);
+STEPS[3].panel+=taylorNote(true);
+
 /* ===================== 主流程 ===================== */
 const navEl=document.getElementById("nav"),leadEl=document.getElementById("lead"),panelEl=document.getElementById("panel");
 navEl.innerHTML=STEPS.map((s,i)=>'<button data-i="'+i+'"><span class="n">'+(i+1)+'</span>'+s.nav+'</button>').join("");
