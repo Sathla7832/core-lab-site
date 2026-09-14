@@ -1536,14 +1536,14 @@ STEPS[5].items=function(){
 STEPS[5].read=function(){
  const st=S.s6,a=GAS_REFERENCE,v=empiricalVolume(st.P,st.T),el=document.getElementById('emp-text'),key=document.getElementById('diagram-key');
  if(st.derivation===0){if(key)key.innerHTML='<span style="color:#403990">等溫：只改 P</span><span style="color:#C75B2A">等壓：只改 T</span>';
- el.innerHTML='<div class="eq" style="color:#403990"><b>波以耳定律：固定溫度、氣體量</b><br>V ∝ 1/P<br>PV = kₜ；P₁V₁ = P₂V₂</div><p>只改壓力，沿紫藍線走。kₜ 對這條等溫線固定，但換了溫度，常數可以不同。</p>'+
- '<div class="eq" style="color:#C75B2A"><b>查理定律：固定壓力、氣體量</b><br>V ∝ T<br>V/T = kₚ；V₁/T₁ = V₂/T₂</div><p>只改溫度，沿橘線走。T 使用 K。kₚ 對這條等壓線固定，但換了壓力，常數可以不同。</p>';}
+ el.innerHTML='<div class="eq" style="color:#403990"><b>波以耳定律：固定溫度、氣體量</b><br>V ∝ 1/P<br>PV = Constant；P₁V₁ = P₂V₂</div><p>只改壓力，沿紫藍線走。Constant 對這條等溫線固定，但換了溫度，常數可以不同。</p>'+
+ '<div class="eq" style="color:#C75B2A"><b>查理定律：固定壓力、氣體量</b><br>V ∝ T<br>V/T = Constant；V₁/T₁ = V₂/T₂</div><p>只改溫度，沿橘線走。T 使用 K。Constant 對這條等壓線固定，但換了壓力，常數可以不同。</p>';}
  else{el.innerHTML='<p><b>不是同時等溫又等壓，而是分兩段走。</b>同一份氣體從 A 到 C，先經過中間狀態 B。</p>'+
  '<div class="eq" style="color:#403990">A → B：T₁ 不變<br>P₁V₁ = P₂Vᵦ<br>Vᵦ = P₁V₁/P₂</div>'+
  '<div class="eq" style="color:#C75B2A">B → C：P₂ 不變<br>Vᵦ/T₁ = V₂/T₂<br>V₂ = Vᵦ T₂/T₁</div>'+
- '<div class="eq">代入並整理：<br>V₂ = (P₁V₁/P₂)(T₂/T₁)<br>P₁V₁/T₁ = P₂V₂/T₂<br>所以同一份氣體：PV/T = C</div>'+
+ '<div class="eq">代入並整理：<br>V₂ = (P₁V₁/P₂)(T₂/T₁)<br>P₁V₁/T₁ = P₂V₂/T₂<br>所以同一份氣體：PV/T = Constant</div>'+
  '<p>A 固定在 12 bar、430 K；目前 B 在 '+fmt(st.P,1)+' bar、430 K；C 在 '+fmt(st.P,1)+' bar、'+fmt(st.T,0)+' K。若起終值相同，對應路段會縮成一點。</p>';
- if(st.derivation===2)el.innerHTML+='<div class="eq"><b>最後加入亞佛加厥定律</b><br>固定 P、T 時，V ∝ n<br>因此 C ∝ n，令 C = nR<br><strong>PV = nRT</strong></div><p>只靠波以耳與查理定律，可得到固定氣體量的 PV/T = C；加入氣體量的比例關係後，才得到 nR。R 的數值要由量測決定。</p>';}
+ if(st.derivation===2)el.innerHTML+='<div class="eq"><b>最後加入亞佛加厥定律</b><br>固定 P、T 時，V ∝ n<br>因此 Constant ∝ n，令 Constant = nR<br><strong>PV = nRT</strong></div><p>只靠波以耳與查理定律，可得到固定氣體量的 PV/T = Constant；加入氣體量的比例關係後，才得到 nR。R 的數值要由量測決定。</p>';}
  el.innerHTML+='<p class="note">這些比例是稀薄氣體的近似規律，不能精確涵蓋所有真實氣體或相變。圖形展示兩條規律如何相容，不是另一份實驗證明。</p><a href="https://openstax.org/books/chemistry/pages/9-2-relating-pressure-volume-amount-and-temperature-the-ideal-gas-law" target="_blank" rel="noopener">定律與推導參考</a>';
 };
 
