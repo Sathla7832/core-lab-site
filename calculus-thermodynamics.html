@@ -64,7 +64,7 @@ input[type=range]{width:100%;accent-color:var(--red)}
 }
 .num:focus{outline:2px solid var(--blue);outline-offset:1px}
 .num::-webkit-outer-spin-button,.num::-webkit-inner-spin-button{opacity:.45}
-.quick{display:flex;gap:4px;flex-wrap:wrap;margin:-6px 0 12px}
+.quick{display:flex;gap:4px;flex-wrap:wrap;margin:10px 0 16px}
 .quick button{
   font:inherit;font-size:12px;font-family:Georgia,serif;padding:3px 8px;border:1px solid var(--rule);
   border-radius:3px;background:#fff;cursor:pointer;color:var(--ink)
@@ -98,9 +98,11 @@ input[type=range]#a-x0,input[type=range]#b-x0,input[type=range]#b-y0,input[type=
 #a-read tr:nth-child(n+4){display:none}
 .diagram-key{display:flex;flex-wrap:wrap;gap:6px 18px;padding:8px 10px;margin-bottom:8px;background:#fff;border:1px solid #d5d9df;font-size:13px;line-height:1.7}.diagram-key:empty{display:none}.diagram-key b{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border:2px solid currentColor;border-radius:50%;margin-right:6px}
 #panel .ctl:has(#f-dT),#panel .ctl:has(#f-dP),#f-half{display:none}#f-read tr:nth-child(n+2){display:none}
+.reset-view-row{margin:12px 0 20px;clear:both}.reset-view-row button{min-height:36px;line-height:1.5}
 </style>
 <script>if(new URLSearchParams(location.search).get('embed')==='1')document.documentElement.classList.add('course-embedded');</script>
-<style>.course-embedded body{height:auto}.course-embedded header>a,.course-embedded header>span,.course-embedded header>h1,.course-embedded header>.sub{display:none}.course-embedded main{height:760px;flex:none}.course-embedded header{padding:8px 12px 0}@media(max-width:900px){.course-embedded main{height:auto}.course-embedded .frame{height:520px;flex:none}.course-embedded .stage{padding:10px}.course-embedded aside{overflow:visible}}</style>
+<style>.course-embedded body{height:auto}.course-embedded header>a,.course-embedded header>span,.course-embedded header>h1,.course-embedded header>.sub{display:none}.course-embedded main{height:760px;flex:none}.course-embedded header{padding:8px 12px 0}@media(max-width:900px){.course-embedded main{height:auto}.course-embedded .frame{height:520px;flex:none}.course-embedded .stage{padding:10px}.course-embedded aside{overflow:visible}}.reset-view-row{margin:12px 0 20px;clear:both}.reset-view-row button{min-height:36px;line-height:1.5}
+</style>
 </head>
 <body>
 <header>
@@ -1589,7 +1591,7 @@ function go(i){
   navEl.querySelectorAll("button").forEach((b,k)=>b.setAttribute("aria-current",k===i?"true":"false"));
   leadEl.innerHTML=STEPS[i].lead;
   const prompts=["把橘點移近紅點，看看兩條直線。","保持 y 不動，再試試保持 x 不動。","轉個方向，猜猜哪邊最陡。","把兩個移動距離縮小，看看綠線。","先關掉幾個圖形，再一個一個打開。","先猜體積會變大還是變小，再看數字。","把路線彎一點，看看終點高度。"];
-  panelEl.innerHTML='<div class="note"><b>試試看：</b>'+prompts[i]+'</div><div class="quick"><button id="reset-view">回到原本的角度</button></div>'+STEPS[i].panel;
+  panelEl.innerHTML='<div class="note"><b>試試看：</b>'+prompts[i]+'</div><div class="quick reset-view-row"><button id="reset-view">回到原本的角度</button></div>'+STEPS[i].panel;
   document.getElementById('reset-view').onclick=()=>flyTo(i===5?{yaw:-0.85,pitch:0.58,zoom:0.82}:CAMS.iso);
   STEPS[i].init&&STEPS[i].init();
   cache.key=null;
