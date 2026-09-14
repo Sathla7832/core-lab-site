@@ -103,7 +103,7 @@ input[type=range]#a-x0,input[type=range]#b-x0,input[type=range]#b-y0,input[type=
 <body>
 <header>
   <a href="index.html" style="display:inline-block;font-size:13px;color:#403990;margin-bottom:6px">← 回 CORE Lab 首頁</a> <a href="course.html" style="margin-left:16px;color:#403990;font-size:13px">Course</a> <span aria-current="page" style="margin-left:12px;font-size:13px;font-weight:bold">Ch. 1</span>
-  <h1>一起看看：坡度、曲面和氣體 <small style="font:12px sans-serif;color:var(--muted)">熱力學清晰版 15</small></h1>
+  <h1>一起看看：坡度、曲面和氣體 <small style="font:12px sans-serif;color:var(--muted)">實驗規律推導版 16</small></h1>
   <div class="sub">微分 → 偏微分 → 方向導數 → 全微分 → <span class="math"><i>V</i>(<i>P</i>,<i>T</i>)</span>　｜　拖曳旋轉．滾輪縮放．← → 換頁</div>
   <nav id="nav"></nav>
 </header>
@@ -1512,6 +1512,41 @@ STEPS[5].read=function(){conciseGasRead.call(this);const el=document.getElementB
  '<div class="eq" style="color:#403990"><b>等溫線｜波以耳定律</b><br>PV = nRT = '+fmt(R*S.s6.T,3)+' L·bar<br>P₁V₁ = P₂V₂</div><p>溫度不變，壓力變 2 倍，體積變一半。</p>'+
  '<div class="eq" style="color:#C75B2A"><b>等壓線｜查理定律</b><br>V/T = nR/P = '+fmt(R/S.s6.P,5)+' L/K<br>V₁/T₁ = V₂/T₂</div><p>壓力不變，絕對溫度變 2 倍，體積也變 2 倍。</p>';
 };
+
+// 以參考狀態及兩條比例規律建構示意曲面，不拿 PV=nRT 當作推導前提。
+const GAS_REFERENCE={P:12,T:430,V:2.9793625};
+function empiricalVolume(P,T){const a=GAS_REFERENCE;return a.V*(a.P/P)*(T/a.T);}
+S.s6.derivation=0;
+STEPS[5].scene=function(){return {key:'empirical-gas',ua:2,ub:40,va:310,vb:600,za:0,zb:25.5,f:empiricalVolume,ul:'P (bar)',vl:'T (K)',zl:'V (L)'};};
+STEPS[5].lead='先觀察同一份氣體：等溫時 PV 不變，等壓時 V/T 不變。沿圖上的兩段路把規律接起來，最後才得到一般方程式。';
+STEPS[5].panel='<h2>先觀察，再把規律接起來</h2><p class="note">氣體量固定。這是符合比例規律的示意圖，不是歷史實驗數據。用現代符號整理早期實驗觀察；查理定律的 V/T 寫法使用絕對溫度 K，不是當年原始記錄的寫法。</p>'+
+ '<div class="ctl"><label>溫度 T（K）<input class="num" id="f-Tv" type="number"></label><input id="f-T" type="range" min="315" max="595" step="1"></div>'+
+ '<div class="ctl"><label>壓力 P（bar）<input class="num" id="f-Pv" type="number"></label><input id="f-P" type="range" min="2.5" max="39" step="0.1"></div>'+
+ '<div class="quick"><button id="emp-observe">1. 看兩條規律</button><button id="emp-combine">2. 沿兩段路推導</button><button id="emp-final">3. 加入氣體量</button></div><div id="emp-text"></div>';
+STEPS[5].init=function(){rng('f-T','f-Tv',S.s6.T,v=>{S.s6.T=v;render();},0);rng('f-P','f-Pv',S.s6.P,v=>{S.s6.P=v;render();},1);['observe','combine','final'].forEach((id,i)=>document.getElementById('emp-'+id).onclick=()=>{S.s6.derivation=i;flyTo(CAMS.iso);render();});};
+STEPS[5].items=function(){
+ const st=S.s6,a=GAS_REFERENCE,V=empiricalVolume,curves=[],points=[],labels=[];
+ const line=(p0,t0,p1,t1,color)=>{const pts=[];for(let i=0;i<=140;i++){const p=lerp(p0,p1,i/140),t=lerp(t0,t1,i/140);pts.push([p,t,V(p,t)]);}curves.push({pts,color,width:4,noOcclusion:true});};
+ if(st.derivation===0){line(SC.ua,st.T,SC.ub,st.T,C.blue);line(st.P,SC.va,st.P,SC.vb,C.amber);points.push({u:st.P,v:st.T,z:V(st.P,st.T),color:C.red,r:6});}
+ else{line(a.P,a.T,st.P,a.T,C.blue);line(st.P,a.T,st.P,st.T,C.amber);
+  for(const [name,p,t] of [['A',a.P,a.T],['B',st.P,a.T],['C',st.P,st.T]]){points.push({u:p,v:t,z:V(p,t),color:name==='B'?C.amber:C.red,r:5});labels.push({u:p,v:t,z:V(p,t),text:name+(name==='A'?'：起點':name==='B'?'：只改壓力':'：再改溫度'),color:name==='B'?C.amber:C.blue});}
+ }
+ return {contours:false,curves,points,labels,vectors:[],curtains:[]};
+};
+STEPS[5].read=function(){
+ const st=S.s6,a=GAS_REFERENCE,v=empiricalVolume(st.P,st.T),el=document.getElementById('emp-text'),key=document.getElementById('diagram-key');
+ if(st.derivation===0){if(key)key.innerHTML='<span style="color:#403990">等溫：只改 P</span><span style="color:#C75B2A">等壓：只改 T</span>';
+ el.innerHTML='<div class="eq" style="color:#403990"><b>波以耳定律：固定溫度、氣體量</b><br>V ∝ 1/P<br>PV = kₜ；P₁V₁ = P₂V₂</div><p>只改壓力，沿紫藍線走。kₜ 對這條等溫線固定，但換了溫度，常數可以不同。</p>'+
+ '<div class="eq" style="color:#C75B2A"><b>查理定律：固定壓力、氣體量</b><br>V ∝ T<br>V/T = kₚ；V₁/T₁ = V₂/T₂</div><p>只改溫度，沿橘線走。T 使用 K。kₚ 對這條等壓線固定，但換了壓力，常數可以不同。</p>';}
+ else{el.innerHTML='<p><b>不是同時等溫又等壓，而是分兩段走。</b>同一份氣體從 A 到 C，先經過中間狀態 B。</p>'+
+ '<div class="eq" style="color:#403990">A → B：T₁ 不變<br>P₁V₁ = P₂Vᵦ<br>Vᵦ = P₁V₁/P₂</div>'+
+ '<div class="eq" style="color:#C75B2A">B → C：P₂ 不變<br>Vᵦ/T₁ = V₂/T₂<br>V₂ = Vᵦ T₂/T₁</div>'+
+ '<div class="eq">代入並整理：<br>V₂ = (P₁V₁/P₂)(T₂/T₁)<br>P₁V₁/T₁ = P₂V₂/T₂<br>所以同一份氣體：PV/T = C</div>'+
+ '<p>A 固定在 12 bar、430 K；目前 B 在 '+fmt(st.P,1)+' bar、430 K；C 在 '+fmt(st.P,1)+' bar、'+fmt(st.T,0)+' K。若起終值相同，對應路段會縮成一點。</p>';
+ if(st.derivation===2)el.innerHTML+='<div class="eq"><b>最後加入亞佛加厥定律</b><br>固定 P、T 時，V ∝ n<br>因此 C ∝ n，令 C = nR<br><strong>PV = nRT</strong></div><p>只靠波以耳與查理定律，可得到固定氣體量的 PV/T = C；加入氣體量的比例關係後，才得到 nR。R 的數值要由量測決定。</p>';}
+ el.innerHTML+='<p class="note">這些比例是稀薄氣體的近似規律，不能精確涵蓋所有真實氣體或相變。圖形展示兩條規律如何相容，不是另一份實驗證明。</p><a href="https://openstax.org/books/chemistry/pages/9-2-relating-pressure-volume-amount-and-temperature-the-ideal-gas-law" target="_blank" rel="noopener">定律與推導參考</a>';
+};
+
 /* ===================== 主流程 ===================== */
 const navEl=document.getElementById("nav"),leadEl=document.getElementById("lead"),panelEl=document.getElementById("panel");
 navEl.innerHTML=STEPS.map((s,i)=>'<button data-i="'+i+'"><span class="n">'+(i+1)+'</span>'+s.nav+'</button>').join("");
