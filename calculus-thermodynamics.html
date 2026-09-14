@@ -1497,6 +1497,10 @@ navEl.innerHTML=STEPS.map((s,i)=>'<button data-i="'+i+'"><span class="n">'+(i+1)
 navEl.querySelectorAll("button").forEach(b=>b.onclick=()=>go(+b.dataset.i));
 function go(i){
   S.step=i;
+  const viewP=document.querySelector('.views button[data-v="fx"]');
+  const viewT=document.querySelector('.views button[data-v="fy"]');
+  if(viewP)viewP.textContent=i===5?'看 V–P':'看 x 方向';
+  if(viewT)viewT.textContent=i===5?'看 V–T':'看 y 方向';
   cam=i===5?{yaw:-0.85,pitch:0.58,zoom:0.82}:{...CAMS.iso};
   navEl.querySelectorAll("button").forEach((b,k)=>b.setAttribute("aria-current",k===i?"true":"false"));
   leadEl.innerHTML=STEPS[i].lead;
