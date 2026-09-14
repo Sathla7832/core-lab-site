@@ -1505,6 +1505,13 @@ const gasRead=STEPS[5].read;
 STEPS[5].read=function(){gasRead.call(this);const key=document.getElementById('diagram-key');if(key)key.innerHTML='<span style="color:#403990">等溫線：T = '+fmt(S.s6.T,0)+' K</span><span style="color:#C75B2A">等壓線：P = '+fmt(S.s6.P,1)+' bar</span>';};
 STEPS[5].lead='紅點是目前的狀態。保持溫度不變、只改壓力，看等溫線；保持壓力不變、只改溫度，看等壓線。';
 
+
+const conciseGasRead=STEPS[5].read;
+STEPS[5].read=function(){conciseGasRead.call(this);const el=document.getElementById('f-laws');
+ if(el)el.innerHTML='<div class="eq"><b>理想氣體</b><br>PV = nRT</div><p>n = 1 mol；T 要用 K。</p>'+
+ '<div class="eq" style="color:#403990"><b>等溫線｜波以耳定律</b><br>PV = nRT = '+fmt(R*S.s6.T,3)+' L·bar<br>P₁V₁ = P₂V₂</div><p>溫度不變，壓力變 2 倍，體積變一半。</p>'+
+ '<div class="eq" style="color:#C75B2A"><b>等壓線｜查理定律</b><br>V/T = nR/P = '+fmt(R/S.s6.P,5)+' L/K<br>V₁/T₁ = V₂/T₂</div><p>壓力不變，絕對溫度變 2 倍，體積也變 2 倍。</p>';
+};
 /* ===================== 主流程 ===================== */
 const navEl=document.getElementById("nav"),leadEl=document.getElementById("lead"),panelEl=document.getElementById("panel");
 navEl.innerHTML=STEPS.map((s,i)=>'<button data-i="'+i+'"><span class="n">'+(i+1)+'</span>'+s.nav+'</button>').join("");
