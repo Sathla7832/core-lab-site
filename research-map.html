@@ -556,6 +556,24 @@ drawPanel();
 
 bridges.innerHTML=B.map(b=>`<article class="bridge"><div class="bar">${b.f.map(k=>`<span style="background:${COL[k]}"></span>`).join('')}</div>
 <h3>${b.t}</h3><p>${b.p}</p><p class="rd">搭配閱讀：${b.r}</p></article>`).join('');
+
+// When embedded in the member portal, expand the frame to the document height.
+// This leaves the browser with one scroll bar instead of nested page scrolling.
+if (window.parent !== window) {
+  const reportEmbeddedHeight = () => {
+    const height = Math.max(
+      document.body.scrollHeight,
+      document.documentElement.scrollHeight,
+      document.body.offsetHeight,
+      document.documentElement.offsetHeight,
+    );
+    window.parent.postMessage({ type: "core-lab-research-map-height", height }, window.location.origin);
+  };
+  window.addEventListener("load", () => {
+    requestAnimationFrame(reportEmbeddedHeight);
+    new ResizeObserver(reportEmbeddedHeight).observe(document.body);
+  });
+}
 </script>
 </body>
 </html>

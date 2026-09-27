@@ -40,6 +40,16 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
       const portalTabs = Array.from(document.querySelectorAll("[data-member-tab-target]"));
   const portalPanels = Array.from(document.querySelectorAll("[data-member-panel]"));
   const availablePortalTabs = () => portalTabs.filter((tab) => !tab.hidden);
+  window.addEventListener("message", (event) => {
+    if (event.origin !== window.location.origin) return;
+    const data = event.data || {};
+    const frame = document.querySelector(".member-research-map-frame");
+    if (data.type !== "core-lab-research-map-height" || !frame || event.source !== frame.contentWindow) return;
+    const height = Number(data.height);
+    if (Number.isFinite(height) && height >= 600 && height <= 60000) {
+      frame.style.height = `${Math.ceil(height)}px`;
+    }
+  });
       const resourceSubtabs = Array.from(document.querySelectorAll("[data-member-resource-subtab]"));
       let activeResourceSubtab = "experiments";
       let loadMemberRoadmap = () => {};
