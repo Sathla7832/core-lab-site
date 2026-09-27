@@ -37,9 +37,33 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
     return "The portal could not complete that request. Please try again or contact the administrator.";
   };
 
-      const portalTabs = Array.from(document.querySelectorAll("[data-member-tab-target]"));
+  const portalTabs = Array.from(document.querySelectorAll("[data-member-tab-target]"));
   const portalPanels = Array.from(document.querySelectorAll("[data-member-panel]"));
   const availablePortalTabs = () => portalTabs.filter((tab) => !tab.hidden);
+  const resizeResearchMapFrame = (frame) => {
+    const mapDocument = frame?.contentDocument;
+    if (!mapDocument?.documentElement || !mapDocument.body) return;
+    const height = Math.max(
+      mapDocument.body.scrollHeight,
+      mapDocument.documentElement.scrollHeight,
+      mapDocument.body.offsetHeight,
+      mapDocument.documentElement.offsetHeight,
+    );
+    if (height >= 600 && height <= 60000) frame.style.height = `${Math.ceil(height)}px`;
+  };
+  const wireResearchMapFrame = () => {
+    const frame = document.querySelector(".member-research-map-frame");
+    if (!frame || frame.dataset.heightWired === "true") return;
+    frame.dataset.heightWired = "true";
+    frame.addEventListener("load", () => {
+      resizeResearchMapFrame(frame);
+      const mapDocument = frame.contentDocument;
+      if (mapDocument?.body && "ResizeObserver" in window) {
+        new ResizeObserver(() => resizeResearchMapFrame(frame)).observe(mapDocument.body);
+      }
+    });
+  };
+  wireResearchMapFrame();
   window.addEventListener("message", (event) => {
     if (event.origin !== window.location.origin) return;
     const data = event.data || {};
