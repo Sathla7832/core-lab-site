@@ -81,26 +81,19 @@
 
         <nav class="member-portal-tabs" role="tablist" aria-label="Member portal sections">
           <button id="member-tab-report-schedule" class="member-portal-tab" type="button" role="tab" aria-selected="true" aria-controls="member-panel-report-schedule" data-member-tab-target="report-schedule">Presentation Schedule</button>
+          <button id="member-tab-research-map" class="member-portal-tab" type="button" role="tab" aria-selected="false" aria-controls="member-panel-research-map" data-member-tab-target="research-map" tabindex="-1">Research Map &amp; Reading Plan</button>
           <button id="member-tab-calendars" class="member-portal-tab" type="button" role="tab" aria-selected="false" aria-controls="member-panel-calendars" data-member-tab-target="calendars" tabindex="-1">Calendars</button>
           <button id="member-tab-members" class="member-portal-tab" type="button" role="tab" aria-selected="false" aria-controls="member-panel-members" data-member-tab-target="members" tabindex="-1">Members list</button>
           <button id="member-tab-manage" class="member-portal-tab" type="button" role="tab" aria-selected="false" aria-controls="member-panel-manage" data-member-tab-target="manage" data-member-admin-tab tabindex="-1" hidden>Manage Portal</button>
         </nav>
 
         <section id="member-panel-report-schedule" class="member-content-section member-portal-panel member-report-schedule-panel" role="tabpanel" aria-labelledby="member-tab-report-schedule" data-member-panel="report-schedule">
-          <div class="member-schedule-layout">
-            <div class="member-schedule-main">
-              <p class="member-report-schedule-state muted" data-member-report-schedule-state>Loading the presentation schedule...</p>
-              <div class="member-schedule-table-wrap" data-member-report-schedule-table hidden></div>
-            </div>
-            <aside class="member-research-focus" aria-label="Research focus and reading roadmap">
-              <p class="member-research-eyebrow">CORE LAB · RESEARCH FOCUS</p>
-              <h2>單原子催化劑研究架構</h2>
-              <p>全員以單原子催化劑的配位、活性位與穩定性為共同核心；從水分解與液流電池等應用系統，回到可驗證的原子尺度證據。</p>
-              <div class="member-research-chain" aria-label="Research method chain"><span>單原子催化劑</span><b>→</b><span>臨場量測</span><b>→</b><span>反應器設計</span></div>
-              <section><h3>專題生 · 水分解單原子主線</h3><ul><li>陳泓嘉：合成與 OER 基準</li><li>顏晨宇：Fe 位點與 Ni 基 OER</li><li>洪志嘉：HER 活性位</li><li>蔡宜蓁：ECSA 與正規化</li><li>包師為：穩定性與失效</li><li>黃震霖：水分解量測基準</li></ul></section>
-              <section><h3>碩班 · 必修研究能力</h3><ul><li>呂安璿、林庭暉：單原子 RFB 電極</li><li>李承叡、林宥陞：單原子海水分解</li><li>四人皆須完成臨場量測與反應器／流動 cell 設計</li></ul></section>
-            </aside>
-          </div>
+          <p class="member-report-schedule-state muted" data-member-report-schedule-state>Loading the presentation schedule...</p>
+          <div class="member-schedule-table-wrap" data-member-report-schedule-table hidden></div>
+        </section>
+
+        <section id="member-panel-research-map" class="member-content-section member-portal-panel member-research-map-panel" role="tabpanel" aria-labelledby="member-tab-research-map" data-member-panel="research-map" hidden>
+          <iframe class="member-research-map-frame" title="CORE Lab 研究地圖與文獻閱讀計畫" src="research-map.html" loading="lazy"></iframe>
         </section>
         <section id="member-panel-calendars" class="member-content-section member-calendar-section member-portal-panel" role="tabpanel" aria-labelledby="member-tab-calendars" data-member-panel="calendars" hidden>
           <div class="member-section-head member-calendar-intro">

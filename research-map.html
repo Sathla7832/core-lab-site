@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CORE Lab 研究地圖與文獻閱讀路徑</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@500;700;900&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F3F5F7; --ink:#1C2B3A; --mute:#5A6878; --line:#D5DCE3;
+  --fb:#C99212;   /* V5+ 黃：液流電池 */
+  --ec:#2A62B8;   /* V4+ 藍：電解水 */
+  --sac:#2F8A5B;  /* V3+ 綠：單原子 */
+  --rx:#7442A8;   /* V2+ 紫：反應器 */
+  --xas:#0F4C5C;  /* 核心：XAS */
+  --base:#6B7785; /* 共同基礎 */
+  --ur:#A8326E;   /* 尿素合成 */
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:"Noto Sans TC",system-ui,sans-serif;font-size:16px;line-height:1.75}
+h1,h2,h3{font-family:"Noto Serif TC",serif;line-height:1.3;margin:0}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--ec);outline-offset:3px}
+.wrap{max-width:1040px;margin:0 auto;padding:0 24px}
+.prose{max-width:40em}
+
+/* Hero：一條 XANES 吸收邊 */
+header{padding:56px 0 24px;position:relative}
+.hero-spec{width:100%;height:170px;display:block}
+.hero-spec path{fill:none;stroke:var(--xas);stroke-width:2.5;stroke-linecap:round;stroke-dasharray:1400;stroke-dashoffset:1400;animation:draw 2.4s ease-out .2s forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+.hero-spec text{font-size:12px;fill:var(--mute)}
+h1{font-size:clamp(30px,5vw,50px);font-weight:900;margin-top:8px;letter-spacing:.02em}
+.lede{font-size:18px;color:var(--mute);margin:14px 0 0}
+nav.toc{display:flex;flex-wrap:wrap;gap:8px 20px;margin-top:24px;font-size:15px}
+nav.toc a{text-decoration:none;border-bottom:1px solid var(--line);padding-bottom:2px}
+nav.toc a:hover{border-color:var(--ink)}
+
+section{padding:56px 0;border-top:1px solid var(--line)}
+h2{font-size:30px;font-weight:700;margin-bottom:10px}
+.sub{color:var(--mute);margin:0 0 28px}
+
+/* 倒金字塔 */
+.pyramid{max-width:680px;margin:8px auto 10px}
+.pyramid svg{width:100%;height:auto;display:block;overflow:visible}
+.tier{cursor:pointer;outline:none}
+.tier polygon{fill:color-mix(in srgb,var(--c) 13%,#fff);stroke:var(--paper);stroke-width:5;stroke-linejoin:round;transition:fill .25s}
+.tier:hover polygon{fill:color-mix(in srgb,var(--c) 26%,#fff)}
+.tier[aria-pressed="true"] polygon{fill:var(--c)}
+.tier:focus-visible polygon{stroke:var(--ink);stroke-width:3}
+.tier text{fill:var(--ink);font-family:"Noto Serif TC",serif;font-weight:700;font-size:21px;text-anchor:middle;pointer-events:none;transition:fill .25s}
+.tier text.s{font-family:"Noto Sans TC",sans-serif;font-weight:500;font-size:13px}
+.tier[aria-pressed="true"] text{fill:#fff}
+.edge{fill:none;stroke:var(--ink);stroke-width:1;opacity:.35}
+.axis{display:flex;justify-content:space-between;font-size:13px;color:var(--mute);max-width:680px;margin:0 auto 24px}
+
+.detail{background:#fff;border-left:6px solid var(--c,var(--ink));padding:24px 28px;min-height:120px}
+.detail h3{font-size:24px;margin-bottom:6px;color:var(--c)}
+.detail .one{font-size:17px;margin:0 0 16px}
+.detail dl{display:grid;grid-template-columns:7.5em 1fr;gap:10px 18px;margin:0}
+.detail dt{font-weight:700;color:var(--c)}
+.detail dd{margin:0}
+.kw{display:flex;flex-wrap:wrap;gap:6px}
+.kw i{font-style:normal;font-size:13px;border:1px solid var(--line);padding:1px 8px;border-radius:3px;background:var(--paper)}
+@media (max-width:640px){.detail dl{grid-template-columns:1fr}.detail dt{margin-top:6px}}
+
+/* 閱讀路徑（真的有先後，所以用編號） */
+.stages{list-style:none;padding:0;margin:0;counter-reset:s;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:0}
+.stages li{counter-increment:s;padding:0 20px 0 0;border-top:3px solid var(--ink);padding-top:14px;margin-right:16px}
+.stages li::before{content:"階段 " counter(s);font-family:"Noto Serif TC",serif;font-weight:900;font-size:22px;display:block}
+.stages .wk{color:var(--mute);font-size:14px}
+.stages p{margin:8px 0 0;font-size:15px}
+.note{margin-top:28px;background:#fff;padding:18px 22px;font-size:15px}
+.note b{font-family:"Noto Serif TC",serif}
+
+/* 文獻清單 */
+.filters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}
+.filters button{font:inherit;font-size:14px;border:1.5px solid var(--line);background:#fff;padding:4px 12px;border-radius:20px;cursor:pointer;color:var(--ink)}
+.filters button[aria-pressed="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.filters .sw{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:1px}
+.progress{font-size:14px;color:var(--mute);margin:12px 0 20px}
+.level{margin-top:26px}
+.level h3{font-size:20px;display:flex;align-items:baseline;gap:12px}
+.level h3 small{font-family:"Noto Sans TC";font-weight:400;font-size:14px;color:var(--mute)}
+.paper{display:grid;grid-template-columns:28px 1fr;gap:4px 12px;padding:16px 0;border-bottom:1px solid var(--line)}
+.paper input{width:18px;height:18px;margin-top:5px;accent-color:var(--xas)}
+.paper .t{font-weight:700}
+.paper .meta{font-size:14px;color:var(--mute)}
+.paper .why{font-size:15px;margin:4px 0 0}
+.paper .q{font-size:14.5px;margin:4px 0 0;padding-left:10px;border-left:2px solid var(--line)}
+.dots{display:inline-flex;gap:4px;margin-right:8px;vertical-align:1px}
+.dots span{width:10px;height:10px;border-radius:50%}
+.paper a.s{font-size:14px;color:var(--ec)}
+.paper.done .t{text-decoration:line-through;text-decoration-color:var(--mute)}
+.empty{color:var(--mute);padding:16px 0}
+
+/* 串連 */
+.bridges{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:22px}
+.bridge{background:#fff;padding:0 22px 20px}
+.bridge .bar{display:flex;height:6px;margin:0 -22px 16px}
+.bridge .bar span{flex:1}
+.bridge h3{font-size:19px;margin-bottom:6px}
+.bridge p{margin:6px 0;font-size:15px}
+.bridge .rd{font-size:14px;color:var(--mute)}
+.chain{font-size:15px;background:#fff;padding:20px 24px;margin-top:26px;border-left:6px solid var(--xas)}
+
+footer{padding:40px 0 60px;border-top:1px solid var(--line);font-size:14px;color:var(--mute)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:8px}
+.legend span::before{content:"";display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--c);margin-right:6px;vertical-align:-1px}
+/* 分組 */
+.tabs{display:flex;gap:0;border-bottom:2px solid var(--ink);margin:0 0 28px}
+.tabs button{font:inherit;font-family:"Noto Serif TC",serif;font-weight:700;font-size:19px;background:none;border:0;padding:10px 22px 10px 0;margin-right:22px;cursor:pointer;color:var(--mute);border-bottom:4px solid transparent;margin-bottom:-2px}
+.tabs button small{font-family:"Noto Sans TC";font-weight:400;font-size:14px;margin-left:6px}
+.tabs button[aria-selected="true"]{color:var(--ink);border-color:var(--ink)}
+h3.blk{font-size:22px;margin:40px 0 6px}
+.topics{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:18px;margin-top:14px}
+.topic{background:#fff;padding:18px 22px 20px;border-top:5px solid var(--c,var(--ec))}
+.topic h4{font-family:"Noto Serif TC",serif;font-size:18px;margin:0 0 8px;line-height:1.4}
+.topic p{margin:6px 0;font-size:15px}
+.topic .lab{font-weight:700}
+.topic .rd{font-size:14px;color:var(--mute)}
+.tag{font-size:12px;border:1px solid var(--line);padding:0 6px;margin-left:8px;border-radius:3px}
+.stages.s5{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+.stages.s5 li::before{content:attr(data-m);font-size:15px;font-family:"Noto Sans TC";font-weight:500;color:var(--mute)}
+.stages.s5 .wk{font-family:"Noto Serif TC",serif;font-weight:900;font-size:20px;color:var(--ink)}
+.srow{display:grid;grid-template-columns:210px 1fr;gap:18px;border-top:1px solid var(--line);padding-top:4px}
+.srow .who{border-left:5px solid var(--c);padding:14px 0 0 12px}
+.srow .who b{display:block;font-family:"Noto Serif TC",serif}
+.srow .who span{font-size:14px;color:var(--mute);line-height:1.5;display:block}
+.srow .paper:last-child{border-bottom:0}
+#sched{border-bottom:1px solid var(--line)}
+@media (max-width:640px){.srow{grid-template-columns:1fr;gap:0}}
+
+/* 2026 visual system: research control deck */
+:root{--paper:#eaf0f4;--ink:#102a3e;--mute:#52697a;--line:#cbd8e1;--surface:#fff;--deep:#071b2b;--deep-2:#0d3954;--signal:#43d5c4;--shadow:0 14px 32px rgba(15,42,62,.09)}
+body{background:linear-gradient(180deg,#dfe9ee 0,#edf2f4 380px,#f7f9fa 100%);letter-spacing:.005em}
+header.wrap{max-width:none;min-height:420px;padding:52px max(24px,calc((100vw - 1040px)/2)) 42px;background:radial-gradient(circle at 78% 14%,rgba(67,213,196,.2),transparent 25%),radial-gradient(circle at 86% 68%,rgba(72,126,196,.23),transparent 27%),linear-gradient(125deg,var(--deep),var(--deep-2));color:#fff;overflow:hidden}
+header .hero-spec{height:142px;opacity:.95}
+header .hero-spec path{stroke:var(--signal);stroke-width:2.8;filter:drop-shadow(0 0 8px rgba(67,213,196,.45))}
+header .hero-spec text{fill:#b9d4df;font-weight:500}
+.eyebrow{display:inline-block;margin:0 0 4px;color:#82e5d8;font-size:12px;font-weight:700;letter-spacing:.16em}
+header h1{font-size:clamp(34px,5vw,56px);text-shadow:0 2px 18px rgba(0,0,0,.25)}
+header .lede{color:#c9d9e1;font-size:18px;max-width:48em}
+.hero-stats{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}.hero-stats span{padding:7px 13px;border:1px solid rgba(190,231,236,.28);border-radius:999px;background:rgba(255,255,255,.08);color:#dcecf0;font-size:13px;backdrop-filter:blur(5px)}.hero-stats b{color:#80e7db;font-size:18px;margin-right:3px}
+nav.toc{gap:8px;margin-top:26px}nav.toc a{border:1px solid rgba(204,232,237,.28);border-radius:999px;padding:5px 13px;color:#e4f2f5;background:rgba(255,255,255,.06)}nav.toc a:hover{border-color:var(--signal);color:#fff}
+section{padding:70px 0;border-top:1px solid rgba(110,139,157,.25)}h2{font-size:clamp(27px,3vw,36px);color:var(--deep)}.sub{max-width:48em}
+.reading-intro{max-width:none;width:100%;text-align:justify;text-align-last:justify;text-justify:inter-character;line-height:1.9}
+.pyramid{padding:24px 18px 12px;border:1px solid #d5e0e6;border-radius:20px;background:linear-gradient(150deg,#fff,#f2f7f8);box-shadow:var(--shadow)}.tier polygon{stroke:#f8fbfc;filter:drop-shadow(0 5px 6px rgba(22,53,70,.11))}.tier:hover polygon{fill:color-mix(in srgb,var(--c) 34%,#fff)}.axis{padding:0 12px}
+.detail{margin-top:22px;border:1px solid #d9e4e9;border-left:7px solid var(--c,var(--ink));border-radius:0 16px 16px 0;box-shadow:var(--shadow);padding:28px 30px}.detail .one{font-size:18px}.kw i{border-radius:999px;background:#f0f5f7}
+.tabs{display:inline-flex;border:1px solid #d0dde5;border-radius:14px;background:#fff;padding:5px;box-shadow:0 8px 20px rgba(15,42,62,.07)}.tabs button{border:0!important;border-radius:10px;margin:0;padding:9px 16px;color:var(--mute)}.tabs button[aria-selected="true"]{background:var(--deep);color:#fff;box-shadow:0 5px 10px rgba(7,27,43,.2)}
+h3.blk{margin-top:48px;color:var(--deep)}.topics{gap:16px}.topic{border:1px solid #d9e4e9;border-top:5px solid var(--c,var(--ec));border-radius:14px;box-shadow:0 8px 20px rgba(15,42,62,.06);padding:20px 22px}.topic .member-name{display:inline-block;margin:0 0 8px;padding:3px 10px;border-radius:999px;background:color-mix(in srgb,var(--c) 12%,#fff);color:var(--c);font-size:13px;font-weight:800}.topic h4{color:var(--deep)}
+.stages{gap:14px}.stages li{margin:0;padding:18px;border:1px solid #d9e4e9;border-top:4px solid var(--ink);border-radius:14px;background:#fff;box-shadow:0 8px 18px rgba(15,42,62,.05)}.stages.s5 li{border-top-color:var(--ec)}.stages.s5 .wk{color:var(--deep)}.note{border:1px solid #d8e6e7;border-left:5px solid var(--signal);border-radius:12px;box-shadow:0 8px 18px rgba(15,42,62,.04)}
+.filters button{padding:6px 13px;border-color:#c8d7df;background:#fff;transition:transform .18s,background .18s}.filters button:hover{transform:translateY(-1px);border-color:var(--ec)}.filters button[aria-pressed="true"]{background:var(--deep)}.paper{margin-top:10px;padding:15px 14px;border:1px solid #dce6eb;border-radius:12px;background:#fff;box-shadow:0 4px 12px rgba(15,42,62,.035)}.paper+.paper{margin-top:8px}.paper:last-child{border-bottom:1px solid #dce6eb}.paper .t{color:var(--deep)}
+.tag.oa{margin-left:8px;border-color:#5bcdbf;background:#e4f8f3;color:#12685d;font-weight:700}.paper-links{display:flex;flex-wrap:wrap;gap:7px 14px;margin-top:9px}.paper-links .s{font-weight:700;text-decoration:none}.paper-links .s:hover,.paper-links .s:focus-visible{text-decoration:underline}.paper-links a.direct{color:#086d62}
+.weekly{list-style:none;margin:16px 0 0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.weekly li{display:grid;grid-template-columns:auto 1fr auto;gap:11px;align-items:start;padding:13px 14px;border:1px solid #d5e4e9;border-radius:12px;background:#fff}.weekly li>span{font-weight:800;color:var(--xas);font-size:13px}.weekly li b{display:block;color:var(--deep);line-height:1.45}.weekly li p{margin:3px 0 0;font-size:13px;line-height:1.6;color:var(--mute)}.weekly li em{font-style:normal;font-size:12px;font-weight:700;white-space:nowrap;padding:2px 7px;border-radius:999px;background:#e3f5f1;color:#12685d}@media(max-width:700px){.weekly{grid-template-columns:1fr}.weekly li{grid-template-columns:auto 1fr}.weekly li em{grid-column:2;justify-self:start}}
+.review-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.review-card{border:1px solid #d4e1e7;border-top:5px solid var(--c);border-radius:16px;background:rgba(255,255,255,.78);padding:18px;box-shadow:0 8px 18px rgba(15,42,62,.05)}.review-card>header{min-height:auto;padding:0;background:none;color:var(--deep);overflow:visible}.review-card>header span{display:block;color:var(--c);font-weight:800;font-size:14px}.review-card>header h4{margin:2px 0 14px;font-family:"Noto Serif TC",serif;font-size:19px;line-height:1.45}.review-months{display:grid;gap:11px}.review-months section{padding:10px 11px;border-radius:10px;background:#f1f6f8}.review-months section>b{display:block;font-size:13px;color:var(--mute);margin-bottom:6px}.review-months .paper{margin-top:7px;padding:10px;grid-template-columns:22px 1fr;font-size:14px;box-shadow:none}.review-months .paper .meta,.review-months .paper .why{font-size:12px}.review-months .paper .why{margin-top:2px}.review-months .paper a.s{font-size:12px}@media(max-width:800px){.review-grid{grid-template-columns:1fr}}
+.foundation-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.foundation{padding:18px;border:1px solid #d4e1e7;border-top:5px solid var(--xas);border-radius:16px;background:rgba(255,255,255,.78);box-shadow:0 8px 18px rgba(15,42,62,.05)}.foundation h4{margin:0 0 12px;font-family:"Noto Serif TC",serif;color:var(--deep);font-size:19px;line-height:1.45}.foundation .paper{margin-top:8px;padding:11px;grid-template-columns:22px 1fr;font-size:14px;box-shadow:none}.foundation .paper .meta,.foundation .paper .why{font-size:12px}.foundation .paper .why{margin-top:2px}.foundation .paper a.s{font-size:12px}@media(max-width:800px){.foundation-grid{grid-template-columns:1fr}}
+.srow{margin-top:16px;padding:14px;border:1px solid #d8e3e8;border-radius:16px;background:rgba(255,255,255,.66)}.srow .who{padding-top:10px}.srow .paper{background:#fff}#sched{border-bottom:0}.chain{border:1px solid #cfe3e7;border-left:6px solid var(--xas);border-radius:0 16px 16px 0;box-shadow:var(--shadow)}.bridge{border:1px solid #d9e4e9;border-radius:16px;overflow:hidden;box-shadow:var(--shadow)}
+footer{margin-top:28px;background:var(--deep);border-top:0;color:#bfd1db;padding:42px max(24px,calc((100vw - 1040px)/2)) 60px}footer.wrap{max-width:none}.legend span::before{box-shadow:0 0 0 3px rgba(255,255,255,.08)}
+@media (max-width:640px){header.wrap{min-height:auto;padding-top:28px;padding-bottom:32px}header .hero-spec{height:90px}.hero-stats{gap:7px}.hero-stats span{font-size:12px}.tabs{display:flex;width:100%}.tabs button{flex:1;padding:8px}.tabs button small{display:block;margin:1px 0 0}.pyramid{padding:14px 6px}.detail{padding:22px}.stages li{padding:16px}.srow{padding:10px}}
+</style>
+</head>
+<body>
+
+<header class="wrap">
+  <svg class="hero-spec" viewBox="0 0 1000 170" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0,150 L300,146 C340,144 360,140 372,132 C380,126 384,112 388,70 C392,30 402,14 420,18 C440,24 450,58 470,62 C495,66 505,40 530,42 C560,46 570,74 600,74 C630,74 640,56 670,58 C700,60 715,76 745,76 C775,76 790,66 820,67 C860,68 880,76 920,75 L1000,74"/>
+    <text x="372" y="166">吸收邊</text><text x="560" y="100">EXAFS 振盪</text>
+  </svg>
+  <p class="eyebrow">CORE LAB · RESEARCH OPERATING MAP</p>
+  <h1>CORE Lab 研究地圖</h1>
+  <p class="lede prose">以單原子催化劑為共同研究核心，專題生建立可靠的材料與電化學基準；碩班生再把活性位帶進臨場量測與反應器設計，追蹤它在真實工作條件下的變化。</p>
+  <div class="hero-stats" aria-label="研究地圖摘要"><span><b>10</b> 位學生</span><span><b>56</b> 篇指定閱讀</span><span><b>4</b> 個月研究衝刺</span></div>
+  <nav class="toc" aria-label="頁面目錄">
+    <a href="#map">研究方向</a><a href="#people" data-g="ug">專題生</a><a href="#people" data-g="ms">碩班</a><a href="#links">領域串連</a>
+  </nav>
+</header>
+
+<main>
+<section id="map" class="wrap">
+  <h2>研究方向：以單原子催化劑為核心</h2>
+  <p class="sub prose">液流電池、電解水與尿素合成是不同的應用場景；專題生與碩班生共同聚焦單原子催化劑的配位、活性位與穩定性。碩班生則在此核心上，進一步以臨場量測和反應器設計檢驗活性位在真實工作條件下的變化。點選每一格進入獨立研究主題頁。</p>
+  <div class="pyramid" role="group" aria-label="研究方向倒金字塔">
+  <svg viewBox="0 0 640 424">
+    <g class="tier" data-f="fb" role="button" tabindex="0" aria-pressed="true" aria-label="液流電池" style="--c:var(--fb)">
+      <polygon points="20,2 220,2 245,107 95,107"/><text x="145" y="52">液流電池</text><text class="s" x="145" y="78">儲能</text></g>
+    <g class="tier" data-f="ec" role="button" tabindex="0" aria-pressed="false" aria-label="電解水催化劑" style="--c:var(--ec)">
+      <polygon points="220,2 420,2 395,107 245,107"/><text x="320" y="52">電解水催化劑</text><text class="s" x="320" y="78">轉換</text></g>
+    <g class="tier" data-f="ur" role="button" tabindex="0" aria-pressed="false" aria-label="電化學尿素合成" style="--c:var(--ur)">
+      <polygon points="420,2 620,2 545,107 395,107"/><text x="495" y="52">尿素合成</text><text class="s" x="495" y="78">合成</text></g>
+    <g class="tier" data-f="sac" role="button" tabindex="0" aria-pressed="false" aria-label="單原子催化劑設計" style="--c:var(--sac)">
+      <polygon points="95,107 545,107 470,212 170,212"/><text x="320" y="155">單原子催化劑設計</text><text class="s" x="320" y="181">活性位</text></g>
+    <g class="tier" data-f="rx" role="button" tabindex="0" aria-pressed="false" aria-label="臨場反應器設計" style="--c:var(--rx)">
+      <polygon points="170,212 470,212 395,317 245,317"/><text x="320" y="260">臨場反應器設計</text><text class="s" x="320" y="286">觀測平台</text></g>
+    <g class="tier" data-f="xas" role="button" tabindex="0" aria-pressed="false" aria-label="XAS 臨場量測" style="--c:var(--xas)">
+      <polygon points="245,317 395,317 320,422"/><text x="320" y="350">XAS</text><text class="s" x="320" y="370">臨場量測</text></g>
+    <polyline class="edge" points="20,2 320,422 620,2"/>
+  </svg>
+  </div>
+</section>
+
+<section id="people" class="wrap">
+  <h2>題目與閱讀路徑</h2>
+  <p class="sub prose reading-intro">2026 年 10 月至 2027 年 1 月，規劃每月 14 篇指定閱讀：六位專題生各 1 篇（共 6 篇），四位碩士生各 2 篇（共 8 篇）；四個月合計 56 篇，且全數不重複。全體成員均以單原子催化劑的設計、結構確認、活性與穩定性為核心；碩士生另須將各自主題接入臨場量測與反應器設計，建立可在工作條件下驗證活性位的研究能力。</p>
+  <div class="tabs" role="tablist">
+    <button role="tab" data-g="ug" aria-selected="true">專題生</button>
+    <button role="tab" data-g="ms" aria-selected="false">碩班</button>
+  </div>
+  <div id="panel" role="tabpanel"></div>
+</section>
+
+<section id="links" class="wrap">
+  <h2>領域串連</h2>
+  <p class="sub prose">碩班進入第四階段後，用這些問題把各自的題目接起來。專題生可以先讀第二題，了解自己量到的活性之後會被怎麼追問。</p>
+  <div class="bridges" id="bridges"></div>
+  <div class="chain prose"><b>整條鏈怎麼走</b>：專題生建立可靠的電解水活性與穩定性數據 → 碩班追問衰退來自哪個活性位或物種 → 設計能在工作條件下量測的反應器 → 用 XAS（加上調製激發與相敏偵測拉高時間解析）抓到價態與配位變化 → 回頭修改材料或操作條件，讓衰退可預測、可逆轉。</div>
+</section>
+</main>
+
+<footer class="wrap">
+  <div>配色取自釩離子在溶液中的四種價態顏色，也就是液流電池裡最常見的那組顏色。</div>
+  <div class="legend">
+    <span style="--c:var(--fb)">液流電池</span><span style="--c:var(--ec)">電解水</span><span style="--c:var(--ur)">尿素合成</span><span style="--c:var(--sac)">單原子</span>
+    <span style="--c:var(--rx)">臨場反應器</span><span style="--c:var(--xas)">XAS</span><span style="--c:var(--base)">共同基礎</span>
+  </div>
+  <p>書目已完成排程與基本資訊檢核；指定閱讀前，仍請以期刊頁面確認最終 DOI、全文權限與版本。</p>
+</footer>
+
+<script>
+const F={
+ fb:{n:"液流電池",c:"var(--fb)",one:"把能量存在流動的電解液裡，功率（電堆）與容量（儲槽）可以分開放大，是長時儲能的主要候選。",
+   q:"容量衰退從哪裡來？活性物種跨膜、正負極價態失衡、析氫副反應、有機分子分解、電極表面鈍化。",
+   s:"電池結構、充電狀態（SOC）、庫倫／電壓／能量效率、極化曲線、衰退率的計算方式。",
+   l:"衰退是跨時間尺度的問題：秒級的電極反應，累積成數百圈的容量損失。追蹤電解液價態與電極表面，正是臨場 XAS 的場景。",
+   w:"碩班液流電池主線，一人負責。",k:["VRFB","AORFB","crossover","capacity fade","state of charge","electrolyte imbalance"]},
+ ec:{n:"電解水催化劑",c:"var(--ec)",one:"用電把水分解成氫與氧。瓶頸在陽極的析氧反應（OER）：四電子轉移，以及催化劑在高電位下的穩定性。",
+   q:"活性由什麼決定（eg 填充、scaling relation）？表面是否重構成氫氧化物？Fe 雜質的角色？晶格氧是否參與？劣化與溶解如何發生？",
+   s:"Tafel 分析、10 mA cm⁻² 過電位、ECSA、iR 補償、參考電極校正、穩定性測試規範。",
+   l:"真正的活性相往往在反應中才形成，離線表徵看到的是反應前或反應後的樣子，所以必須臨場量測。",
+   w:"專題生 6 人以水分解中的單原子催化劑為共同起點；碩班則把單原子活性位帶入不同應用系統。",k:["OER","HER","surface reconstruction","lattice oxygen","NiFeOOH","benchmarking"]},
+ ur:{n:"電化學尿素合成",c:"var(--ur)",one:"探索在常溫常壓下，以電力驅動 CO₂ 與含氮物種（優先以硝酸根／亞硝酸根）形成 C–N 鍵的可能性；這仍是機制、選擇性與嚴謹定量都必須逐一驗證的研究方向，而非已可取代工業製程的方案。",
+   q:"C–N 鍵可能在哪類中間體間形成？如何排除 NH₃、CO 與析氫的競爭反應？產物與碳／氮來源如何以空白對照、標準加入與同位素標記驗證？",
+   s:"CO₂ 與硝酸根還原的副產物分析；尿素以二乙醯一肟法配合校正與回收率、¹H NMR 或 LC-MS 交叉驗證；空白對照、標準加入、¹³CO₂／¹⁵N 同位素標記與法拉第效率計算。",
+   l:"難度最高、跨越最多方向：雙功能活性位與 C–N 偶聯假說都需要可靠產物驗證，以及臨場光譜與對照實驗共同支持。",
+   w:"碩班尿素合成主線，一人負責。",k:["C–N coupling","urea electrosynthesis","nitrate reduction","CO2RR","Faradaic efficiency","isotope labeling"]},
+ sac:{n:"單原子催化劑設計",c:"var(--sac)",one:"把金屬分散成孤立的單一原子，原子利用率最大，活性位結構也最接近可以精確定義。",
+   q:"如何把單原子穩住（atom trapping、M–N₄ 配位）？如何證明真的是單原子？反應中會不會團聚或改變配位？",
+   s:"常見合成路線、HAADF-STEM 判讀、EXAFS 擬合配位數、XANES 判讀價態。",
+   l:"單原子系統很適合以 XAS 追蹤局部配位與價態；但 XAS 是整體平均訊號，仍須結合 HAADF-STEM、XPS 與對照樣品，避免只憑單一方法宣稱單原子或活性位。它同時是電解水與液流電池電極的候選材料。",
+   w:"所有專題生與碩班生的共同研究核心；碩班生另需以臨場量測與反應器設計驗證活性位。",k:["SAC","M–N–C","atom trapping","coordination environment","HAADF-STEM"]},
+ rx:{n:"臨場反應器設計",c:"var(--rx)",one:"讓樣品在真實工作條件下被量測：電解液、電位、流動、氣泡、X 光路徑都要一起顧到。",
+   q:"窗口材料與 X 光穿透、液層厚度、電流分布與死體積、氣泡干擾、輻射損傷，以及電化學表現是否與實驗室 cell 一致。",
+   s:"讀懂 cell 設計圖、用 Hephaestus 估算吸收長度、密封與材料相容性、讓電化學與光譜時間戳同步。",
+   l:"反應器決定你能量到哪個時間尺度。調製激發（週期性改變電位或流量）需要反應器本身就能快速、可重複地切換條件。",
+   w:"四位碩班生共同必修，分別服務 RFB 與海水分解的單原子催化劑主線。",k:["臨場 cell","spectroelectrochemical cell","flow cell","X-ray window","beam damage"]},
+ xas:{n:"XAS 臨場量測",c:"var(--xas)",one:"元素選擇性地看價態（XANES）與局部結構（EXAFS），不需要長程有序，對非晶相、單原子與溶液物種都有效。",
+   q:"吸收邊位移與價態、pre-edge、配位數與鍵長擬合、整體平均訊號與表面訊號的落差、時間解析（QXAFS、MES-PSD）、以機器學習反演光譜。",
+   s:"Athena 歸一化、Artemis 擬合、線性組合擬合（LCF）、差譜、相敏偵測的原理。",
+   l:"實驗室的方法識別。前四層的問題，最後都要轉成一個可以量到的光譜變化。",
+   w:"四位碩班生共同必修；每人都要能判讀自己的單原子活性位在工作條件下的基本光譜變化。",k:["XANES","EXAFS","XES","QXAFS","MES-PSD","LCF","ML-XANES"]}
+};
+const COL={fb:"var(--fb)",ec:"var(--ec)",ur:"var(--ur)",sac:"var(--sac)",rx:"var(--rx)",xas:"var(--xas)",base:"var(--base)"};
+const NAME={fb:"液流電池",ec:"電解水",ur:"尿素合成",sac:"單原子",rx:"臨場反應器",xas:"XAS",base:"共同基礎"};
+
+// 書目庫
+const D={
+ bard:{f:["base"],t:"Electrochemical Methods: Fundamentals and Applications (2nd ed.)",a:"Bard, A. J.; Faulkner, L. R.",j:"Wiley, 2001",w:"第 1–3 章：電極電位、質傳、電子轉移動力學。所有電化學文獻的共同語言。"},
+ newville:{f:["base","xas"],t:"Fundamentals of XAFS",a:"Newville, M.",j:"Rev. Mineral. Geochem. 78, 33 (2014)",w:"最好入門的 XAFS 物理圖像，免費可讀。"},
+ calvin:{f:["base","xas"],t:"XAFS for Everyone",a:"Calvin, S.",j:"CRC Press, 2013",w:"當工具書查，特別是擬合與誤差的章節。"},
+ weber:{f:["fb"],t:"Redox flow batteries: a review",a:"Weber, A. Z. et al.",j:"J. Appl. Electrochem. 41, 1137 (2011)",w:"系統架構、效率定義、各種化學體系一次看完。"},
+ solo:{f:["fb"],t:"Flow Batteries: Current Status and Trends",a:"Soloveichik, G. L.",j:"Chem. Rev. 115, 11533 (2015)",w:"化學體系的全景地圖。"},
+ skk:{f:["fb"],t:"Progress in Flow Battery Research and Development",a:"Skyllas-Kazacos, M. et al.",j:"J. Electrochem. Soc. 158, R55 (2011)",w:"釩液流電池發明者的回顧，電解液失衡與膜的問題講得最清楚。"},
+ darling:{f:["fb"],t:"Pathways to low-cost electrochemical energy storage: a comparison of aqueous and nonaqueous flow batteries",a:"Darling, R. M. et al.",j:"Energy Environ. Sci. 7, 3459 (2014)",w:"用成本模型說明哪些參數真正重要。"},
+ aaron:{f:["fb"],t:"Dramatic performance gains in vanadium redox flow batteries through modified cell architecture",a:"Aaron, D. S. et al.",j:"J. Power Sources 206, 450 (2012)",w:"cell 架構（零間隙設計）如何大幅改變性能，自組電池前必讀。"},
+ husk:{f:["fb"],t:"A metal-free organic–inorganic aqueous flow battery",a:"Huskinson, B. et al.",j:"Nature 505, 195 (2014)",w:"醌類有機液流電池的起點。"},
+ lin:{f:["fb"],t:"Alkaline quinone flow battery",a:"Lin, K. et al.",j:"Science 349, 1529 (2015)",w:"與前一篇對照讀，看分子設計如何改變穩定性。"},
+ kwabi:{f:["fb","rx"],t:"Electrolyte Lifetime in Aqueous Organic Redox Flow Batteries: A Critical Review",a:"Kwabi, D. G.; Ji, Y.; Aziz, M. J.",j:"Chem. Rev. 120, 6467 (2020)",w:"衰退機制的分類與量測方式，直接對應實驗室的失效主軸。"},
+ li13:{f:["fb","ec"],t:"Bismuth nanoparticle decorating graphite felt as a high-performance electrode for an all-vanadium redox flow battery",a:"Li, B. et al.",j:"Nano Lett. 13, 1330 (2013)",w:"液流電池電極本身也是電催化問題。"},
+ seh:{f:["ec"],t:"Combining theory and experiment in electrocatalysis: Insights into materials design",a:"Seh, Z. W. et al.",j:"Science 355, eaad4998 (2017)",w:"火山圖與描述子的總覽。"},
+ jiao:{f:["ec"],t:"Design of electrocatalysts for oxygen- and hydrogen-involving energy conversion reactions",a:"Jiao, Y. et al.",j:"Chem. Soc. Rev. 44, 2060 (2015)",w:"HER 與 OER 的反應步驟與設計原則，比 Seh 更細。"},
+ zou:{f:["ec"],t:"Noble metal-free hydrogen evolution catalysts for water splitting",a:"Zou, X.; Zhang, Y.",j:"Chem. Soc. Rev. 44, 5148 (2015)",w:"非貴金屬 HER 材料的全景。"},
+ wei19:{f:["ec"],t:"Recommended Practices and Benchmark Activity for Hydrogen and Oxygen Electrocatalysis in Water Splitting and Fuel Cells",a:"Wei, C. et al.",j:"Adv. Mater. 31, 1806296 (2019)",w:"實驗規範。做第一條極化曲線前一定要讀。"},
+ voiry:{f:["ec"],t:"Best Practices for Reporting Electrocatalytic Performance of Nanomaterials",a:"Voiry, D. et al.",j:"ACS Nano 12, 9635 (2018)",w:"數據要怎麼報才可信，專題報告的檢查清單。"},
+ anan:{f:["ec"],t:"Do the Evaluation Parameters Reflect Intrinsic Activity of Electrocatalysts in Electrochemical Water Splitting?",a:"Anantharaj, S. et al.",j:"ACS Energy Lett. 4, 1260 (2019)",w:"過電位、Tafel 斜率、ECSA 各自的陷阱。"},
+ mccrory:{f:["ec"],t:"Benchmarking Heterogeneous Electrocatalysts for the Oxygen Evolution Reaction",a:"McCrory, C. C. L. et al.",j:"J. Am. Chem. Soc. 135, 16977 (2013)",w:"標準化比較 OER 催化劑的方法。"},
+ gong:{f:["ec"],t:"An Advanced Ni–Fe Layered Double Hydroxide Electrocatalyst for Water Oxidation",a:"Gong, M. et al.",j:"J. Am. Chem. Soc. 135, 8452 (2013)",w:"NiFe LDH 的代表作，合成與量測都適合照著做。"},
+ louie:{f:["ec"],t:"An Investigation of Thin-Film Ni–Fe Oxide Catalysts for the Electrochemical Evolution of Oxygen",a:"Louie, M. W.; Bell, A. T.",j:"J. Am. Chem. Soc. 135, 12329 (2013)",w:"系統改變 Fe 比例看活性，實驗設計的好範例。"},
+ trot:{f:["ec"],t:"Nickel–Iron Oxyhydroxide Oxygen-Evolution Electrocatalysts: The Role of Intentional and Incidental Iron Incorporation",a:"Trotochaud, L. et al.",j:"J. Am. Chem. Soc. 136, 6744 (2014)",w:"電解液中微量 Fe 如何改變結論。"},
+ jara:{f:["ec"],t:"Identification of Active Edge Sites for Electrochemical H2 Evolution from MoS2 Nanocatalysts",a:"Jaramillo, T. F. et al.",j:"Science 317, 100 (2007)",w:"證明 MoS₂ 活性來自邊緣位，活性位概念的經典。"},
+ norskov:{f:["ec"],t:"Trends in the Exchange Current for Hydrogen Evolution",a:"Nørskov, J. K. et al.",j:"J. Electrochem. Soc. 152, J23 (2005)",w:"HER 火山圖的出處。"},
+ luo:{f:["ec"],t:"Water photolysis at 12.3% efficiency via perovskite photovoltaics and Earth-abundant catalysts",a:"Luo, J. et al.",j:"Science 345, 1593 (2014)",w:"泡沫鎳上的 NiFe LDH 同時當陰陽極，雙電極全電解的範例。"},
+ dionigi:{f:["ec"],t:"NiFe-Based (Oxy)hydroxide Catalysts for Oxygen Evolution Reaction in Non-Acidic Electrolytes",a:"Dionigi, F.; Strasser, P.",j:"Adv. Energy Mater. 6, 1600621 (2016)",w:"NiFe 系統的完整回顧。"},
+ spori:{f:["ec"],t:"The Stability Challenges of Oxygen Evolving Catalysts: Towards a Common Fundamental Understanding and Mitigation of Catalyst Degradation",a:"Spöri, C. et al.",j:"Angew. Chem. Int. Ed. 56, 5994 (2017)",w:"劣化機制總覽。"},
+ cher:{f:["ec"],t:"Oxygen and hydrogen evolution reactions on Ru, RuO2, Ir, and IrO2 thin film electrodes in acidic and alkaline electrolytes: A comparative study on activity and stability",a:"Cherevko, S. et al.",j:"Catal. Today 262, 170 (2016)",w:"同時量活性與溶解量，穩定性研究的做法。"},
+ sunt:{f:["ec"],t:"A Perovskite Oxide Optimized for Oxygen Evolution Catalysis from Molecular Orbital Principles",a:"Suntivich, J. et al.",j:"Science 334, 1383 (2011)",w:"eg 填充描述子的經典。"},
+ man:{f:["ec"],t:"Universality in Oxygen Evolution Electrocatalysis on Oxide Surfaces",a:"Man, I. C. et al.",j:"ChemCatChem 3, 1159 (2011)",w:"scaling relation 的理論基礎。"},
+ grimaud:{f:["ec"],t:"Activating lattice oxygen redox reactions in metal oxides to catalyse oxygen evolution",a:"Grimaud, A. et al.",j:"Nat. Chem. 9, 457 (2017)",w:"晶格氧機制，活性與穩定性的取捨。"},
+ fabbri:{f:["ec","xas"],t:"Dynamic surface self-reconstruction is the key of highly active perovskite nano-electrocatalysts for water splitting",a:"Fabbri, E. et al.",j:"Nat. Mater. 16, 925 (2017)",w:"用臨場 XAS 看到表面重構與活性的關係。"},
+ wang18:{f:["sac"],t:"Heterogeneous single-atom catalysis",a:"Wang, A.; Li, J.; Zhang, T.",j:"Nat. Rev. Chem. 2, 65 (2018)",w:"單原子領域最清楚的總覽。"},
+ qiao:{f:["sac"],t:"Single-atom catalysis of CO oxidation using Pt1/FeOx",a:"Qiao, B. et al.",j:"Nat. Chem. 3, 634 (2011)",w:"奠基論文，注意如何用多種表徵證明單原子。"},
+ jones:{f:["sac"],t:"Thermally stable single-atom platinum-on-ceria catalysts via atom trapping",a:"Jones, J. et al.",j:"Science 353, 150 (2016)",w:"如何讓單原子穩定。"},
+ fei:{f:["sac","xas","ec"],t:"General synthesis and definitive structural identification of MN4C4 single-atom catalysts with tunable electrocatalytic activities",a:"Fei, H. et al.",j:"Nat. Catal. 1, 63 (2018)",w:"單原子、EXAFS 判讀、電催化同時出現，最好的串連範例。"},
+ kaiser:{f:["sac"],t:"Single-Atom Catalysts across the Periodic Table",a:"Kaiser, S. K. et al.",j:"Chem. Rev. 120, 11703 (2020)",w:"進階全景，找題目用。"},
+ yang21:{f:["rx","ec"],t:"Operando Methods in Electrocatalysis",a:"Yang, Y. et al.",j:"ACS Catal. 11, 1136 (2021)",w:"各種臨場技術與 cell 設計的比較總覽。"},
+ berg19:{f:["rx","xas"],t:"Operando Insights into Nanoparticle Transformations during Catalysis",a:"Bergmann, A.; Roldan Cuenya, B.",j:"ACS Catal. 9, 10020 (2019)",w:"從材料轉變的角度談臨場量測該看什麼。"},
+ timo21:{f:["rx","xas","ec"],t:"In Situ/Operando Electrocatalyst Characterization by X-ray Absorption Spectroscopy",a:"Timoshenko, J.; Roldan Cuenya, B.",j:"Chem. Rev. 121, 882 (2021)",w:"ACS Open Access；臨場 XAS 的 cell 設計、量測幾何與判讀陷阱，本實驗室的核心參考。",u:"https://pubs.acs.org/doi/10.1021/acs.chemrev.0c00396"},
+ ferri:{f:["rx","xas"],t:"First steps in combining modulation excitation spectroscopy with synchronous dispersive EXAFS/DRIFTS/mass spectrometry for in situ time resolved study of heterogeneous catalysts",a:"Ferri, D. et al.",j:"Phys. Chem. Chem. Phys. 12, 5634 (2010)",w:"調製激發接上 XAS 的早期實作。"},
+ ravel:{f:["xas"],t:"ATHENA, ARTEMIS, HEPHAESTUS: data analysis for X-ray absorption spectroscopy using IFEFFIT",a:"Ravel, B.; Newville, M.",j:"J. Synchrotron Radiat. 12, 537 (2005)",w:"邊讀邊裝軟體操作。"},
+ friebel:{f:["xas","ec"],t:"Identification of Highly Active Fe Sites in (Ni,Fe)OOH for Electrocatalytic Water Splitting",a:"Friebel, D. et al.",j:"J. Am. Chem. Soc. 137, 1305 (2015)",w:"臨場 XAS 加理論計算回答「活性位是誰」。"},
+ berg15:{f:["xas","ec"],t:"Reversible amorphization and the catalytically active state of crystalline Co3O4 during oxygen evolution",a:"Bergmann, A. et al.",j:"Nat. Commun. 6, 8625 (2015)",w:"可逆的結構變化只有在臨場條件下才看得到。"},
+ timo17:{f:["xas"],t:"Supervised Machine-Learning-Based Determination of Three-Dimensional Structure of Metallic Nanoparticles",a:"Timoshenko, J. et al.",j:"J. Phys. Chem. Lett. 8, 5091 (2017)",w:"用機器學習從 XANES 反推結構。"},
+ timo19:{f:["xas"],t:"Inverting X-ray Absorption Spectra of Catalysts by Machine Learning in Search for Activity Descriptors",a:"Timoshenko, J.; Frenkel, A. I.",j:"ACS Catal. 9, 10192 (2019)",w:"機器學習光譜分析的總覽，連到預測失效。"},
+ vanl:{f:["ur"],t:"Electrocatalytic Nitrate Reduction for Sustainable Ammonia Production",a:"van Langevelde, P. H.; Katsounaros, I.; Koper, M. T. M.",j:"Joule 5, 290 (2021)",w:"硝酸根還原的反應路徑與中間體，尿素合成的含氮半邊。"},
+ nitopi:{f:["ur","ec"],t:"Progress and Perspectives of Electrochemical CO2 Reduction on Copper in Aqueous Electrolyte",a:"Nitopi, S. et al.",j:"Chem. Rev. 119, 7610 (2019)",w:"CO₂ 還原在銅上的完整回顧，尿素合成的含碳半邊。"},
+ li22:{f:["ur"],t:"Construction of C–N bonds from small-molecule precursors through heterogeneous electrocatalysis",a:"Li, J. et al.",j:"Nat. Rev. Chem. 6, 303 (2022)",w:"電化學 C–N 耦合的全景，含尿素、胺類與醯胺。"},
+ chen20:{f:["ur"],t:"Coupling N2 and CO2 in H2O to synthesize urea under ambient conditions",a:"Chen, C. et al.",j:"Nat. Chem. 12, 717 (2020)",w:"早期 N₂／CO₂ 路線主張；N₂ 來源與尿素定量極易受污染和假陽性影響，適合作為批判閱讀，不應直接作為可複現基準。"},
+ lv21:{f:["ur"],t:"Selective electrocatalytic synthesis of urea with nitrate and carbon dioxide",a:"Lv, C. et al.",j:"Nat. Sustain. 4, 868 (2021)",w:"改用硝酸根當氮源，選擇性與產率都更實際。"},
+ wang20:{f:["ur","ec"],t:"Enhanced Nitrate-to-Ammonia Activity on Copper–Nickel Alloys via Tuning of Intermediate Adsorption",a:"Wang, Y. et al.",j:"J. Am. Chem. Soc. 142, 5702 (2020)",w:"用合金調中間體吸附能，設計 C–N 耦合觸媒的思路來源。"},
+ andersen:{f:["ur"],t:"A rigorous electrochemical ammonia synthesis protocol with quantitative isotope measurements",a:"Andersen, S. Z. et al.",j:"Nature 570, 504 (2019)",w:"含氮產物的汙染與假陽性，做尿素定量前必讀的實驗規範。"},
+ subbaraman:{f:["ec"],t:"Trends in activity for the water electrolyser reactions on 3d M(Ni,Co,Fe,Mn) hydr(oxy)oxide catalysts",a:"Subbaraman, R. et al.",j:"Nat. Mater. 11, 550 (2012)",w:"3d 過渡金屬氫氧化物的活性趨勢，把 NiFe 放回整個週期表裡看。"},
+ klaus:{f:["ec"],t:"Effects of Fe Electrolyte Impurities on Ni(OH)2/NiOOH Structure and Oxygen Evolution Activity",a:"Klaus, S. et al.",j:"J. Phys. Chem. C 119, 7243 (2015)",w:"Fe 雜質如何改變 Ni(OH)₂ 的結構與 CV 特徵。"},
+ burke:{f:["ec"],t:"Cobalt–Iron (Oxy)hydroxide Oxygen Evolution Electrocatalysts: The Role of Structure and Composition on Activity, Stability, and Mechanism",a:"Burke, M. S. et al.",j:"J. Am. Chem. Soc. 137, 3638 (2015)",w:"把 Fe 效應延伸到 Co 系統，比較兩者異同。"},
+ kibsgaard:{f:["ec"],t:"Engineering the surface structure of MoS2 to preferentially expose active edge sites for electrocatalysis",a:"Kibsgaard, J. et al.",j:"Nat. Mater. 11, 963 (2012)",w:"從找到活性位走到設計結構去暴露活性位。"},
+ popczun:{f:["ec"],t:"Nanostructured Nickel Phosphide as an Electrocatalyst for the Hydrogen Evolution Reaction",a:"Popczun, E. J. et al.",j:"J. Am. Chem. Soc. 135, 9267 (2013)",w:"Ni₂P 的 HER 表現，雙功能電極陰極端的候選。"},
+ lu15:{f:["ec"],t:"Electrodeposition of hierarchically structured three-dimensional nickel–iron electrodes for efficient oxygen evolution at high current densities",a:"Lu, X.; Zhao, C.",j:"Nat. Commun. 6, 6616 (2015)",w:"開放全文；泡沫鎳上電沉積 NiFe，高電流密度下的電極設計。",u:"https://www.nature.com/articles/ncomms7616"},
+ jung16:{f:["ec"],t:"Benchmarking nanoparticulate metal oxide electrocatalysts for the alkaline water oxidation reaction",a:"Jung, S. et al.",j:"J. Mater. Chem. A 4, 3068 (2016)",w:"奈米顆粒催化劑的基準比較，正規化方式直接影響排名。"},
+ mccrory15:{f:["ec"],t:"Benchmarking Hydrogen Evolving Reaction and Oxygen Evolving Reaction Electrocatalysts for Solar Water Splitting Devices",a:"McCrory, C. C. L. et al.",j:"J. Am. Chem. Soc. 137, 4347 (2015)",w:"同時比較 HER 與 OER 催化劑，全電解系統的起點。"},
+ rossmeisl07:{f:["ec"],t:"Electrolysis of water on oxide surfaces",a:"Rossmeisl, J. et al.",j:"J. Electroanal. Chem. 607, 83 (2007)",w:"OER 四步驟與理論過電位的原始推導，NiFe 活性的理論起點。"},
+ elgrishi:{f:["base"],t:"A Practical Beginner's Guide to Cyclic Voltammetry",a:"Elgrishi, N. et al.",j:"J. Chem. Educ. 95, 197 (2018)",w:"CV 最友善的入門，讀完才看得懂 Ni²⁺/Ni³⁺ 氧化還原峰。"},
+ shinagawa:{f:["ec"],t:"Insight on Tafel slopes from a microkinetic analysis of aqueous electrocatalysis for energy conversion",a:"Shinagawa, T.; Garcia-Esparza, A. T.; Takanabe, K.",j:"Sci. Rep. 5, 13801 (2015)",w:"開放全文；Tafel 斜率到底代表什麼、什麼時候不能直接比。",u:"https://www.nature.com/articles/srep13801"},
+ nor04:{f:["ec"],t:"Origin of the Overpotential for Oxygen Reduction at a Fuel-Cell Cathode",a:"Nørskov, J. K. et al.",j:"J. Phys. Chem. B 108, 17886 (2004)",w:"計算氫電極模型的出處，所有自由能圖的方法基礎。"},
+ koper11:{f:["ur","ec"],t:"Thermodynamic theory of multi-electron transfer reactions: Implications for electrocatalysis",a:"Koper, M. T. M.",j:"J. Electroanal. Chem. 660, 254 (2011)",w:"多電子轉移反應的熱力學限制，理解 C–N 耦合為何難選擇。"},
+ gattrell04:{f:["fb"],t:"Study of the Mechanism of the Vanadium 4+/5+ Redox Reaction in Acidic Solutions",a:"Gattrell, M. et al.",j:"J. Electrochem. Soc. 151, A123 (2004)",w:"VO²⁺/VO₂⁺ 電極反應機制，正極動力學的理論基礎。"},
+ rehr00:{f:["xas"],t:"Theoretical approaches to x-ray absorption fine structure",a:"Rehr, J. J.; Albers, R. C.",j:"Rev. Mod. Phys. 72, 621 (2000)",w:"EXAFS 與 XANES 理論的完整推導，FEFF 背後的物理。"},
+ sun92:{f:["fb"],t:"Modification of graphite electrode materials for vanadium redox flow battery application—I. Thermal treatment",a:"Sun, B.; Skyllas-Kazacos, M.",j:"Electrochim. Acta 37, 1253 (1992)",w:"碳氈熱處理引入含氧官能基，電極設計最早也最常用的手法。"},
+ holder19:{f:["base"],t:"Tutorial on Powder X-ray Diffraction for Characterizing Nanoscale Materials",a:"Holder, C. F.; Schaak, R. E.",j:"ACS Nano 13, 7359 (2019)",w:"奈米材料 XRD 判讀教學，LDH 寬峰與晶粒大小怎麼看。"},
+ biesinger:{f:["base"],t:"Resolving surface chemical states in XPS analysis of first row transition metals, oxides and hydroxides: Cr, Mn, Fe, Co and Ni",a:"Biesinger, M. C. et al.",j:"Appl. Surf. Sci. 257, 2717 (2011)",w:"Ni、Fe 的 XPS 擬合參考，判讀價態必備。"},
+ mourd:{f:["base"],t:"Characterization techniques for nanoparticles: comparison and complementarity upon studying nanoparticle properties",a:"Mourdikoudis, S.; Pallares, R. M.; Thanh, N. T. K.",j:"Nanoscale 10, 12871 (2018)",w:"TEM、XRD、BET 等表徵技術的比較與互補。"},
+ wei19b:{f:["ec"],t:"Approaches for measuring the surface areas of metal oxide electrocatalysts for determining their intrinsic electrocatalytic activity",a:"Wei, C. et al.",j:"Chem. Soc. Rev. 48, 2518 (2019)",w:"Cdl、BET、氧化還原峰積分等表面積量法的比較。"},
+ greczynski:{f:["base"],t:"X-ray photoelectron spectroscopy: Towards reliable binding energy referencing",a:"Greczynski, G.; Hultman, L.",j:"Prog. Mater. Sci. 107, 100591 (2020)",w:"XPS 能量校正的陷阱，不要再無腦用 C 1s 284.8 eV。"},
+ major20:{f:["base"],t:"Practical guide for curve fitting in X-ray photoelectron spectroscopy",a:"Major, G. H. et al.",j:"J. Vac. Sci. Technol. A 38, 061203 (2020)",w:"XPS 擬合的實務規範，避免過度擬合。"},
+ choi17:{f:["fb"],t:"A review of vanadium electrolytes for vanadium redox flow batteries",a:"Choi, C. et al.",j:"Renew. Sustain. Energy Rev. 69, 263 (2017)",w:"釩電解液的組成、穩定性與分析方法。"},
+ petch16:{f:["fb"],t:"Spectroscopic Measurement of State of Charge in Vanadium Flow Batteries with an Analytical Model of VIV-VV Absorbance",a:"Petchsingh, C. et al.",j:"J. Electrochem. Soc. 163, A5068 (2016)",w:"用 UV-vis 監測 SOC，與臨場 XAS 監測價態直接對照。"},
+ niel19:{f:["ur"],t:"A Versatile Method for Ammonia Detection in a Range of Relevant Electrolytes via Direct Nuclear Magnetic Resonance Techniques",a:"Nielander, A. C. et al.",j:"ACS Catal. 9, 5797 (2019)",w:"含氮產物定量與污染控制的思路參考；尿素仍要以專屬校正與交叉驗證，不能直接套用其氨定量程序。"},
+ yeo12:{f:["ec","rx"],t:"In Situ Raman Study of Nickel Oxide and Gold-Supported Nickel Oxide Catalysts for the Electrochemical Evolution of Oxygen",a:"Yeo, B. S.; Bell, A. T.",j:"J. Phys. Chem. C 116, 8394 (2012)",w:"臨場拉曼 cell 的入門範例，看 NiOOH 怎麼在電位下出現。"},
+ garsany10:{f:["ec","rx"],t:"Experimental Methods for Quantifying the Activity of Platinum Electrocatalysts for the Oxygen Reduction Reaction",a:"Garsany, Y. et al.",j:"Anal. Chem. 82, 6321 (2010)",w:"RDE 操作與薄膜電極製備的方法範例；反應系統是 ORR，不能直接當作 OER 活性基準。"},
+ angulo20:{f:["ec","rx"],t:"Influence of Bubbles on the Energy Conversion Efficiency of Electrochemical Reactors",a:"Angulo, A. et al.",j:"Joule 4, 555 (2020)",w:"氣泡如何吃掉效率，電極與反應器設計要考慮的事。"},
+ carmo13:{f:["ec","rx"],t:"A comprehensive review on PEM water electrolysis",a:"Carmo, M. et al.",j:"Int. J. Hydrogen Energy 38, 4901 (2013)",w:"從三電極到真正電解槽，面積與電流密度的尺度差多少。"},
+ klemm11:{f:["ec","rx"],t:"Coupling of a high throughput microelectrochemical cell with online multielemental trace analysis by ICP-MS",a:"Klemm, S. O. et al.",j:"Electrochem. Commun. 13, 1533 (2011)",w:"流動微電解池接 ICP-MS，即時量金屬溶出的反應器設計。"},
+ li20aem:{f:["ec","rx"],t:"Highly quaternized polystyrene ionomers for high performance anion exchange membrane water electrolysers",a:"Li, D. et al.",j:"Nat. Energy 5, 378 (2020)",w:"AEM 電解槽的膜電極設計，泡沫鎳電極的實際應用場景。"},
+ houser16:{f:["fb","rx"],t:"Influence of architecture and material properties on vanadium redox flow battery performance",a:"Houser, J. et al.",j:"J. Power Sources 302, 369 (2016)",w:"流道與電極架構如何影響性能，設計臨場液流電池 cell 的依據。"},
+ weekes18:{f:["ur","rx"],t:"Electrolytic CO2 Reduction in a Flow Cell",a:"Weekes, D. M. et al.",j:"Acc. Chem. Res. 51, 910 (2018)",w:"CO₂ 流動電解池的設計重點，尿素合成電解槽的參考。"},
+ burdyny19:{f:["ur","rx"],t:"CO2 reduction on gas-diffusion electrodes and why catalytic performance must be assessed at commercially-relevant conditions",a:"Burdyny, T.; Smith, W. A.",j:"Energy Environ. Sci. 12, 1442 (2019)",w:"H 型槽與氣體擴散電極的結果為何不能直接比。"},
+ kempler23:{f:["ur","ec"],t:"Reliable reporting of Faradaic efficiencies for electrocatalysis research",a:"Kempler, P. A.; Nielander, A. C.",j:"Nat. Commun. 14, 1158 (2023)",w:"開放全文；法拉第效率的正確計算與報告方式。",u:"https://www.nature.com/articles/s41467-023-36880-8"},
+ baur:{f:["xas","rx"],t:"Quantitative modulated excitation Fourier transform infrared spectroscopy",a:"Baurecht, D.; Fringeli, U. P.",j:"Rev. Sci. Instrum. 72, 3782 (2001)",w:"相敏／調製資料分析的概念基礎；XAS 的時間解析、訊雜比與同步方式仍須依光束線條件另行驗證。"},
+ ma19:{f:["fb","rx"],t:"In situ mapping of activity distribution and oxygen evolution reaction in vanadium flow batteries",a:"Ma, K. et al.",j:"Nat. Commun. 10, 5286 (2019)",w:"開放全文；以空間解析原位量測比較石墨氈在 VRFB 中的局部反應與氣泡行為。",u:"https://www.nature.com/articles/s41467-019-13147-9"},
+ wang26fb:{f:["fb"],t:"Balanced-state electrolytes overcome crossover in vanadium redox flow batteries",a:"Wang, Z. et al.",j:"Nat. Commun. 17, 4470 (2026)",w:"開放全文；以電解液平衡策略處理 crossover，適合討論容量衰退的系統層級證據。",u:"https://www.nature.com/articles/s41467-026-70872-8"},
+ kim20:{f:["ec","rx"],t:"Highly efficient oxygen evolution reaction via facile bubble transport realized by three-dimensionally stack-printed catalysts",a:"Kim, Y. J. et al.",j:"Nat. Commun. 11, 4921 (2020)",w:"開放全文；把氣泡傳輸、電極幾何與 OER 效率放在同一個可觀察的設計問題中。",u:"https://www.nature.com/articles/s41467-020-18686-0"},
+ irx26:{f:["ec"],t:"Composition, Activity, and Stability of IrOx Oxygen Evolution Reaction Electrocatalysts",a:"Bizzotto, F. et al.",j:"ACS Catal. 16, 8473 (2026)",w:"ACS Open Access；酸性 OER 的組成、活性與穩定性可作為基準催化劑判讀框架。",u:"https://doi.org/10.1021/acscatal.6c00906"},
+ li24urea:{f:["ur"],t:"Sequential co-reduction of nitrate and carbon dioxide enables selective urea electrosynthesis",a:"Li, Y. et al.",j:"Nat. Commun. 15, 176 (2024)",w:"開放全文；以硝酸根／CO₂ 路線與原位光譜討論動態活性位及 C–N 偶聯。",u:"https://www.nature.com/articles/s41467-023-44131-z"},
+ liu26urea:{f:["ur"],t:"Selective electrosynthesis of urea from nitrate and carbon dioxide with low overpotential",a:"Liu, S. et al.",j:"Nat. Commun. 17, 1787 (2026)",w:"開放全文；以 Ag/CdO 異質結構為例，應連同副產物與長時測試的定量方式批判閱讀。",u:"https://www.nature.com/articles/s41467-026-68497-y"},
+ fig23urea:{f:["ur"],t:"Carbon dioxide and nitrate co-electroreduction to urea on CuOxZnOy",a:"Figueiredo, M. C. C. et al.",j:"Commun. Chem. 6, 199 (2023)",w:"開放全文；CuO/ZnO 比例、ECSA 正規化與產物分析均適合作為可重做的設計案例。",u:"https://www.nature.com/articles/s42004-023-01001-5"},
+ lin20xas:{f:["xas","rx"],t:"Operando time-resolved X-ray absorption spectroscopy reveals the chemical nature enabling highly selective CO2 reduction",a:"Lin, S.-C. et al.",j:"Nat. Commun. 11, 3525 (2020)",w:"開放全文；以秒級臨場 XAS 與電位切換連結價態演化及 CO₂RR 選擇性。",u:"https://www.nature.com/articles/s41467-020-17231-3"},
+ lien20xas:{f:["xas","sac"],t:"Probing the active site in single-atom oxygen reduction catalysts via operando X-ray and electrochemical spectroscopy",a:"Lien, H.-T. et al.",j:"Nat. Commun. 11, 4233 (2020)",w:"開放全文；單原子系統的臨場 XAS cell、配位變化與電化學訊號如何交叉驗證。",u:"https://www.nature.com/articles/s41467-020-17975-y"},
+ li25xas:{f:["xas","rx"],t:"Operando X-ray absorption spectroscopic investigation of electrocatalysts state in anion exchange membrane fuel cells",a:"Li, Q. et al.",j:"Nat. Commun. 16, 3008 (2025)",w:"開放全文；從半電池走向裝置條件時，XAS cell、螢光模式與訊號穿透限制的實作案例。",u:"https://www.nature.com/articles/s41467-025-57177-y"}
+ ,ug_nife1:{f:["ec"],t:"Enhanced Oxygen Evolution Reaction Activity by Encapsulating NiFe Alloy Nanoparticles in Nitrogen-Doped Carbon Nanofibers",a:"Wei, P. et al.",j:"ACS Appl. Mater. Interfaces 12, 31503 (2020)",w:"NiFe 組成、奈米纖維結構、10 mA cm⁻² 與雙電極測試可作為合成後的基準比較。"}
+ ,ug_nife2:{f:["ec"],t:"Remarkable Bifunctional Oxygen and Hydrogen Evolution Electrocatalytic Activities with Trace-Level Fe Doping in Ni- and Co-Layered Double Hydroxides for Overall Water-Splitting",a:"Rajeshkhanna, G. et al.",j:"ACS Appl. Mater. Interfaces 10 (2018)",w:"以痕量 Fe 摻雜比較 Ni／Co LDH，連結合成組成與 OER／HER 的基準量測。"}
+ ,ug_nife3:{f:["ec"],t:"Hierarchically Constructed Silver Nanowire@Nickel–Iron Layered Double Hydroxide Nanostructures for Electrocatalytic Water Splitting",a:"Zhang, L. et al.",j:"ACS Appl. Nano Mater. 2 (2019)",w:"自支撐 NiFe LDH 電極的結構設計案例；用於比較載體、導電網路與幾何電流密度。"}
+ ,ug_nife4:{f:["ec"],t:"Hierarchical Hollow Microspheres Assembled from Sulfide-incorporated NiFe-Layered Double Hydroxides for Efficient Electrocatalytic Water Splitting with Low Overpotentials",a:"Jung, H. et al.",j:"ACS Appl. Energy Mater. (2025)",w:"以 NiFe LDH 的形貌與硫化調控為例，檢查電極製備、ECSA 與長時測試是否一致。"}
+ ,ug_fe1:{f:["ec"],t:"Radially Aligned Hierarchical Nickel/Nickel–Iron (Oxy)hydroxide Nanotubes for Efficient Electrocatalytic Water Splitting",a:"Wu, X. et al.",j:"ACS Appl. Mater. Interfaces 10 (2018)",w:"比較無 Fe 與含 Fe 的 Ni 基氧氫氧化物，作為 Fe 效應與形貌效應的對照起點。"}
+ ,ug_fe2:{f:["ec"],t:"Heteroatom Modification of Nanoporous Nickel Surfaces for Electrocatalytic Water Splitting",a:"Shen, F. et al.",j:"ACS Appl. Nano Mater. 3 (2020)",w:"以多孔 Ni 表面改質建立母材空白對照，先釐清基材與電解液造成的效應。"}
+ ,ug_fe3:{f:["ec"],t:"Charge-Transfer Effects in Fe–Co and Fe–Co–Y Oxides for Electrocatalytic Water Oxidation Reaction",a:"Zhang, Y. et al.",j:"ACS Appl. Energy Mater. 2 (2019)",w:"以成分系列量測 OER，練習把 Fe 的角色與電荷轉移、結構差異分開討論。"}
+ ,ug_fe4:{f:["ec"],t:"Doping Sulfur in Layered Double Hydroxides with High Hydrophilicity to Accelerate the Charge Transfer and Reduce the Energy Barrier for Efficient Electrocatalytic Splitting Water",a:"Cong, Y. et al.",j:"ACS Appl. Mater. Interfaces (2024)",w:"以 LDH 摻雜為案例，建立電解液、組成、接觸角與極化曲線的成套對照。"}
+ ,ug_her1:{f:["ec"],t:"Three-Dimensional Structures of MoS2@Ni Core/Shell Nanosheets Array toward Synergetic Electrocatalytic Water Splitting",a:"Xing, Z. et al.",j:"ACS Appl. Mater. Interfaces 8 (2016)",w:"MoS₂／Ni 異質結構的 HER 案例；從極化曲線、Tafel 斜率到雙功能水分解逐一核對。"}
+ ,ug_her2:{f:["ec"],t:"Crystal Structure and Composition-Dependent Electrocatalytic Activity of Ni–Mo Nanoalloys for Water Splitting To Produce Hydrogen",a:"Rodene, D. D. et al.",j:"ACS Appl. Energy Mater. 2 (2019)",w:"NiMo 組成系列可直接用於練習 HER 的結構—活性關係與對照組設計。"}
+ ,ug_her3:{f:["ec"],t:"Synthesis of Manganese Silicide Nanowires by Thermal Chemical Vapor Deposition for the Hydrogen Evolution Reaction",a:"Zhang, Y. et al.",j:"ACS Appl. Nano Mater. 6, 12124 (2023)",w:"以非貴金屬奈米線為例，辨識 HER 所需的合成、結構確認與量測條件。"}
+ ,ug_her4:{f:["ec"],t:"Ru-Doped CuO/MoS2 Nanostructures as Bifunctional Water-Splitting Electrocatalysts in Alkaline Media",a:"Maiti, U. N. et al.",j:"ACS Appl. Nano Mater. 4 (2021)",w:"比較 MoS₂ 與摻雜後材料，練習區分 HER 活性、ECSA 與雙功能表現。"}
+ ,ug_ecsa1:{f:["ec"],t:"6R-TaS2 Anchored on Mo Foil as a Robust Electrocatalyst for Hydrogen Evolution",a:"Gao, X. et al.",j:"ACS Appl. Mater. Interfaces (2026)",w:"直接比較幾何電流、質量活性與 ECSA 正規化；適合檢查排名是否因正規化而改變。"}
+ ,ug_ecsa2:{f:["ec"],t:"Enhancing the Performance of Nickel Electrocatalysts for the Oxygen Evolution Reaction Using Arrays of Self-Cleaning Linear Ridges",a:"Gates, B. D. et al.",j:"ACS Appl. Energy Mater. 7, 3187 (2024)",w:"以氣泡遮蔽與 ECSA 為例，理解表觀幾何活性不等於材料本徵活性。"}
+ ,ug_ecsa3:{f:["ec"],t:"Doped Nickel-Based Nanocatalysts for Electrochemical Water Splitting: A Review",a:"Kumar, S. et al.",j:"ACS Appl. Nano Mater. (2025)",w:"整理 Cdl、ECSA、BET 與幾何面積的用途與限制，作為每次比較前的檢核表。"}
+ ,ug_ecsa4:{f:["ec"],t:"Assessing the Transformations of Supported Nanocatalysts Used in the Oxygen Evolution Reaction: A Case Study Using NiFe2O4 Nanoparticles Supported on Textured Ni Electrodes",a:"Taylor, A. K. et al.",j:"ACS Appl. Energy Mater. 5, 12696 (2022)",w:"結合 ECSA、老化與顯微結構，避免將反應中的面積變化錯當成催化本徵提升。"}
+ ,ug_stab1:{f:["ec"],t:"Strain-Induced Microstructure Damage in SrCoO3−δ Thin Films during the Oxygen Evolution Reaction",a:"Zhang, H. et al.",j:"ACS Appl. Energy Mater. 4, 12696 (2021)",w:"把長時 OER 劣化連到薄膜龜裂與相變，練習區分活性降低的材料原因。"}
+ ,ug_stab2:{f:["ec"],t:"Operando Electro-Oxidation Reconstitution of a Newly Designed 2D Co(II)-MOF on Nickel Foam to Cobalt Oxyhydroxide Nanosheets towards Energy Sustainability",a:"Diyali, M. et al.",j:"ACS Appl. Mater. Interfaces (2025)",w:"用工作條件下的重構案例，判斷活性提升與材料初始結構之間不能直接畫等號。"}
+ ,ug_stab3:{f:["ec"],t:"Cerium Surface-Engineered Iridium Oxides for Enhanced Oxygen Evolution Reaction Activity and Stability",a:"Sun, W. et al.",j:"ACS Appl. Energy Mater. 3, 4432 (2020)",w:"以表面工程同時處理活性與穩定性，練習用前後對照而非單一長時曲線下結論。"}
+ ,ug_stab4:{f:["ec"],t:"Photocorrosion of ZnO Single Crystals during Electrochemical Water Splitting",a:"Dworschak, F. et al.",j:"ACS Appl. Mater. Interfaces 12 (2020)",w:"以明確的腐蝕案例練習設定空白、時間序列與材料溶出／失效的判讀。"}
+ ,ug_base1:{f:["ec"],t:"Designing Self-Supported Electrocatalysts for Electrochemical Water Splitting: Surface/Interface Engineering toward Enhanced Electrocatalytic Performance",a:"Wang, Y. et al.",j:"ACS Appl. Mater. Interfaces 13 (2021)",w:"自支撐電極的製備、載量、接觸電阻與對照組設計，作為量測基準的整體導覽。"}
+ ,ug_base2:{f:["ec"],t:"Nanomaterials-Based Water Splitting: How Far Are We from a Sustainable Solution?",a:"Herbaut, R. et al.",j:"ACS Appl. Nano Mater. 4 (2021)",w:"從效率、材料用量與可擴展性檢視水分解報告，避免只比較單一過電位。"}
+ ,ug_base3:{f:["ec"],t:"Continuous and Scalable Laser Synthesis of Atom Clusters with Tunable Surface Oxidation for Electrocatalytic Water Splitting",a:"Tack, P. et al.",j:"ACS Appl. Energy Mater. 7 (2024)",w:"用連續製程案例檢查合成可重現性、電極製備與水分解評估的可放大性。"}
+ ,ug_base4:{f:["ec"],t:"Platinum-Free Electrocatalysts Based on Electrodeposited Co–Mn–Ni Alloys for Efficient Electrocatalytic Alkaline Water Splitting",a:"Chandran M, R. et al.",j:"ACS Appl. Energy Mater. (2025)",w:"以電沉積非貴金屬合金建立從製備、雙電極 cell 到長時量測的入門檢查流程。"}
+};
+// DOI registry: every journal article in the assigned-reading plan links to the
+// publisher's canonical DOI resolver. Books deliberately do not receive a fake DOI.
+const DOI={
+ rossmeisl07:"10.1016/j.jelechem.2006.11.008",gong:"10.1021/ja4044503",holder19:"10.1021/acsnano.9b05157",mccrory:"10.1021/ja407115p",
+ elgrishi:"10.1021/acs.jchemed.7b00361",trot:"10.1021/ja502379c",biesinger:"10.1016/j.apsusc.2010.10.051",klaus:"10.1021/acs.jpcc.5b00105",
+ norskov:"10.1149/1.1856988",jara:"10.1126/science.1141482",mourd:"10.1039/C8NR02278J",voiry:"10.1021/acsnano.8b04551",
+ shinagawa:"10.1038/srep13801",subbaraman:"10.1038/nmat3313",wei19b:"10.1039/C8CS00848E",anan:"10.1021/acsenergylett.9b00686",
+ seh:"10.1126/science.aad4998",dionigi:"10.1002/aenm.201600621",cher:"10.1016/j.cattod.2015.08.014",spori:"10.1002/anie.201608601",
+ jiao:"10.1039/C4CS00470A",lu15:"10.1038/ncomms7616",greczynski:"10.1016/j.pmatsci.2019.100591",mccrory15:"10.1021/ja510442p",
+ ma19:"10.1038/s41467-019-13147-9",wang26fb:"10.1038/s41467-026-70872-8",sun92:"10.1016/0013-4686(92)85163-U",li13:"10.1021/nl400481p",
+ choi17:"10.1016/j.rser.2016.09.121",petch16:"10.1149/2.0401606jes",houser16:"10.1016/j.jpowsour.2015.10.097",kwabi:"10.1021/acs.chemrev.9b00599",
+ man:"10.1002/cctc.201100145",nor04:"10.1021/jp047349j",sunt:"10.1126/science.1212858",fei:"10.1038/s41929-017-0008-y",
+ major20:"10.1116/6.0000357",kaiser:"10.1021/acs.chemrev.0c00529",irx26:"10.1021/acscatal.6c00906",kim20:"10.1038/s41467-020-18686-0",
+ weber:"10.1007/s10800-011-0348-2",solo:"10.1021/cr500720t",skk:"10.1149/1.3599565",gattrell04:"10.1149/1.1643669",
+ aaron:"10.1016/j.jpowsour.2012.02.056",darling:"10.1039/C4EE02158B",husk:"10.1038/nature12909",lin:"10.1126/science.aab3033",
+ newville:"10.2138/rmg.2014.78.2",rehr00:"10.1103/RevModPhys.72.621",timo21:"10.1021/acs.chemrev.0c00396",lien20xas:"10.1038/s41467-020-17975-y",lin20xas:"10.1038/s41467-020-17231-3",
+ ravel:"10.1107/S0909049505012719",li25xas:"10.1038/s41467-025-57177-y",baur:"10.1063/1.1415402"
+ ,ug_nife1:"10.1021/acsami.0c08271",ug_nife2:"10.1021/acsami.8b16425",ug_nife3:"10.1021/acsanm.9b02457",ug_nife4:"10.1021/acsaem.5c00231"
+ ,ug_fe1:"10.1021/acsami.7b16430",ug_fe2:"10.1021/acsanm.0c02391",ug_fe3:"10.1021/acsaem.9b01938",ug_fe4:"10.1021/acsami.4c15055"
+ ,ug_her1:"10.1021/acsami.6b02331",ug_her2:"10.1021/acsaem.9b01043",ug_her3:"10.1021/acsanm.3c01863",ug_her4:"10.1021/acsanm.1c00791"
+ ,ug_ecsa1:"10.1021/acsami.5c22479",ug_ecsa2:"10.1021/acsaem.3c03187",ug_ecsa3:"10.1021/acsanm.5c03051",ug_ecsa4:"10.1021/acsaem.2c01548"
+ ,ug_stab1:"10.1021/acsaem.1c02419",ug_stab2:"10.1021/acsami.4c20152",ug_stab3:"10.1021/acsaem.0c00139",ug_stab4:"10.1021/acsami.0c15508"
+ ,ug_base1:"10.1021/acsami.1c17448",ug_base2:"10.1021/acsanm.1c00246",ug_base3:"10.1021/acsaem.4c00342",ug_base4:"10.1021/acsaem.5c01775"
+};
+const cite=id=>{const a=D[id].a.split(/[,;]/)[0];const y=D[id].j.match(/(\d{4})\)?$/)[1];return `${a} ${y}`};
+
+const CATS=["電化學理論","催化劑設計","儀器分析","臨場反應器設計","量測"];
+const G={
+ ug:{
+  intro:"專題生 6 人都以水分解中的單原子催化劑為共同領域，每人從一個可操作的子題目切入。四個月的 24 篇指定閱讀全部選自近十年的 ACS Applied Materials & Interfaces、ACS Applied Nano Materials 或 ACS Applied Energy Materials；每月每人讀 1 篇，六人合計 6 篇，彼此不重複。",
+  per:1,
+  mc:[0,1,2,4],
+  stages:["從單原子活性位、配位環境、電位與過電位開始，建立與水分解相關的理論基礎。",
+   "讀單原子催化劑的合成與載體／配位設計，完成第一組可比較的樣品。",
+   "用 XRD、XPS、TEM、ICP 等離線表徵確認材料；單原子主張必須搭配多項證據。",
+   "以活性、ECSA、穩定性與報告規範完成資料檢核，準備期末專題報告。"],
+  note:"<b>每次報告</b>：每人報告當月那一篇，15 分鐘。<b>一頁筆記</b>：這篇在量什麼、用什麼條件量、最關鍵的一張圖是什麼、我照著做需要準備什麼。",
+  topics:[
+   {who:"陳泓嘉（專題生）",t:"單原子催化劑合成與 OER 基準量測",q:"單原子位點的合成與配位環境，能否在相同量測條件下帶來可重現的 OER 活性？",m:"單原子合成、XRD／XPS、LSV、Tafel、10 mA cm⁻² 過電位",s:[["ug_nife1"],["ug_nife2"],["ug_nife3"],["ug_nife4"]]},
+   {who:"顏晨宇（專題生）",t:"Fe 單原子位點與 Ni 基 OER 催化劑",q:"KOH 純化前後，Fe 單原子或 Ni–Fe 位點的活性差異來自配位、電解液，還是材料重構？",m:"KOH 純化、單原子載體設計、LSV、CV 氧化還原峰追蹤",s:[["ug_fe1"],["ug_fe2"],["ug_fe3"],["ug_fe4"]]},
+   {who:"洪志嘉（專題生）",t:"單原子位點 HER 催化劑",q:"單原子位點與載體界面如何影響 HER 的中間體吸附與表觀活性？",m:"單原子合成、HER 極化曲線、Tafel 斜率、Cdl",s:[["ug_her1"],["ug_her2"],["ug_her3"],["ug_her4"]]},
+   {who:"蔡宜蓁（專題生）",t:"單原子催化劑的 ECSA 與正規化",q:"用幾何面積、ECSA、質量正規化比較單原子催化劑時，排名會不會翻轉？",m:"Cdl 量測、位點密度估算、不同正規化方式比較",s:[["ug_ecsa1"],["ug_ecsa2"],["ug_ecsa3"],["ug_ecsa4"]]},
+   {who:"包師為（專題生）",t:"單原子催化劑穩定性測試",q:"定電流 24 小時後，單原子位點是否遷移、團聚、溶出，活性又掉了多少？",m:"計時電位法、加速老化、金屬溶出與結構前後對照",s:[["ug_stab1"],["ug_stab2"],["ug_stab3"],["ug_stab4"]]},
+   {who:"黃震霖（專題生）",t:"單原子催化劑水分解入門與量測基準",q:"如何為單原子催化劑建立可重現的電極製備、iR 校正與全電解量測基準？",m:"單原子電極製備、雙電極 cell、長時間測試與量測紀錄",s:[["ug_base1"],["ug_base2"],["ug_base3"],["ug_base4"]]}],
+  extra:{bard:0,wei19:4,yeo12:3,garsany10:3,angulo20:3,carmo13:3,klemm11:3,li20aem:3,zou:1,louie:1,burke:1,kibsgaard:1,popczun:1,luo:3,jung16:4,friebel:4,fabbri:4}
+ },
+ ms:{
+  intro:"碩班 4 人皆以單原子催化劑為研究核心：呂安璿與林庭暉分別從 RFB 電極切入，李承叡與林宥陞分別從海水分解切入。四人都必須在自己的主線中加入臨場量測與反應器設計，讓活性位、傳輸條件與實際裝置表現能夠被同時驗證。",
+  per:2,
+  mc:[0,1,2,[3,4]],
+  foundation:[
+   ["電化學量測與比較基礎",["rossmeisl07","elgrishi","shinagawa","mccrory15"]],
+   ["NiFe／Fe 效應與 OER",["gong","trot","klaus","subbaraman"]],
+   ["HER／OER 活性位與報告",["norskov","jara","voiry","seh"]],
+   ["材料表徵、ECSA 與正規化",["holder19","biesinger","mourd","wei19b"]],
+   ["穩定性與失效判讀",["anan","dionigi","cher","spori"]],
+   ["整體水分解與量測規範",["jiao","lu15","greczynski","mccrory"]]
+  ],
+  stages:["單原子活性位的反應機制、熱力學與配位設計；同時建立臨場 XAS 的理論基礎。",
+   "單原子位點、載體與電極架構設計；選定能在臨場條件下驗證的模型系統。",
+   "以離線表徵、產物分析與空白對照建立參照，確認後續臨場訊號可被正確判讀。",
+   "每人完成一個反應器／cell 設計與一個臨場量測案例；月底以單原子活性位為核心寫兩頁提案。"],
+  note:"<b>每月文獻會</b>：每人報告當月兩篇，各 15 分鐘。<b>一頁筆記</b>：這篇要回答什麼問題、用了什麼方法、最關鍵的一張圖、一件我還不懂的事、可以接到實驗室的哪一層。",
+  topics:[
+   {k:"fb",who:"呂安璿（碩士生）",c:"var(--sac)",t:"單原子催化劑 RFB 電極：臨場量測與反應器設計",q:"單原子位點如何改變 RFB 電極反應與衰退？如何以流動式臨場 cell 分開觀察價態失衡、跨膜與電極劣化？",m:"單原子電極設計、自組流動電池、長循環測試、臨場 XAS 與反應器設計",s:[["ma19","wang26fb"],["sun92","li13"],["choi17","petch16"],["houser16","kwabi"]]},
+   {k:"ec",who:"李承叡（碩士生）",c:"var(--sac)",t:"單原子催化劑海水分解：臨場量測與反應器設計",q:"在含 Cl⁻ 的鹼性電解液中，單原子位點如何維持 OER 選擇性並避免氯氧化與劣化？如何以臨場 cell 驗證？",m:"單原子催化劑設計、模擬海水反應器、選擇性／穩定性測試、臨場 XANES／EXAFS",s:[["man","nor04"],["sunt","fei"],["major20","kaiser"],["irx26","kim20"]]},
+   {k:"fb2",who:"林庭暉（碩士生）",c:"var(--sac)",t:"單原子催化劑 RFB 電極：流動反應器與臨場量測",q:"單原子位點、零間隙 cell、電解液與流道設計如何共同改變極化、效率與長循環表現？",m:"單原子電極架構、流動 cell 設計、流量／壓降紀錄、臨場量測與效率判讀",s:[["weber","solo"],["skk","gattrell04"],["aaron","darling"],["husk","lin"]]},
+   {k:"op",who:"林宥陞（碩士生）",c:"var(--sac)",t:"單原子催化劑海水分解：臨場量測與反應器設計",q:"如何設計可控 Cl⁻、氣泡與流動條件的海水分解 cell，並以臨場 XAS 分辨單原子位點的配位重構與劣化？",m:"單原子催化劑、海水分解 cell 設計、時間同步、XANES／EXAFS 與光束線實驗",s:[["newville","rehr00"],["lien20xas","lin20xas"],["ravel","timo21"],["li25xas","baur"]]}],
+  extra:{bard:0,solo:0,aaron:3,skk:4,berg19:3,berg15:4,burdyny19:3,chen20:4,ferri:3,timo19:4,li22:1,nitopi:1,husk:1,lin:1,jones:1,grimaud:1,darling:4,fabbri:4,timo17:4},
+  tracks:[["all","全部主線"],["fb","液流電池",["fb"]],["ec","電解水",["ec","sac"]],["ur","尿素合成",["ur"]],["op","臨場光譜",["xas","rx"]]]
+ }
+};
+
+const B=[
+ {f:["fb","rx","xas"],t:"液流電池衰退時，電解液價態在哪裡失衡？",p:"在流動的電解液裡直接量 V K-edge，把 SOC 與價態失衡從事後滴定變成即時訊號。",r:"Skyllas-Kazacos 2011、Kwabi 2020、Timoshenko 2021"},
+ {f:["ec","rx","xas"],t:"電解水的活性相到底是誰？",p:"離線看到的結構不是工作中的結構。比較三篇如何用臨場 XAS 抓到重構與可逆變化。",r:"Friebel 2015、Bergmann 2015、Fabbri 2017"},
+ {f:["sac","ec","xas"],t:"單原子在高電位下會不會移動或團聚？",p:"單原子的 EXAFS 最乾淨，最適合追蹤配位在反應中的漂移。",r:"Fei 2018、Kaiser 2020、Timoshenko 2021"},
+ {f:["fb","ec","sac"],t:"液流電池電極也是一個催化問題",p:"電極反應動力學與析氫副反應決定效率與衰退，電催化的設計思路可以搬過來。",r:"Li 2013、Seh 2017、Wang 2018"},
+ {f:["ur","ec","sac","xas"],t:"尿素合成的 C–N 鍵在哪個活性位上形成？",p:"兩種反應物的還原必須在同一處相遇。比較雙金屬與單原子觸媒，用臨場 XAS 追蹤活性位價態，找出選擇性的來源；電解水的催化劑設計經驗可以直接借用。",r:"Lv 2021、Wang 2020、Fei 2018"},
+ {f:["rx","xas"],t:"把時間解析從分鐘推到秒",p:"週期性調製電位或流量，再用相敏偵測只留下跟著調製變化的訊號，看到短暫的中間物種。",r:"Baurecht 2001、Ferri 2010"},
+ {f:["fb","ec","sac","rx","xas"],t:"從看到衰退到預測衰退",p:"累積臨場光譜，用機器學習把光譜變化對應到後續的性能衰退。",r:"Timoshenko 2017、Timoshenko 2019、Kwabi 2020"}
+];
+
+// 倒金字塔
+const topicPage=`CORE-Lab-Research-Topic.html`;
+function openTopic(k){window.location.href=`${topicPage}?topic=${encodeURIComponent(k)}`}
+document.querySelectorAll('.tier').forEach(b=>{b.addEventListener('click',()=>openTopic(b.dataset.f));b.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openTopic(b.dataset.f)}})});
+
+// 分組面板
+let g="ug",cSel=-1,tSel="all",mSel=0;const read={ug:new Set(),ms:new Set()};
+const panel=document.getElementById('panel');
+function setGroup(x){g=x;cSel=-1;tSel="all";mSel=0;document.querySelectorAll('.tabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.g===g));drawPanel()}
+document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>setGroup(b.dataset.g));
+document.querySelectorAll('.toc a[data-g]').forEach(a=>a.addEventListener('click',()=>setGroup(a.dataset.g)));
+panel.addEventListener('change',e=>{const i=e.target.dataset.i;if(!i)return;e.target.checked?read[g].add(i):read[g].delete(i);drawSched();drawList()});
+
+const MONTHS=["10 月","11 月","12 月","1 月"];
+const MS_WEEKLY=[
+ ["第 1 次","系統邊界、反應路徑與競爭反應","同一個效能數字代表什麼？如何把主反應與 HER／副產物說清楚？"],
+ ["第 2 次","基準比較與證據鏈設計","電位、面積、電流密度與循環條件如何可比？一項機制主張至少需要哪兩種獨立證據？"],
+ ["第 3 次","催化劑設計、活性位與重構","組成、配位與界面改變了哪一步？如何避免把反應前後差異誤判為活性相？"],
+ ["第 4 次","傳輸、電極架構與失效模式","孔洞、氣泡、流場或膜如何改變表觀效能？衰退是溶出、crossover、重構，還是量測假象？"],
+ ["第 5 次","產物定量與離線表徵邊界","校正、空白、回收率與質量平衡是否完整？XRD、XPS、TEM 能回答什麼？"],
+ ["第 6 次","臨場量測與資料不確定性","哪些問題必須在工作條件下觀察？訊雜比、擬合參數與誤差如何影響結論？"],
+ ["第 7 次","反應器、時間同步與跨尺度驗證","電化學、流量、光譜與取樣如何對齊？半電池結論能否轉移到流動／裝置條件？"],
+ ["第 8 次","可否推論機制？兩頁研究提案","把觀察、相關性與因果性拆開，整合成可執行的下一步實驗。"]
+];
+const mcat=(d,m)=>[d.mc[m]].flat();
+function catOf(d,id){for(const t of d.topics){for(let m=0;m<t.s.length;m++){const j=t.s[m].indexOf(id);if(j>=0){const c=d.mc[m];return Array.isArray(c)?c[j]:c}}}return d.extra[id]}
+function drawPanel(){
+  const d=G[g];
+  panel.innerHTML=`<p class="prose">${d.intro}</p>
+  <h3 class="blk">題目</h3><div class="topics">${d.topics.map(t=>`<article class="topic" style="--c:${t.c||'var(--ec)'}"><p class="member-name">${t.who}</p><h4>${t.t}</h4>
+    <p><span class="lab">要回答：</span>${t.q}</p><p><span class="lab">主要工作：</span>${t.m}</p><p class="rd">本學期 ${t.s.flat().length} 篇，從 ${cite(t.s[0][0])} 開始</p></article>`).join('')}</div>
+  <h3 class="blk">2026 年 10 月至 2027 年 1 月</h3><ol class="stages s5">${d.stages.map((s,i)=>`<li data-m="${MONTHS[i]}"><span class="wk">${mcat(d,i).map(c=>CATS[c]).join('＋')}</span><p>${s}</p></li>`).join('')}</ol>
+  ${g==='ms'?`<h3 class="blk">碩班共同基礎閱讀</h3><p class="sub prose">以下為原專題生基礎內容，現改列為四位碩班生共同必讀，作為各自主線的量測、判讀與研究設計底座；不計入每人每月兩篇的主線排程，因此不影響既定的 56 篇不重複指定閱讀。</p><div class="foundation-grid">${d.foundation.map(([title,ids])=>`<section class="foundation"><h4>${title}</h4>${ids.map((id,i)=>paperRow(id,`f${id}${i}`,'共同基礎')).join('')}</section>`).join('')}</div>`:''}
+  <div class="filters" id="mf" role="group" aria-label="選擇月份" style="margin-top:28px"></div>
+  <p class="progress" id="mprog"></p><div id="sched"></div>
+  <h3 class="blk">全員文獻查核表</h3><p class="sub prose">一次攤開每位成員 10 月至 1 月的所有指定閱讀，供確認主題、重複與難度；每篇仍可標記已讀。</p><div id="review" class="review-grid"></div>
+  <h3 class="blk">完整文獻庫</h3><p class="sub prose" style="margin-bottom:14px">排程內的文獻加上可換讀的補充文獻，依五個主題分類。標有 <b>Open Access</b> 的文獻可由頁面直接開啟全文；其餘經典文獻保留為延伸閱讀。勾選「已讀」只在這次開啟頁面時有效，與上方排程同步。</p>
+  ${d.tracks?'<div class="filters" id="tf" role="group" aria-label="依主線篩選"></div>':''}
+  <div class="filters" id="cf" role="group" aria-label="依主題篩選"></div><p class="progress" id="prog"></p><div id="list"></div>`;
+  drawSched();drawReview(d);drawList();
+}
+function paperRow(id,k,tag){const p=D[id],doi=DOI[id];return `<div class="paper${read[g].has(id)?' done':''}">
+    <input type="checkbox" id="${k}" data-i="${id}" ${read[g].has(id)?'checked':''} aria-label="標記已讀：${p.t}">
+    <div><label for="${k}" class="t"><span class="dots">${p.f.map(x=>`<span style="background:${COL[x]}" title="${NAME[x]}"></span>`).join('')}</span>${p.t}</label>
+    <div class="meta">${p.a}，${p.j}${p.u?'<span class="tag oa">Open Access</span>':''}${tag?`<span class="tag">${tag}</span>`:''}</div><p class="why">${p.w}</p>
+    <div class="paper-links">${p.u?`<a class="s direct" href="${p.u}" target="_blank" rel="noopener">出版社全文 ↗</a>`:''}${doi?`<a class="s" href="https://doi.org/${doi}" target="_blank" rel="noopener">DOI: ${doi} ↗</a>`:''}</div></div></div>`}
+function drawSched(){
+  const d=G[g],mf=panel.querySelector('#mf');
+  mf.innerHTML=MONTHS.map((c,m)=>`<button data-v="${m}" aria-pressed="${m===mSel}">${c}：${mcat(d,m).map(x=>CATS[x]).join('＋')}</button>`).join('');
+  mf.onclick=e=>{const b=e.target.closest('button');if(!b)return;mSel=+b.dataset.v;drawSched()};
+  const ids=d.topics.flatMap(t=>t.s[mSel]),done=ids.filter(i=>read[g].has(i)).length;
+  panel.querySelector('#mprog').textContent=`${MONTHS[mSel]}主題「${mcat(d,mSel).map(x=>CATS[x]).join('＋')}」，共 ${ids.length} 篇（${d.topics.length} 人，每人 ${d.per} 篇），已讀 ${done} 篇。10 月到 1 月合計 ${ids.length*4} 篇。`;
+  panel.querySelector('#sched').innerHTML=d.topics.map(t=>`<div class="srow" style="--c:${t.c||'var(--ec)'}"><div class="who"><b>${t.who}</b><span>${t.t}</span></div>
+    <div>${t.s[mSel].map(id=>paperRow(id,'s'+g+id)).join('')}</div></div>`).join('');
+}
+function drawReview(d){
+  const host=panel.querySelector('#review');
+  host.innerHTML=d.topics.map((t,person)=>`<article class="review-card" style="--c:${t.c||'var(--ec)'}"><header><span>${t.who}</span><h4>${t.t}</h4></header><div class="review-months">${t.s.map((papers,m)=>`<section><b>${MONTHS[m]} · ${mcat(d,m).map(x=>CATS[x]).join('＋')}</b>${papers.map((id,i)=>paperRow(id,`r${g}${person}${m}${i}`)).join('')}</section>`).join('')}</div></article>`).join('');
+}
+function chips(el,items,cur,set){
+  el.innerHTML=items.map(([v,l])=>`<button data-v="${v}" aria-pressed="${cur==v}">${l}</button>`).join('');
+  el.onclick=e=>{const b=e.target.closest('button');if(!b)return;set(b.dataset.v);drawList()};
+}
+function drawList(){
+  const d=G[g];
+  if(d.tracks)chips(panel.querySelector('#tf'),d.tracks,tSel,v=>tSel=v);
+  chips(panel.querySelector('#cf'),[[-1,"所有主題"],...CATS.map((c,i)=>[i,c])],cSel,v=>cSel=+v);
+  const all=[...new Set([...d.topics.flatMap(t=>t.s.flat()),...Object.keys(d.extra)])];
+  const tr=d.tracks&&tSel!=="all"?d.tracks.find(t=>t[0]===tSel):null;
+  const own=tr?d.topics.find(t=>t.k===tSel):null;
+  const ok=id=>!tr||(own.s.flat().includes(id))||(id in d.extra&&D[id].f.some(x=>tr[2].includes(x)));
+  const rows=CATS.map((c,i)=>[i,all.filter(id=>catOf(d,id)===i&&ok(id))]).filter(r=>(cSel<0||r[0]===cSel)&&r[1].length);
+  const n=rows.reduce((s,r)=>s+r[1].length,0),done=rows.reduce((s,r)=>s+r[1].filter(i=>read[g].has(i)).length,0);
+  panel.querySelector('#prog').textContent=`目前顯示 ${n} 篇，已讀 ${done} 篇`;
+  const list=panel.querySelector('#list');
+  if(!n){list.innerHTML='<p class="empty">這個組合沒有文獻，換一個主題或主線試試。</p>';return}
+  list.innerHTML=rows.map(([i,ids])=>`<div class="level"><h3>${CATS[i]}</h3>${ids.map(id=>paperRow(id,g+id,id in d.extra?'補充':'')).join('')}</div>`).join('');
+}
+drawPanel();
+
+bridges.innerHTML=B.map(b=>`<article class="bridge"><div class="bar">${b.f.map(k=>`<span style="background:${COL[k]}"></span>`).join('')}</div>
+<h3>${b.t}</h3><p>${b.p}</p><p class="rd">搭配閱讀：${b.r}</p></article>`).join('');
+</script>
+</body>
+</html>
