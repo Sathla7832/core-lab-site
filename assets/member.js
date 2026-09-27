@@ -325,6 +325,8 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
             host.replaceChildren(createText("p", "No presentations are scheduled yet.", "muted"));
           } else {
             renderScheduleTable(host, rows);
+            const intro = String(data.intro || "").trim();
+            if (intro) host.prepend(createText("p", intro, "member-schedule-intro"));
           }
           host.hidden = false;
           if (state) state.hidden = true;
