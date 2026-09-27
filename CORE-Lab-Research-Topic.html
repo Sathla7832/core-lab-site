@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CORE Lab｜研究主題</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@600;700;900&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#102a3e;--deep:#071b2b;--mute:#586f7f;--line:#d4e1e7;--paper:#edf3f5;--c:#176b78}*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 80% 5%,#d5f0ed,transparent 30%),var(--paper);color:var(--ink);font-family:"Noto Sans TC",sans-serif;line-height:1.75}.hero{padding:42px 24px 66px;background:linear-gradient(125deg,#071b2b,#0d3954);color:#fff}.wrap{max-width:1000px;margin:auto}.crumb{color:#a9ced8;font-size:14px;text-decoration:none}.crumb:hover{text-decoration:underline}.eyebrow{margin:30px 0 6px;color:#75e1d4;font-weight:700;font-size:12px;letter-spacing:.14em}.hero h1{font:900 clamp(34px,6vw,62px)/1.25 "Noto Serif TC",serif;margin:0}.hero p{max-width:700px;margin:16px 0 0;color:#d1e0e6;font-size:18px}.grid{display:grid;grid-template-columns:1.25fr .75fr;gap:22px;margin:-32px auto 60px;padding:0 24px}.card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:28px;box-shadow:0 14px 32px rgba(15,42,62,.08)}.card h2{font:700 24px/1.35 "Noto Serif TC",serif;margin:0 0 10px;color:var(--c)}.card p{margin:0}.card+.card{margin-top:18px}.label{display:block;color:var(--c);font-weight:800;font-size:13px;margin-bottom:7px}.pill{display:inline-block;padding:4px 10px;margin:5px 5px 0 0;border-radius:999px;background:#eef5f7;color:#345668;font-size:13px}.people{display:grid;gap:10px}.person{padding:13px;border-left:4px solid var(--c);background:#f2f7f8;border-radius:0 9px 9px 0}.person b{display:block}.person span{font-size:14px;color:var(--mute)}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}.btn{display:inline-block;border-radius:10px;padding:10px 15px;font-weight:700;text-decoration:none}.btn.primary{background:var(--c);color:#fff}.btn.light{border:1px solid var(--line);color:var(--ink);background:#fff}@media(max-width:720px){.grid{grid-template-columns:1fr;padding:0 16px}.hero{padding:30px 18px 55px}.card{padding:22px}}
+</style>
+</head>
+<body>
+<header class="hero"><div class="wrap"><a class="crumb" href="research-map.html">← 返回研究地圖總覽</a><p class="eyebrow">CORE LAB · RESEARCH FOCUS</p><h1 id="title">研究主題</h1><p id="one"></p></div></header>
+<main class="grid"><section><article class="card"><h2>核心問題</h2><p id="question"></p></article><article class="card"><h2>本主題需要建立的能力</h2><p id="skills"></p></article><article class="card"><h2>與實驗室地圖的關係</h2><p id="link"></p></article></section><aside><article class="card"><h2>相關成員</h2><div class="people" id="people"></div></article><article class="card"><h2>關鍵字</h2><div id="keywords"></div><div class="actions"><a class="btn primary" href="research-map.html#people">查看文獻規劃</a><a class="btn light" href="research-map.html">返回總覽</a></div></article></aside></main>
+<script>
+const topics={
+ fb:{n:'液流電池',one:'把能量存在流動電解液中，功率與容量可分開擴充，是長時儲能的重要系統。',q:'容量衰退來自跨膜、電解液價態失衡、析氫副反應、分子分解還是電極鈍化？',s:'電池結構、SOC、庫倫／電壓／能量效率、極化曲線與衰退率的計算。',l:'RFB 是跨時間尺度問題；電解液與電極的 operando 診斷能把單次反應接到長循環衰退。',k:['VRFB','AORFB','SOC','crossover','capacity fade'],p:[['呂安璿','RFB：容量衰退與電解液平衡'],['林庭暉','RFB：電極、反應器與系統設計']]},
+ ec:{n:'電解水催化劑',one:'以電力將水轉為氫與氧；OER 的四電子反應與高電位穩定性是主要瓶頸。',q:'活性位、表面重構、Fe 雜質、晶格氧與溶解如何共同決定活性和壽命？',s:'Tafel、iR 補償、ECSA、參考電極校正與穩定性測試規範。',l:'專題生的共同研究底盤；必須把離線表徵與工作條件下的訊號分開解讀。',k:['OER','HER','NiFeOOH','benchmarking','stability'],p:[['專題生組','水分解材料、量測基準與穩定性']]},
+ ur:{n:'電化學尿素合成',one:'探索在溫和條件下以 CO₂ 與含氮物種形成 C–N 鍵；產物與來源的嚴格驗證是研究前提。',q:'如何排除 NH₃、CO 與 HER，並用空白、回收率、同位素與交叉分析驗證尿素及其來源？',s:'副產物分析、專屬尿素校正、¹H NMR／LC-MS、同位素標記與法拉第效率。',l:'此主題保留在實驗室研究地圖與資料庫中，供後續成員在完成定量基礎後接續。',k:['C–N coupling','nitrate reduction','CO2RR','isotope labeling'],p:[['研究儲備主線','目前未配置專責碩士生；文獻仍保留供後續立題']]},
+ sac:{n:'單原子催化劑設計',one:'將金屬分散為孤立原子以控制局部配位與活性位，但需要多重證據確認結構。',q:'單原子如何穩定？反應中是否團聚或改變配位？單一表徵是否足以支持活性位主張？',s:'HAADF-STEM、XPS、XANES 與 EXAFS 的互補判讀及對照樣品設計。',l:'作為 RFB、海水分解與尿素等方向可共用的催化劑設計工具。',k:['SAC','M–N–C','atom trapping','EXAFS'],p:[['李承叡','海水分解的材料／活性位選項'],['林宥陞','operando 配位與重構診斷']]},
+ rx:{n:'臨場反應器設計',one:'讓樣品在工作條件下量測；電位、流動、氣泡、液層、窗口與光路必須一起設計。',q:'反應器內的電流分布、死體積、氣泡、穿透深度與輻射損傷，是否改變了原本的電化學行為？',s:'cell 設計、密封與材料相容性、吸收長度估算及電化學／光譜時間同步。',l:'是從材料表現走向可辨識機制的觀測平台，也是兩位 RFB 與海水分解研究共同需要的能力。',k:['operando cell','flow cell','X-ray window','beam damage'],p:[['林庭暉','RFB 反應器與系統設計'],['林宥陞','海水分解 cell 與時間同步']]},
+ xas:{n:'XAS 臨場量測',one:'以元素選擇性追蹤價態與局部配位，適合非晶相、溶液物種與工作中的催化劑。',q:'XANES／EXAFS 的平均訊號如何連回活性位？時間解析、訊雜比與擬合不確定性如何處理？',s:'Athena、Artemis、LCF、差譜、QXAFS 與調製激發資料判讀。',l:'實驗室共通的證據工具；所有上層主題最後都要轉譯成可以量到、可被反駁的光譜問題。',k:['XANES','EXAFS','QXAFS','LCF','MES-PSD'],p:[['林宥陞','海水分解的 operando XAS'],['全體碩士生','共同週會的證據鏈與資料判讀']]}
+};
+const id=new URLSearchParams(location.search).get('topic')||'fb',t=topics[id]||topics.fb;document.title=`CORE Lab｜${t.n}`;document.documentElement.style.setProperty('--c',({fb:'#bd8615',ec:'#2a62b8',ur:'#a8326e',sac:'#2f8a5b',rx:'#7442a8',xas:'#0f4c5c'})[id]||'#176b78');document.querySelector('#title').textContent=t.n;document.querySelector('#one').textContent=t.one;document.querySelector('#question').textContent=t.q;document.querySelector('#skills').textContent=t.s;document.querySelector('#link').textContent=t.l;document.querySelector('#keywords').innerHTML=t.k.map(k=>`<span class="pill">${k}</span>`).join('');document.querySelector('#people').innerHTML=t.p.map(([n,r])=>`<div class="person"><b>${n}</b><span>${r}</span></div>`).join('');
+</script>
+</body>
+</html>
