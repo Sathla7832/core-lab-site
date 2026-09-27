@@ -421,7 +421,7 @@ const cite=id=>{const a=D[id].a.split(/[,;]/)[0];const y=D[id].j.match(/(\d{4})\
 const CATS=["電化學理論","催化劑設計","儀器分析","臨場反應器設計","量測"];
 const G={
  ug:{
-  intro:"專題生 6 人都以水分解中的單原子催化劑為共同領域，每人從一個可操作的子題目切入。四個月的 24 篇指定閱讀全部選自近十年的 ACS Applied Materials & Interfaces、ACS Applied Nano Materials 或 ACS Applied Energy Materials；每月每人讀 1 篇，六人合計 6 篇，彼此不重複。",
+  intro:"專題生 6 人以 Cu 與 3d 過渡金屬單原子催化劑為共同主線，採用可比較的 M–Nₓ／M–Oₓ 錨定架構，分別處理 Cu、Fe、Co、Ni、Mn、Zn 六種金屬中心。Cu 與 Zn 定位為配位與結構對照；Fe、Co、Ni、Mn 分別用於 OER、HER 與耐久性比較。四個月的 24 篇指定閱讀全部選自近十年的 ACS Applied Materials & Interfaces、ACS Applied Nano Materials 或 ACS Applied Energy Materials；每月每人讀 1 篇，六人合計 6 篇，彼此不重複。",
   per:1,
   mc:[0,1,2,4],
   stages:["從單原子活性位、配位環境、電位與過電位開始，建立與水分解相關的理論基礎。",
@@ -430,12 +430,12 @@ const G={
    "以活性、ECSA、穩定性與報告規範完成資料檢核，準備期末專題報告。"],
   note:"<b>每次報告</b>：每人報告當月那一篇，15 分鐘。<b>一頁筆記</b>：這篇在量什麼、用什麼條件量、最關鍵的一張圖是什麼、我照著做需要準備什麼。",
   topics:[
-   {who:"陳泓嘉（專題生）",t:"單原子催化劑合成與 OER 基準量測",q:"單原子位點的合成與配位環境，能否在相同量測條件下帶來可重現的 OER 活性？",m:"單原子合成、XRD／XPS、LSV、Tafel、10 mA cm⁻² 過電位",s:[["ug_nife1"],["ug_nife2"],["ug_nife3"],["ug_nife4"]]},
-   {who:"顏晨宇（專題生）",t:"Fe 單原子位點與 Ni 基 OER 催化劑",q:"KOH 純化前後，Fe 單原子或 Ni–Fe 位點的活性差異來自配位、電解液，還是材料重構？",m:"KOH 純化、單原子載體設計、LSV、CV 氧化還原峰追蹤",s:[["ug_fe1"],["ug_fe2"],["ug_fe3"],["ug_fe4"]]},
-   {who:"洪志嘉（專題生）",t:"單原子位點 HER 催化劑",q:"單原子位點與載體界面如何影響 HER 的中間體吸附與表觀活性？",m:"單原子合成、HER 極化曲線、Tafel 斜率、Cdl",s:[["ug_her1"],["ug_her2"],["ug_her3"],["ug_her4"]]},
-   {who:"蔡宜蓁（專題生）",t:"單原子催化劑的 ECSA 與正規化",q:"用幾何面積、ECSA、質量正規化比較單原子催化劑時，排名會不會翻轉？",m:"Cdl 量測、位點密度估算、不同正規化方式比較",s:[["ug_ecsa1"],["ug_ecsa2"],["ug_ecsa3"],["ug_ecsa4"]]},
-   {who:"包師為（專題生）",t:"單原子催化劑穩定性測試",q:"定電流 24 小時後，單原子位點是否遷移、團聚、溶出，活性又掉了多少？",m:"計時電位法、加速老化、金屬溶出與結構前後對照",s:[["ug_stab1"],["ug_stab2"],["ug_stab3"],["ug_stab4"]]},
-   {who:"黃震霖（專題生）",t:"單原子催化劑水分解入門與量測基準",q:"如何為單原子催化劑建立可重現的電極製備、iR 校正與全電解量測基準？",m:"單原子電極製備、雙電極 cell、長時間測試與量測紀錄",s:[["ug_base1"],["ug_base2"],["ug_base3"],["ug_base4"]]}],
+   {who:"陳泓嘉（專題生）",t:"Cu₁ 單原子：配位設計與水分解基準",q:"Cu₁–Nₓ／Cu₁–Oₓ 位點能否維持原子分散，並在相同電極載量與量測條件下建立可靠的 HER／OER 基準？",m:"Cu₁ 合成、載體空白對照、XRD／XPS、LSV、Tafel、10 mA cm⁻² 過電位",s:[["ug_nife1"],["ug_nife2"],["ug_nife3"],["ug_nife4"]]},
+   {who:"顏晨宇（專題生）",t:"Fe₁ 單原子：Ni 基 OER 活性位",q:"Fe₁ 位點加入 Ni 基載體後，OER 活性差異來自金屬配位、KOH 雜質，還是反應中的表面重構？",m:"Fe₁ 載體設計、KOH 純化、LSV、CV 氧化還原峰與空白對照",s:[["ug_fe1"],["ug_fe2"],["ug_fe3"],["ug_fe4"]]},
+   {who:"洪志嘉（專題生）",t:"Co₁ 單原子：鹼性 HER 與水解離",q:"Co₁ 位點及其碳／氧化物載體界面，是否能改善鹼性 HER 的水解離與氫吸附步驟？",m:"Co₁ 合成、HER 極化曲線、Tafel 斜率、Cdl 與重複量測",s:[["ug_her1"],["ug_her2"],["ug_her3"],["ug_her4"]]},
+   {who:"蔡宜蓁（專題生）",t:"Ni₁ 單原子：位點密度與活性正規化",q:"Ni₁ 單原子催化劑以幾何面積、ECSA、質量與金屬載量正規化後，表觀活性排名是否一致？",m:"Ni₁ 電極製備、Cdl 量測、載量與位點密度估算、不同正規化方式比較",s:[["ug_ecsa1"],["ug_ecsa2"],["ug_ecsa3"],["ug_ecsa4"]]},
+   {who:"包師為（專題生）",t:"Mn₁ 單原子：OER 耐久性與失效",q:"在定電流與加速老化後，Mn₁ 位點是否發生遷移、團聚或溶出，並如何影響 OER 表現？",m:"Mn₁ 前後結構對照、計時電位法、加速老化、金屬溶出分析",s:[["ug_stab1"],["ug_stab2"],["ug_stab3"],["ug_stab4"]]},
+   {who:"黃震霖（專題生）",t:"Zn₁ 單原子：配位結構對照與量測基準",q:"作為較弱氧化還原活性的 Zn₁ 配位對照，如何建立可重現的電極製備、iR 校正與全電解量測流程？",m:"Zn₁／無金屬載體對照、雙電極 cell、長時間測試與量測紀錄",s:[["ug_base1"],["ug_base2"],["ug_base3"],["ug_base4"]]}],
   extra:{bard:0,wei19:4,yeo12:3,garsany10:3,angulo20:3,carmo13:3,klemm11:3,li20aem:3,zou:1,louie:1,burke:1,kibsgaard:1,popczun:1,luo:3,jung16:4,friebel:4,fabbri:4}
  },
  ms:{
