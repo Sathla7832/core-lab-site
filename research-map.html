@@ -148,6 +148,7 @@ header .lede{color:#c9d9e1;font-size:18px;max-width:48em}
 nav.toc{gap:8px;margin-top:26px}nav.toc a{border:1px solid rgba(204,232,237,.28);border-radius:999px;padding:5px 13px;color:#e4f2f5;background:rgba(255,255,255,.06)}nav.toc a:hover{border-color:var(--signal);color:#fff}
 section{padding:70px 0;border-top:1px solid rgba(110,139,157,.25)}h2{font-size:clamp(27px,3vw,36px);color:var(--deep)}.sub{max-width:48em}
 .reading-intro{max-width:none;width:100%;text-align:justify;text-justify:inter-character;line-height:1.9}
+.map-group-intro{max-width:none;width:100%;text-align:justify;text-justify:inter-character;line-height:1.9}
 .pyramid{padding:24px 18px 12px;border:1px solid #d5e0e6;border-radius:20px;background:linear-gradient(150deg,#fff,#f2f7f8);box-shadow:var(--shadow)}.tier polygon{stroke:#f8fbfc;filter:drop-shadow(0 5px 6px rgba(22,53,70,.11))}.tier:hover polygon{fill:color-mix(in srgb,var(--c) 34%,#fff)}.axis{padding:0 12px}
 .detail{margin-top:22px;border:1px solid #d9e4e9;border-left:7px solid var(--c,var(--ink));border-radius:0 16px 16px 0;box-shadow:var(--shadow);padding:28px 30px}.detail .one{font-size:18px}.kw i{border-radius:999px;background:#f0f5f7}
 .tabs{display:inline-flex;border:1px solid #d0dde5;border-radius:14px;background:#fff;padding:5px;box-shadow:0 8px 20px rgba(15,42,62,.07)}.tabs button{border:0!important;border-radius:10px;margin:0;padding:9px 16px;color:var(--mute)}.tabs button[aria-selected="true"]{background:var(--deep);color:#fff;box-shadow:0 5px 10px rgba(7,27,43,.2)}
@@ -502,7 +503,7 @@ const mcat=(d,m)=>[d.mc[m]].flat();
 function catOf(d,id){for(const t of d.topics){for(let m=0;m<t.s.length;m++){const j=t.s[m].indexOf(id);if(j>=0){const c=d.mc[m];return Array.isArray(c)?c[j]:c}}}return d.extra[id]}
 function drawPanel(){
   const d=G[g];
-  panel.innerHTML=`<p class="prose">${d.intro}</p>
+  panel.innerHTML=`<p class="prose map-group-intro">${d.intro}</p>
   <h3 class="blk">題目</h3><div class="topics">${d.topics.map(t=>`<article class="topic" style="--c:${t.c||'var(--ec)'}"><p class="member-name">${t.who}</p><h4>${t.t}</h4>
     <p><span class="lab">要回答：</span>${t.q}</p><p><span class="lab">主要工作：</span>${t.m}</p><p class="rd">本學期 ${t.s.flat().length} 篇，從 ${cite(t.s[0][0])} 開始</p></article>`).join('')}</div>
   <h3 class="blk">2026 年 10 月至 2027 年 1 月</h3><ol class="stages s5">${d.stages.map((s,i)=>`<li data-m="${MONTHS[i]}"><span class="wk">${mcat(d,i).map(c=>CATS[c]).join('＋')}</span><p>${s}</p></li>`).join('')}</ol>
