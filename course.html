@@ -48,7 +48,16 @@
   </header>
   <main id="main-content"><section class="section" lang="zh-Hant"><div class="container" style="padding-top:28px;padding-bottom:36px;max-width:1600px">
 <h1 style="margin-bottom:16px">Course</h1>
-<nav aria-label="課程主題" style="display:flex;border-bottom:1px solid #ccd3db;margin:16px 0"><a href="#differential-thermodynamics" aria-current="location" style="padding:12px 20px;border-bottom:3px solid #17518c;font-weight:700">微分與熱力學</a></nav>
+<nav aria-label="課程主題" style="display:flex;flex-wrap:wrap;gap:4px;border-bottom:1px solid #ccd3db;margin:16px 0">
+  <a href="#differential-thermodynamics" aria-current="location" style="padding:12px 20px;border-bottom:3px solid #17518c;font-weight:700">微分與熱力學</a>
+  <a href="#online-quiz" style="padding:12px 20px;font-weight:700">線上小考系統</a>
+</nav>
+<section id="online-quiz" aria-labelledby="online-quiz-title" style="margin:28px 0 36px;padding:28px 32px;border:1px solid #cbd8e1;border-left:6px solid #17518c;border-radius:14px;background:#fff;box-shadow:0 8px 24px rgba(18,55,85,.08)">
+  <p style="margin:0 0 8px;color:#17518c;font-weight:700;letter-spacing:.04em">CORE LAB · ONLINE QUIZ</p>
+  <h2 id="online-quiz-title" style="margin:0 0 12px">線上小考系統</h2>
+  <p style="max-width:780px;margin:0 0 20px;line-height:1.75">提供教師建立題目與試卷、學生登入後練習與作答，以及自動批改與學習紀錄。請使用個人帳號進入系統。</p>
+  <a class="button" href="https://quizbank-production.up.railway.app" target="_blank" rel="noopener noreferrer">進入線上小考系統 <span aria-hidden="true">↗</span></a>
+</section>
 <div id="differential-thermodynamics"><iframe id="course-lesson" src="calculus-thermodynamics.html?embed=1&amp;rev=course-inline-1" title="微分與熱力學互動課程" style="display:block;width:100%;height:940px;border:0;background:#fff" loading="eager"></iframe></div>
 <script>
 window.addEventListener('message',function(event){var frame=document.getElementById('course-lesson');if(event.origin!==location.origin||event.source!==frame.contentWindow||!event.data||event.data.type!=='course-height')return;var h=Number(event.data.height);if(Number.isFinite(h)&&h>100&&h<12000)frame.style.height=Math.ceil(h)+'px';});
