@@ -162,6 +162,8 @@ h3.blk{margin-top:48px;color:var(--deep)}.topics{gap:16px}.topic{border:1px soli
 .foundation-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.foundation{padding:18px;border:1px solid #d4e1e7;border-top:5px solid var(--xas);border-radius:16px;background:rgba(255,255,255,.78);box-shadow:0 8px 18px rgba(15,42,62,.05)}.foundation h4{margin:0 0 12px;font-family:"Noto Serif TC",serif;color:var(--deep);font-size:19px;line-height:1.45}.foundation .paper{margin-top:8px;padding:11px;grid-template-columns:22px 1fr;font-size:14px;box-shadow:none}.foundation .paper .meta,.foundation .paper .why{font-size:12px}.foundation .paper .why{margin-top:2px}.foundation .paper a.s{font-size:12px}@media(max-width:800px){.foundation-grid{grid-template-columns:1fr}}
 .srow{margin-top:16px;padding:14px;border:1px solid #d8e3e8;border-radius:16px;background:rgba(255,255,255,.66)}.srow .who{padding-top:10px}.srow .who a,.review-card>header span a{color:inherit;text-decoration:none}.srow .who a:hover,.srow .who a:focus-visible,.review-card>header span a:hover,.review-card>header span a:focus-visible{text-decoration:underline}.srow .paper{background:#fff}#sched{border-bottom:0}.chain{border:1px solid #cfe3e7;border-left:6px solid var(--xas);border-radius:0 16px 16px 0;box-shadow:var(--shadow)}.bridge{border:1px solid #d9e4e9;border-radius:16px;overflow:hidden;box-shadow:var(--shadow)}
 .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:24px}.actions .btn{display:inline-block;border-radius:10px;padding:10px 15px;font-weight:700;text-decoration:none}.actions .primary{background:var(--deep);color:#fff}.actions .light{border:1px solid #c8d7df;color:var(--deep);background:#fff}
+.pathway{margin:18px 0 28px;padding:20px 22px;border:1px solid #cbdde3;border-left:6px solid var(--signal);border-radius:14px;background:#fff;box-shadow:0 8px 18px rgba(15,42,62,.05)}.pathway h3{font-family:"Noto Serif TC",serif;font-size:20px;color:var(--deep);margin:0 0 10px}.pathway-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.pathway-item{padding:13px 15px;border-radius:10px;background:#f1f6f8}.pathway-item b{display:block;color:var(--xas);margin-bottom:4px}.pathway-item p{margin:0;font-size:14px}.pathway .deliverable{margin:14px 0 0;padding-top:12px;border-top:1px solid var(--line)}.common-core{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:18px 0}.common-core article{padding:16px 18px;border:1px solid #d4e1e7;border-radius:13px;background:#fff}.common-core h4{margin:0 0 6px;font-family:"Noto Serif TC",serif;color:var(--deep);font-size:17px}.common-core p{margin:0;font-size:14px}.route-alert{margin:16px 0;padding:14px 17px;border:1px solid #e7d7a4;border-left:5px solid #c99212;border-radius:10px;background:#fffaf0;color:#5f4a17;font-size:14px}.route-alert b{color:#49370d}
+@media(max-width:700px){.pathway-grid,.common-core{grid-template-columns:1fr}}
 footer{margin-top:28px;background:var(--deep);border-top:0;color:#bfd1db;padding:42px max(24px,calc((100vw - 1040px)/2)) 60px}footer.wrap{max-width:none}.legend span::before{box-shadow:0 0 0 3px rgba(255,255,255,.08)}
 @media (max-width:640px){header.wrap{min-height:auto;padding-top:28px;padding-bottom:32px}header .hero-spec{height:90px}.hero-stats{gap:7px}.hero-stats span{font-size:12px}.tabs{display:flex;width:100%}.tabs button{flex:1;padding:8px}.tabs button small{display:block;margin:1px 0 0}.pyramid{padding:14px 6px}.detail{padding:22px}.stages li{padding:16px}.srow{padding:10px}}
 </style>
@@ -303,7 +305,7 @@ const D={
  kaiser:{f:["sac"],t:"Single-Atom Catalysts across the Periodic Table",a:"Kaiser, S. K. et al.",j:"Chem. Rev. 120, 11703 (2020)",w:"進階全景，找題目用。"},
  yang21:{f:["rx","ec"],t:"Operando Methods in Electrocatalysis",a:"Yang, Y. et al.",j:"ACS Catal. 11, 1136 (2021)",w:"各種臨場技術與 cell 設計的比較總覽。"},
  berg19:{f:["rx","xas"],t:"Operando Insights into Nanoparticle Transformations during Catalysis",a:"Bergmann, A.; Roldan Cuenya, B.",j:"ACS Catal. 9, 10020 (2019)",w:"從材料轉變的角度談臨場量測該看什麼。"},
- timo21:{f:["rx","xas","ec"],t:"In Situ/Operando Electrocatalyst Characterization by X-ray Absorption Spectroscopy",a:"Timoshenko, J.; Roldan Cuenya, B.",j:"Chem. Rev. 121, 882 (2021)",w:"ACS Open Access；臨場 XAS 的 cell 設計、量測幾何與判讀陷阱，本實驗室的核心參考。",u:"https://pubs.acs.org/doi/10.1021/acs.chemrev.0c00396"},
+ timo21:{f:["rx","xas","ec"],t:"In Situ/Operando Electrocatalyst Characterization by X-ray Absorption Spectroscopy",a:"Timoshenko, J.; Roldan Cuenya, B.",j:"Chem. Rev. 121, 882 (2021)",w:"臨場 XAS 的 cell 設計、量測幾何與判讀陷阱；可作方法索引，全文取得方式依圖書館授權確認。"},
  ferri:{f:["rx","xas"],t:"First steps in combining modulation excitation spectroscopy with synchronous dispersive EXAFS/DRIFTS/mass spectrometry for in situ time resolved study of heterogeneous catalysts",a:"Ferri, D. et al.",j:"Phys. Chem. Chem. Phys. 12, 5634 (2010)",w:"調製激發接上 XAS 的早期實作。"},
  ravel:{f:["xas"],t:"ATHENA, ARTEMIS, HEPHAESTUS: data analysis for X-ray absorption spectroscopy using IFEFFIT",a:"Ravel, B.; Newville, M.",j:"J. Synchrotron Radiat. 12, 537 (2005)",w:"邊讀邊裝軟體操作。"},
  friebel:{f:["xas","ec"],t:"Identification of Highly Active Fe Sites in (Ni,Fe)OOH for Electrocatalytic Water Splitting",a:"Friebel, D. et al.",j:"J. Am. Chem. Soc. 137, 1305 (2015)",w:"臨場 XAS 加理論計算回答「活性位是誰」。"},
@@ -426,12 +428,12 @@ const G={
    "以活性、ECSA、穩定性與報告規範完成資料檢核，準備期末專題報告。"],
   note:"<b>每次報告</b>：每人報告當月那一篇，15 分鐘。<b>一頁筆記</b>：這篇在量什麼、用什麼條件量、最關鍵的一張圖是什麼、我照著做需要準備什麼。",
   topics:[
-   {who:"陳泓嘉（專題生）",t:"Cu₁ 單原子：配位設計與水分解基準",q:"Cu₁–Nₓ／Cu₁–Oₓ 位點能否維持原子分散，並在相同電極載量與量測條件下建立可靠的 HER／OER 基準？",m:"Cu₁ 合成、載體空白對照、XRD／XPS、LSV、Tafel、10 mA cm⁻² 過電位",s:[["ug_nife1"],["ug_nife2"],["ug_nife3"],["ug_nife4"]]},
-   {who:"顏晨宇（專題生）",t:"Fe₁ 單原子：Ni 基 OER 活性位",q:"Fe₁ 位點加入 Ni 基載體後，OER 活性差異來自金屬配位、KOH 雜質，還是反應中的表面重構？",m:"Fe₁ 載體設計、KOH 純化、LSV、CV 氧化還原峰與空白對照",s:[["ug_fe1"],["ug_fe2"],["ug_fe3"],["ug_fe4"]]},
-   {who:"洪志嘉（專題生）",t:"Co₁ 單原子：鹼性 HER 與水解離",q:"Co₁ 位點及其碳／氧化物載體界面，是否能改善鹼性 HER 的水解離與氫吸附步驟？",m:"Co₁ 合成、HER 極化曲線、Tafel 斜率、Cdl 與重複量測",s:[["ug_her1"],["ug_her2"],["ug_her3"],["ug_her4"]]},
-   {who:"蔡宜蓁（專題生）",t:"Ni₁ 單原子：位點密度與活性正規化",q:"Ni₁ 單原子催化劑以幾何面積、ECSA、質量與金屬載量正規化後，表觀活性排名是否一致？",m:"Ni₁ 電極製備、Cdl 量測、載量與位點密度估算、不同正規化方式比較",s:[["ug_ecsa1"],["ug_ecsa2"],["ug_ecsa3"],["ug_ecsa4"]]},
-   {who:"包師為（專題生）",t:"Mn₁ 單原子：OER 耐久性與失效",q:"在定電流與加速老化後，Mn₁ 位點是否發生遷移、團聚或溶出，並如何影響 OER 表現？",m:"Mn₁ 前後結構對照、計時電位法、加速老化、金屬溶出分析",s:[["ug_stab1"],["ug_stab2"],["ug_stab3"],["ug_stab4"]]},
-   {who:"黃震霖（專題生）",t:"Zn₁ 單原子：配位結構對照與量測基準",q:"作為較弱氧化還原活性的 Zn₁ 配位對照，如何建立可重現的電極製備、iR 校正與全電解量測流程？",m:"Zn₁／無金屬載體對照、雙電極 cell、長時間測試與量測紀錄",s:[["ug_base1"],["ug_base2"],["ug_base3"],["ug_base4"]]}],
+   {who:"陳泓嘉（專題生）",t:"Cu₁ 單原子：配位設計與水分解基準",q:"Cu₁–Nₓ／Cu₁–Oₓ 位點能否維持原子分散，並在相同電極載量與量測條件下建立可靠的 HER／OER 基準？",m:"Cu₁ 合成、載體空白對照、XRD／XPS、LSV、Tafel、10 mA cm⁻² 過電位",goal:"掌握 Cu(I)/Cu(II) 與 Cu–N／Cu–O 配位；能區分孤立 Cu、Cu₂O/CuOₓ 與顆粒訊號，並說明反應後重構對單原子主張的影響。",task:"依序整理 Cu 位點的合成與配位證據、標準電化學條件、反應前後變化；列出無 Cu 載體與 Cu 顆粒對照。",output:"完成一張 Cu₁ 證據鏈圖、一張控制組表，以及一份依相同載量與校正條件整理的 HER/OER 數據表。",s:[["ug_nife1"],["ug_nife2"],["ug_nife3"],["ug_nife4"]]},
+   {who:"顏晨宇（專題生）",t:"Fe₁ 單原子：Ni 基 OER 活性位",q:"Fe₁ 位點加入 Ni 基載體後，OER 活性差異來自金屬配位、KOH 雜質，還是反應中的表面重構？",m:"Fe₁ 載體設計、KOH 純化、LSV、CV 氧化還原峰與空白對照",goal:"辨認 Fe 單原子、Fe 摻雜／FeOOH 與 NiFe 氧氫化物的證據差異；理解 Fe-free KOH 對照與 Ni 氧化還原峰能回答的問題。",task:"對照材料 Fe 含量、電解液純度、CV/LSV 與反應後表徵；把「Fe 增進活性」和「表面重構」分成可檢驗假說。",output:"交一張 Fe 來源—對照組矩陣、標註一張 CV/LSV 圖的量測條件，並回答 Fe-free KOH 下活性差異若消失代表什麼。",s:[["ug_fe1"],["ug_fe2"],["ug_fe3"],["ug_fe4"]]},
+   {who:"洪志嘉（專題生）",t:"Co₁ 單原子：鹼性 HER 與水解離",q:"Co₁ 位點及其碳／氧化物載體界面，是否能改善鹼性 HER 的水解離與氫吸附步驟？",m:"Co₁ 合成、HER 極化曲線、Tafel 斜率、Cdl 與重複量測",goal:"用簡單步驟說明鹼性 HER 的水解離與 H* 吸附；認識 Co–N/O/S 配位，並知道載體、Ni 基材或 Co 顆粒也可能造成表觀提升。",task:"整理催化劑結構證據及 HER 測試條件，對照空白載體、金屬顆粒與基材；從 Tafel 或阻抗圖指出資料能支持的結論。",output:"完成一張 HER 反應步驟圖、一張至少含三種對照的表格，並寫出一個可重複的極化曲線量測流程。",s:[["ug_her1"],["ug_her2"],["ug_her3"],["ug_her4"]]},
+   {who:"蔡宜蓁（專題生）",t:"Ni₁ 單原子：位點密度與活性正規化",q:"Ni₁ 單原子催化劑以幾何面積、ECSA、質量與金屬載量正規化後，表觀活性排名是否一致？",m:"Ni₁ 電極製備、Cdl 量測、載量與位點密度估算、不同正規化方式比較",goal:"區分幾何活性、質量活性、ECSA 與 TOF；知道 Cdl/ECSA 的假設與限制，並留意 Ni(OH)₂/NiOOH 在 OER 下可能重構。",task:"從文獻擷取電極面積、載量、掃描速率、iR 校正與正規化方式；比較不同指標是否給出相同排名。",output:"交一張原始數據與正規化指標對照表，指出至少兩個可能的表觀效應來源，並提出可檢驗的重複量測。",s:[["ug_ecsa1"],["ug_ecsa2"],["ug_ecsa3"],["ug_ecsa4"]]},
+   {who:"包師為（專題生）",t:"Mn₁ 單原子：OER 耐久性與失效",q:"在定電流與加速老化後，Mn₁ 位點是否發生遷移、團聚或溶出，並如何影響 OER 表現？",m:"Mn₁ 前後結構對照、計時電位法、加速老化、金屬溶出分析",goal:"認識 Mn 價態變化、溶出與重構等可能失效路徑；區分「電流維持」與「活性位結構維持」不是同一個證據。",task:"依時間整理耐久測試、反應前後結構和金屬溶出資訊，標出作者是否有空白、重複樣與加速老化對照。",output:"完成一張失效模式圖及一張測試前後證據表，提出一項能判定 Mn 流失或位點變化的量測。",s:[["ug_stab1"],["ug_stab2"],["ug_stab3"],["ug_stab4"]]},
+   {who:"黃震霖（專題生）",t:"Zn₁ 單原子：配位結構對照與量測基準",q:"作為較弱氧化還原活性的 Zn₁ 配位對照，如何建立可重現的電極製備、iR 校正與全電解量測流程？",m:"Zn₁／無金屬載體對照、雙電極 cell、長時間測試與量測紀錄",goal:"了解 Zn d¹⁰ 配位位點作為結構／電子調控對照的角色；不把 Zn 本身預設成 OER 活性中心，並能說明陰陽極與全電池電壓的差異。",task:"整理 Zn₁、無金屬載體及相關活性材料對照，逐項核對參考電極、iR、載量、電解液與雙電極條件。",output:"交一份量測條件核對清單及全電解 cell 草圖；回答 Zn 對照若表現較差，仍有哪些替代解釋未排除。",s:[["ug_base1"],["ug_base2"],["ug_base3"],["ug_base4"]]}],
   extra:{bard:0,wei19:4,yeo12:3,garsany10:3,angulo20:3,carmo13:3,klemm11:3,li20aem:3,zou:1,louie:1,burke:1,kibsgaard:1,popczun:1,luo:3,jung16:4,friebel:4,fabbri:4}
  },
  ms:{
@@ -439,12 +441,10 @@ const G={
   per:2,
   mc:[0,1,2,[3,4]],
   foundation:[
-   ["電化學量測與比較基礎",["rossmeisl07","elgrishi","shinagawa","mccrory15"]],
-   ["NiFe／Fe 效應與 OER",["gong","trot","klaus","subbaraman"]],
-   ["HER／OER 活性位與報告",["norskov","jara","voiry","seh"]],
-   ["材料表徵、ECSA 與正規化",["holder19","biesinger","mourd","wei19b"]],
-   ["穩定性與失效判讀",["anan","dionigi","cher","spori"]],
-   ["整體水分解與量測規範",["jiao","lu15","greczynski","mccrory"]]
+   ["A｜電化學量測、條件與性能指標",["bard","elgrishi","wei19","anan"]],
+   ["B｜SAC 結構、配位與活性位證據",["wang18","qiao","fei","kaiser"]],
+   ["C｜表徵方法、定量與解讀邊界",["holder19","biesinger","mourd","greczynski"]],
+   ["D｜穩定性、工作態與器件轉移",["spori","cher","yang21","timo21"]]
   ],
   stages:["單原子活性位的反應機制、熱力學與配位設計；同時建立臨場 XAS 的理論基礎。",
    "單原子位點、載體與電極架構設計；選定能在臨場條件下驗證的模型系統。",
@@ -452,10 +452,10 @@ const G={
    "每人完成一個反應器／cell 設計與一個臨場量測案例；月底以單原子活性位為核心寫兩頁提案。"],
   note:"<b>每月文獻會</b>：每人報告當月兩篇，各 15 分鐘。<b>一頁筆記</b>：這篇要回答什麼問題、用了什麼方法、最關鍵的一張圖、一件我還不懂的事、可以接到實驗室的哪一層。",
   topics:[
-   {k:"fb",who:"呂安璿（碩士生）",c:"var(--sac)",t:"單原子催化劑 RFB 電極：臨場量測與反應器設計",q:"單原子位點如何改變 RFB 電極反應與衰退？如何以流動式臨場 cell 分開觀察價態失衡、跨膜與電極劣化？",m:"單原子電極設計、自組流動電池、長循環測試、臨場 XAS 與反應器設計",s:[["ma19","wang26fb"],["sun92","li13"],["choi17","petch16"],["houser16","kwabi"]]},
-   {k:"ec",who:"李承叡（碩士生）",c:"var(--sac)",t:"單原子催化劑海水分解：臨場量測與反應器設計",q:"在含 Cl⁻ 的鹼性電解液中，單原子位點如何維持 OER 選擇性並避免氯氧化與劣化？如何以臨場 cell 驗證？",m:"單原子催化劑設計、模擬海水反應器、選擇性／穩定性測試、臨場 XANES／EXAFS",s:[["man","nor04"],["sunt","fei"],["major20","kaiser"],["irx26","kim20"]]},
-   {k:"fb2",who:"林庭暉（碩士生）",c:"var(--sac)",t:"單原子催化劑 RFB 電極：流動反應器與臨場量測",q:"單原子位點、零間隙 cell、電解液與流道設計如何共同改變極化、效率與長循環表現？",m:"單原子電極架構、流動 cell 設計、流量／壓降紀錄、臨場量測與效率判讀",s:[["weber","solo"],["skk","gattrell04"],["aaron","darling"],["husk","lin"]]},
-   {k:"op",who:"林宥陞（碩士生）",c:"var(--sac)",t:"單原子催化劑海水分解：臨場量測與反應器設計",q:"如何設計可控 Cl⁻、氣泡與流動條件的海水分解 cell，並以臨場 XAS 分辨單原子位點的配位重構與劣化？",m:"單原子催化劑、海水分解 cell 設計、時間同步、XANES／EXAFS 與光束線實驗",s:[["newville","rehr00"],["lien20xas","lin20xas"],["ravel","timo21"],["li25xas","baur"]]}],
+   {k:"fb",who:"呂安璿（碩士生）",c:"var(--sac)",t:"RFB 單原子電極：反應動力學、衰退與流動式臨場驗證",q:"單原子位點如何改變 RFB 電極反應與衰退？如何以流動式臨場 cell 分開觀察價態失衡、跨膜與電極劣化？",m:"單原子電極設計、自組流動電池、長循環測試、臨場 XAS 與反應器設計",goal:"釐清 VRFB 正負極反應、SOC、電荷轉移、傳質、跨膜與價態失衡；區分半電池活性與完整 cell 效率／容量衰退。",task:"每月兩篇中至少一篇聚焦 SAC 電極或活性位證據；另一篇建立流道、流量、壓降、SOC/crossover 或臨場量測方法。",output:"交付一張 flow-through/flow-by cell 草圖與條件表、一份效率／SOC／衰退拆解圖，以及一項同步電化學與 XAS/Raman 的可驗證實驗。",s:[["ma19","wang26fb"],["sun92","li13"],["choi17","petch16"],["houser16","kwabi"]]},
+   {k:"ec",who:"李承叡（碩士生）",c:"var(--sac)",t:"海水分解 SAC：OER/氯氧化選擇性與臨場反應器",q:"在含 Cl⁻ 的鹼性電解液中，單原子位點如何維持 OER 選擇性並避免氯氧化與劣化？如何以臨場 cell 驗證？",m:"單原子催化劑設計、模擬海水反應器、選擇性／穩定性測試、臨場 XANES／EXAFS",goal:"建立 OER 與氯氧化競爭的反應圖；理解 Cl⁻、pH、電位、局部濃度與氣泡對選擇性的作用，並區分純鹼液、模擬海水與真海水證據。",task:"每月至少一篇要連結 SAC/OER；同步追蹤 O₂ 與含氯副產物的定量、空白／回收率和反應後位點變化。ORR 理論僅作對照背景，不作海水 OER 主證據。",output:"提出含氯副產物定量與安全檢核表、一張選擇性證據鏈，及能同步收集電化學、產物與臨場結構訊號的 cell 草圖。",s:[["man","nor04"],["sunt","fei"],["major20","kaiser"],["irx26","kim20"]]},
+   {k:"fb2",who:"林庭暉（碩士生）",c:"var(--sac)",t:"RFB 單原子電極：流道、零間隙架構與系統效率",q:"單原子位點、零間隙 cell、電解液與流道設計如何共同改變極化、效率與長循環表現？",m:"單原子電極架構、流動 cell 設計、流量／壓降紀錄、臨場量測與效率判讀",goal:"從電極材料推進到完整 RFB：掌握電極厚度、壓縮、流速、流道、膜與泵浦的耦合，拆解能量效率、電流效率、電壓效率和容量保持。",task:"每月至少一篇直接連結 SAC 電極；另一篇用 flow cell/全電池資料比較操作條件。明確標示半電池、對稱電池與完整電池不可互換的結論。",output:"完成反應器尺寸/流道/壓縮及操作條件圖表、半電池至 full-cell 指標轉換表，並提出一個把 SAC 電極放入流動系統的驗證設計。",s:[["weber","solo"],["skk","gattrell04"],["aaron","darling"],["husk","lin"]]},
+   {k:"op",who:"林宥陞（碩士生）",c:"var(--sac)",t:"海水分解 SAC：臨場 XAS、選擇性與 cell 設計",q:"如何設計可控 Cl⁻、氣泡與流動條件的海水分解 cell，並以臨場 XAS 分辨單原子位點的配位重構與劣化？",m:"單原子催化劑、海水分解 cell 設計、時間同步、XANES／EXAFS 與光束線實驗",goal:"能讀 XANES/EXAFS、配位數/鍵長/無序度與擬合不確定性；把 X-ray 光程、窗口、電極距離、流量與氣泡條件連到可判讀的工作態訊號。",task:"每月至少一篇連結 SAC/海水 OER；方法文獻需轉成實際 cell 圖，並同步規劃電流、光譜、流量及 O₂/含氯產物的時間軸。",output:"交付標註 X-ray path 與電極/流道的 operando cell 草圖、同步量測流程和一張證據缺口表，說明哪些結果仍不足以證明活性位。",s:[["newville","rehr00"],["lien20xas","lin20xas"],["ravel","timo21"],["li25xas","baur"]]}],
   extra:{bard:0,solo:0,aaron:3,skk:4,berg19:3,berg15:4,burdyny19:3,chen20:4,ferri:3,timo19:4,li22:1,nitopi:1,husk:1,lin:1,jones:1,grimaud:1,darling:4,fabbri:4,timo17:4},
   tracks:[["all","全部主線"],["fb","液流電池",["fb"]],["ec","電解水",["ec","sac"]],["ur","尿素合成",["ur"]],["op","臨場光譜",["xas","rx"]]]
  }
@@ -485,6 +485,16 @@ document.querySelectorAll('.toc a[data-g]').forEach(a=>a.addEventListener('click
 panel.addEventListener('change',e=>{const i=e.target.dataset.i;if(!i)return;e.target.checked?read[g].add(i):read[g].delete(i);if(g==='common'){drawCommonPanel();return}drawSched();drawList()});
 
 const MONTHS=["10 月","11 月","12 月","1 月"];
+const COMMON_CORE=[
+ ["SAC 與活性位證據","分清單原子、團簇與奈米顆粒；理解金屬—載體作用、配位環境與穩定化。專題生能描述表徵看到什麼，碩士生還要比較替代結構模型。"],
+ ["反應與電化學指標","掌握 HER/OER 與整體水分解；正確解讀過電位、交換電流、Tafel、TOF、質量活性和幾何活性，並指出各自假設。"],
+ ["量測條件與表徵邊界","核對二／三電極、參考電極、iR、載量、電解液、電流密度與重複性；理解 XRD、XPS、TEM/STEM、EDS/EELS、XAS、Raman、ICP 的角色及限制。"],
+ ["穩定性、工作態與器件","檢查空白與控制組、溶出、重構和長期穩定性；專題生能連結材料與圖表，碩士生須提出臨場量測、反應器或完整 cell 驗證。"]
+];
+const MONTH_GOALS={
+ ug:["建立材料、反應式與可靠電化學讀圖基礎。","把金屬中心、配位與載體差異連到可比較的材料證據。","檢查表徵是否支持單原子主張，並辨認工作中重構或失效。","整理條件、重複性與數據，完成能實際執行的量測方案。"],
+ ms:["界定系統邊界、反應路徑與競爭反應，建立可比的基準。","拆解 SAC 配位／界面、反應器與傳輸條件對證據的影響。","評估工作態重構、溶出或跨膜等衰退來源，規劃臨場驗證。","整合器件設計、同步量測與研究風險，提出可驗收的提案。"]
+};
 const MS_WEEKLY=[
  ["第 1 次","系統邊界、反應路徑與競爭反應","同一個效能數字代表什麼？如何把主反應與 HER／副產物說清楚？"],
  ["第 2 次","基準比較與證據鏈設計","電位、面積、電流密度與循環條件如何可比？一項機制主張至少需要哪兩種獨立證據？"],
@@ -499,9 +509,10 @@ const mcat=(d,m)=>[d.mc[m]].flat();
 function catOf(d,id){for(const t of d.topics){for(let m=0;m<t.s.length;m++){const j=t.s[m].indexOf(id);if(j>=0){const c=d.mc[m];return Array.isArray(c)?c[j]:c}}}return d.extra[id]}
 function drawCommonPanel(){
   const foundation=G.ms.foundation;
-  panel.innerHTML=`<p class="prose map-group-intro">所有成員共同建立的知識底座：先能正確比較電化學數據、辨認單原子結構證據與失效模式，再進入各自的金屬中心、反應系統與研究提案。這些閱讀不取代個人指定文獻，而是共同討論與實驗設計的檢核架構。</p>
-  <h3 class="blk">共同知識模組</h3><div class="foundation-grid">${foundation.map(([title,ids])=>`<section class="foundation"><h4>${title}</h4>${ids.map((id,i)=>paperRow(id,`c${id}${i}`,'共同知識')).join('')}</section>`).join('')}</div>
-  <h3 class="blk">共同學習順序</h3><ol class="stages s5">${["電化學比較與報告規範：電位、iR 補償、ECSA、空白與重複量測。","單原子催化劑設計：載體、配位、載量與原子分散的多重證據。","材料與量測判讀：XRD、XPS、TEM、ICP 與產物定量的適用邊界。","穩定性與工作條件：失效、溶出、重構，以及臨場量測／反應器設計如何補足離線證據。"].map((s,i)=>`<li data-m="${MONTHS[i]}"><span class="wk">共同知識</span><p>${s}</p></li>`).join('')}</ol>`;
+  panel.innerHTML=`<p class="prose map-group-intro">這是十位成員共用的先備知識與討論框架，不另外增加每月指定篇數。專題生以實驗與圖表判讀為主；碩士生須再評估機理證據、工作態與器件設計。</p>
+  <h3 class="blk">十人共同核心</h3><div class="common-core">${COMMON_CORE.map(([title,description])=>`<article><h4>${title}</h4><p>${description}</p></article>`).join('')}</div>
+  <h3 class="blk">四個先修閱讀模組</h3><p class="sub prose">模組取代原先分散的六組清單；作為查找工具與共同討論材料，不列入 56 篇個人主排程，也不要求把所有篇目當作額外必讀。</p><div class="foundation-grid">${foundation.map(([title,ids])=>`<section class="foundation"><h4>${title}</h4>${ids.map((id,i)=>paperRow(id,`c${id}${i}`,'先修參考')).join('')}</section>`).join('')}</div>
+  <h3 class="blk">四個月共同進階</h3><ol class="stages s5">${MONTH_GOALS.ug.map((s,i)=>`<li data-m="${MONTHS[i]}"><span class="wk">${i===0?'全員基礎':i===1?'結構與設計':i===2?'表徵與工作態':'可靠數據與整合'}</span><p><b>共同：</b>${s}<br><b>碩班加深：</b>${MONTH_GOALS.ms[i]}</p></li>`).join('')}</ol>`;
 }
 function drawStudentPath(group,index){
   const d=G[group],t=d?.topics?.[index];
@@ -516,6 +527,9 @@ function drawStudentPath(group,index){
   document.querySelector('#people > .reading-intro').textContent='下列內容為此學生的主題、每月指定閱讀與工作能力；文獻連結可直接開啟 DOI 或可用的出版社全文。';
   document.querySelector('.tabs').hidden=true;
   panel.innerHTML=`<article class="topic" style="--c:${t.c||'var(--ec)'}"><p class="member-name">${t.who}</p><h4>${t.t}</h4><p><span class="lab">要回答：</span>${t.q}</p><p><span class="lab">主要工作：</span>${t.m}</p></article>
+  <h3 class="blk">共同知識 → 個人目標 → 文獻任務 → 成果</h3><section class="pathway"><div class="pathway-grid"><div class="pathway-item"><b>共同知識先備</b><p>${COMMON_CORE.map(([title])=>title).join('；')}。專題生以量測與圖表正確判讀為主；碩班再評估機理證據並整合工作態與器件。</p></div><div class="pathway-item"><b>個人學習目標</b><p>${t.goal||t.q}</p></div><div class="pathway-item"><b>每篇文獻任務</b><p>${t.task||'用統一閱讀表整理研究問題、材料設計、關鍵表徵、性能條件、控制組與可移植方法。'}</p></div><div class="pathway-item"><b>共通閱讀方法</b><p>問題 → 材料設計 → 表徵 → 電化學結果 → 作者主張；另列量測條件、關鍵數據、控制組與替代解釋。</p></div></div><p class="deliverable"><b>可驗收成果：</b>${t.output||'交一張研究邏輯圖（問題→設計→表徵→電化學→主張）、控制組與替代解釋表、關鍵數據表、150–250 字機理判斷，以及一項可在本實驗室驗證的實驗建議。'}</p></section>
+  ${group==='ug'?`<aside class="route-alert"><b>文獻配對檢核：</b>此頁保留既有每人每月 1 篇的 56 篇排程與 DOI；附件指出部分文章與指定金屬／研究問題未直接對應。請把每篇視為待逐篇核對的候選文獻，不以「水分解」關鍵字相同就當作已符合 Cu/Fe/Co/Ni/Mn/Zn SAC 題目。專題生文獻仍以近十年 ACS Applied 系列為範圍；未核實對題性與全文取得狀態前，不標示為已完成篩選。</aside>`:''}
+  <h3 class="blk">10 月至 1 月：每月學習任務</h3><ol class="stages s5">${MONTH_GOALS[group].map((goal,m)=>`<li data-m="${MONTHS[m]}"><span class="wk">${mcat(d,m).map(x=>CATS[x]).join('＋')}</span><p>${goal}</p><p><b>個人焦點：</b>${t.goal||t.q}</p></li>`).join('')}</ol>
   <h3 class="blk">10 月至 1 月指定閱讀</h3><div id="student-reading">${t.s.map((papers,m)=>`<section class="srow" style="--c:${t.c||'var(--ec)'}"><div class="who"><b>${MONTHS[m]}</b><span>${mcat(d,m).map(x=>CATS[x]).join('＋')}</span></div><div>${papers.map((id,i)=>paperRow(id,`p${group}${index}${m}${i}`,'指定閱讀')).join('')}</div></section>`).join('')}</div>
   <div class="actions"><a class="btn primary" href="research-map.html#people">返回全體閱讀地圖</a><a class="btn light" href="research-map.html?tab=common#people">查看共同知識</a></div>`;
   return true;
@@ -528,7 +542,8 @@ function drawPanel(){
   <h3 class="blk">題目</h3><div class="topics">${d.topics.map((t,index)=>`<article class="topic" style="--c:${t.c||'var(--ec)'}"><p class="member-name"><a href="${studentHref(g,index)}">${t.who}</a></p><h4>${t.t}</h4>
     <p><span class="lab">要回答：</span>${t.q}</p><p><span class="lab">主要工作：</span>${t.m}</p><p class="rd">本學期 ${t.s.flat().length} 篇，從 ${cite(t.s[0][0])} 開始</p></article>`).join('')}</div>
   <h3 class="blk">2026 年 10 月至 2027 年 1 月</h3><ol class="stages s5">${d.stages.map((s,i)=>`<li data-m="${MONTHS[i]}"><span class="wk">${mcat(d,i).map(c=>CATS[c]).join('＋')}</span><p>${s}</p></li>`).join('')}</ol>
-  ${g==='ms'?`<h3 class="blk">碩班共同基礎閱讀</h3><p class="sub prose">以下為原專題生基礎內容，現改列為四位碩班生共同必讀，作為各自主線的量測、判讀與研究設計底座；不計入每人每月兩篇的主線排程，因此不影響既定的 56 篇不重複指定閱讀。</p><div class="foundation-grid">${d.foundation.map(([title,ids])=>`<section class="foundation"><h4>${title}</h4>${ids.map((id,i)=>paperRow(id,`f${id}${i}`,'共同基礎')).join('')}</section>`).join('')}</div>`:''}
+  ${g==='ms'?`<aside class="route-alert"><b>共同知識：</b>四位碩士生共用 SAC／電化學／表徵／穩定性四個先修模組，另須把個人主線延伸到臨場量測與反應器設計。請由「共同知識」分頁查看內容與參考文獻；不另計入每人每月兩篇。</aside>`:''}
+  <aside class="pathway"><h3>每篇文獻的共同驗收格式</h3><div class="pathway-grid"><div class="pathway-item"><b>所有成員</b><p>研究問題 → 材料設計 → 表徵 → 電化學結果 → 作者主張；另列量測條件、關鍵數據與控制組。</p></div><div class="pathway-item"><b>${g==='ug'?'專題生加做':'碩士生加做'}</b><p>${g==='ug'?'以自己的圖表說明量測結果，指出一個可能的替代解釋與一項可重現的實驗。':'評估證據鏈與替代假說，指出機理／器件證據缺口，提出可同步驗證的下一個實驗。'}</p></div></div><p class="deliverable"><b>報告成果：</b>一張邏輯圖、一張控制組／替代解釋表、一張關鍵數據表，以及一項可驗收的後續實驗建議。</p></aside>
   <div class="filters" id="mf" role="group" aria-label="選擇月份" style="margin-top:28px"></div>
   <p class="progress" id="mprog"></p><div id="sched"></div>
   <h3 class="blk">全員文獻查核表</h3><p class="sub prose">一次攤開每位成員 10 月至 1 月的所有指定閱讀，供確認主題、重複與難度；每篇仍可標記已讀。</p><div id="review" class="review-grid"></div>
