@@ -901,6 +901,7 @@ if(studentMatch){
   if(!drawStudentPath(studentMatch[1],Number(studentMatch[2]))) drawPanel();
 }else{
   if(requestedTab==='common') g='common';
+  document.querySelectorAll('.tabs button').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.g===g)));
   drawPanel();
 }
 
