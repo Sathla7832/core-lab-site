@@ -215,16 +215,9 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
         }
       };
 
-      // The schedule arrives as data and is rendered with the portal's own
-      // stylesheet. No iframe, so the member page CSP never applies to it.
-      const scheduleColumns = [
-        { key: "date", label: "Date", className: "member-schedule-date" },
-        { key: "graduate", label: "Graduate Student", people: true },
-        { key: "graduate", label: "Presentation", presentation: true },
-        { key: "undergraduate", label: "Undergraduate Student", people: true },
-        { key: "undergraduate", label: "Presentation", presentation: true },
-      ];
-
+      // The protected schedule API returns structured data, never markup.
+      // Build each date and presenter card with text nodes so paper titles
+      // cannot inject HTML into the signed-in portal.
       // Presenter cells show the English name with the Chinese name beneath it,
       // because members recognize each other by the Chinese name.
       const scheduleChemistryText = (value) => String(value || "")
@@ -234,74 +227,80 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
         .replace(/CO2/g, "CO\u2082")
         .replace(/CoPx/g, "CoP\u2093");
 
-      const scheduleNameCell = (people) => {
-        const cell = document.createElement("td");
-        if (!people.length) {
-          cell.className = "member-schedule-empty";
-          cell.textContent = "-";
-          return cell;
-        }
-        people.forEach((person) => {
-          const block = document.createElement("div");
-          block.className = "member-schedule-person";
-          if (person.en) block.append(createText("span", person.en, "member-schedule-name-en"));
-          if (person.zh) block.append(createText("span", person.zh, "member-schedule-name-zh"));
-          cell.append(block);
-        });
-        return cell;
-      };
-
-      const schedulePresentationCell = (people) => {
-        const cell = document.createElement("td");
-        const links = people.flatMap((person) => Array.isArray(person.presentations)
+      const schedulePresentationList = (person) => {
+        const list = document.createElement("ul");
+        list.className = "member-schedule-reading-list";
+        const assigned = Array.isArray(person.presentations)
           ? person.presentations
-          : (person.presentation ? [person.presentation] : []))
-          .filter((presentation) => presentation && presentation.url);
+          : (person.presentation ? [person.presentation] : []);
+        const links = assigned.filter((presentation) => presentation && presentation.url);
         if (!links.length) {
-          cell.className = "member-schedule-empty";
-          return cell;
+          list.append(createText("li", "Reading assignment is not available yet.", "member-schedule-reading-pending"));
+          return list;
         }
         links.forEach((presentation) => {
-          const link = createText("a", scheduleChemistryText(presentation.label || "Open paper"), "member-schedule-paper-link");
+          const item = document.createElement("li");
+          const link = createText("a", scheduleChemistryText(presentation.label || "Open assigned reading"), "member-schedule-paper-link");
           link.href = presentation.url;
           link.target = "_blank";
           link.rel = "noopener noreferrer";
-          cell.append(link);
+          item.append(link);
+          list.append(item);
         });
-        return cell;
+        return list;
       };
 
-      const renderScheduleTable = (host, rows) => {
-        const table = document.createElement("table");
-        table.className = "member-schedule-table";
-        const head = document.createElement("thead");
-        const headRow = document.createElement("tr");
-        scheduleColumns.forEach((column) => {
-          const cell = createText("th", column.label);
-          cell.scope = "col";
-          headRow.append(cell);
-        });
-        head.append(headRow);
-        const body = document.createElement("tbody");
-        rows.forEach((row) => {
-          const line = document.createElement("tr");
-          scheduleColumns.forEach((column) => {
-            if (column.people) {
-              line.append(scheduleNameCell(Array.isArray(row[column.key]) ? row[column.key] : []));
-              return;
-            }
-            if (column.presentation) {
-              line.append(schedulePresentationCell(Array.isArray(row[column.key]) ? row[column.key] : []));
-              return;
-            }
-            const value = String(row[column.key] || "").trim();
-            const cell = createText("td", value || "-", value ? (column.className || "") : "member-schedule-empty");
-            line.append(cell);
+      const renderScheduleBoard = (host, rows) => {
+        const board = document.createElement("div");
+        board.className = "member-schedule-date-grid";
+        rows.forEach((row, index) => {
+          const date = document.createElement("article");
+          date.className = "member-schedule-date-card";
+          const dateHead = document.createElement("header");
+          dateHead.className = "member-schedule-date-head";
+          dateHead.append(
+            createText("span", `OCTOBER · ${String(index + 1).padStart(2, "0")}`, "member-schedule-date-kicker"),
+            createText("h3", row.date || "Presentation date"),
+            createText("span", `${(Array.isArray(row.graduate) ? row.graduate.length : 0) + (Array.isArray(row.undergraduate) ? row.undergraduate.length : 0)} presenters`, "member-schedule-presenter-count"),
+          );
+          date.append(dateHead);
+
+          [
+            { key: "graduate", label: "Graduate students" },
+            { key: "undergraduate", label: "Undergraduate students" },
+          ].forEach((group) => {
+            const people = Array.isArray(row[group.key]) ? row[group.key] : [];
+            if (!people.length) return;
+            const section = document.createElement("section");
+            section.className = "member-schedule-group";
+            section.append(createText("h4", group.label, "member-schedule-group-label"));
+            people.forEach((person) => {
+              const card = document.createElement("article");
+              card.className = "member-schedule-presenter-card";
+              const identity = document.createElement("div");
+              identity.className = "member-schedule-presenter-identity";
+              if (person.en) identity.append(createText("span", person.en, "member-schedule-name-en"));
+              if (person.zh) identity.append(createText("span", person.zh, "member-schedule-name-zh"));
+              identity.append(createText("span", "15 min", "member-schedule-duration"));
+              card.append(identity, schedulePresentationList(person));
+              section.append(card);
+            });
+            date.append(section);
           });
-          body.append(line);
+          board.append(date);
         });
-        table.append(head, body);
-        host.replaceChildren(table);
+        host.replaceChildren(board);
+      };
+
+      const scheduleEmptyState = () => {
+        const message = document.createElement("div");
+        message.className = "member-schedule-empty-state";
+        message.append(
+          createText("span", "OCTOBER 2026", "member-report-schedule-eyebrow"),
+          createText("h3", "No presentation dates are available yet."),
+          createText("p", "The schedule will appear here after it is published."),
+        );
+        return message;
       };
 
       loadMemberReportSchedule = async () => {
@@ -320,13 +319,14 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
           });
           const data = await response.json().catch(() => ({}));
           if (!response.ok) throw new Error(String(data.error || "The presentation schedule could not be loaded."));
-          const rows = Array.isArray(data.rows) ? data.rows : [];
+          const octoberDates = new Set(["10/7", "10/14", "10/21", "10/28"]);
+          const rows = Array.isArray(data.rows)
+            ? data.rows.filter((row) => octoberDates.has(String(row.date || "").trim()))
+            : [];
           if (!rows.length) {
-            host.replaceChildren(createText("p", "No presentations are scheduled yet.", "muted"));
+            host.replaceChildren(scheduleEmptyState());
           } else {
-            renderScheduleTable(host, rows);
-            const intro = String(data.intro || "").trim();
-            if (intro) host.prepend(createText("p", intro, "member-schedule-intro"));
+            renderScheduleBoard(host, rows);
           }
           host.hidden = false;
           if (state) state.hidden = true;
