@@ -118,6 +118,7 @@ footer{padding:40px 0 60px;border-top:1px solid var(--line);font-size:14px;color
 .tabs button[aria-selected="true"]{color:var(--ink);border-color:var(--ink)}
 h3.blk{font-size:22px;margin:40px 0 6px}
 .topics{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:18px;margin-top:14px}
+.presentation-timeline{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin:14px 0 28px}.presentation-slot{padding:15px 17px;border:1px solid #d4e1e7;border-top:4px solid var(--signal);border-radius:12px;background:#fff;box-shadow:0 6px 16px rgba(15,42,62,.05)}.presentation-slot h4{margin:0 0 9px;color:var(--deep);font-family:"Noto Serif TC",serif;font-size:18px}.presentation-slot p{margin:0 0 8px;color:var(--mute);font-size:13px}.presentation-slot ul{list-style:none;padding:0;margin:0}.presentation-slot li{margin:5px 0}.presentation-slot a{color:var(--ink);font-weight:700;text-decoration:none}.presentation-slot a:hover,.presentation-slot a:focus-visible{text-decoration:underline}.presentation-slot .role{margin-left:6px;color:var(--mute);font-size:12px;font-weight:400}.student-report-date{display:inline-block;padding:4px 9px;border-radius:999px;background:#e8f4f1;color:#12675d;font-size:13px;font-weight:700}
 .topic{background:#fff;padding:18px 22px 20px;border-top:5px solid var(--c,var(--ec))}
 .topic h4{font-family:"Noto Serif TC",serif;font-size:18px;margin:0 0 8px;line-height:1.4}
 .topic p{margin:6px 0;font-size:15px}
@@ -827,7 +828,7 @@ function drawStudentPath(group,index){
   document.querySelector('#people > h2').textContent='個人學習路徑';
   document.querySelector('#people > .reading-intro').textContent='下列內容為此學生的主題、每月指定閱讀與工作能力；文獻連結可直接開啟 DOI 或可用的出版社全文。';
   document.querySelector('.tabs').hidden=true;
-  panel.innerHTML=`<article class="topic" style="--c:${t.c||'var(--ec)'}"><p class="member-name">${t.who}</p><h4>${t.t}</h4><p><span class="lab">要回答：</span>${t.q}</p><p><span class="lab">主要工作：</span>${t.m}</p></article>
+  panel.innerHTML=`<article class="topic" style="--c:${t.c||'var(--ec)'}"><p class="member-name">${t.who}</p>${studentReportDates(group,index).length?`<p class="student-report-date">10 月報告：${studentReportDates(group,index).join('、')}｜每人 15 分鐘</p>`:''}<h4>${t.t}</h4><p><span class="lab">要回答：</span>${t.q}</p><p><span class="lab">主要工作：</span>${t.m}</p></article>
   <h3 class="blk">共同知識 → 個人目標 → 文獻任務 → 成果</h3><section class="pathway"><div class="pathway-grid"><div class="pathway-item"><b>共同知識先備</b><p>${COMMON_CORE.map(([title])=>title).join('；')}。專題生以量測與圖表正確判讀為主；碩班再評估機理證據並整合工作態與器件。</p></div><div class="pathway-item"><b>個人學習目標</b><p>${t.goal||t.q}</p></div><div class="pathway-item"><b>每篇文獻任務</b><p>${t.task||'用統一閱讀表整理研究問題、材料設計、關鍵表徵、性能條件、控制組與可移植方法。'}</p></div><div class="pathway-item"><b>共通閱讀方法</b><p>問題 → 材料設計 → 表徵 → 電化學結果 → 作者主張；另列量測條件、關鍵數據、控制組與替代解釋。</p></div></div><p class="deliverable"><b>可驗收成果：</b>${t.output||'交一張研究邏輯圖（問題→設計→表徵→電化學→主張）、控制組與替代解釋表、關鍵數據表、150–250 字機理判斷，以及一項可在本實驗室驗證的實驗建議。'}</p></section>
   ${group==='ug'?`<aside class="route-alert"><b>文獻配對檢核：</b>此頁保留既有每人每月 1 篇的 56 篇排程與 DOI；附件指出部分文章與指定金屬／研究問題未直接對應。請把每篇視為待逐篇核對的候選文獻，不以「水分解」關鍵字相同就當作已符合 Cu/Fe/Co/Ni/Mn/Zn SAC 題目。專題生文獻仍以近十年 ACS Applied 系列為範圍；未核實對題性與全文取得狀態前，不標示為已完成篩選。</aside>`:''}
   <h3 class="blk">10 月至 1 月：每月學習任務</h3><ol class="stages s5">${MONTH_GOALS[group].map((goal,m)=>`<li data-m="${MONTHS[m]}"><span class="wk">${mcat(d,m).map(x=>CATS[x]).join('＋')}</span><p>${goal}</p><p><b>個人焦點：</b>${t.goal||t.q}</p></li>`).join('')}</ol>
@@ -841,13 +842,22 @@ function drawStudentPath(group,index){
   restoreMonthEndNotes();
   return true;
 }
-const studentHref=(group,index)=>`research-map.html?student=${group}-${index}`;
+const studentHref=(group,index)=>`research-map.html?student=${group}-${index}#people`;
+const OCTOBER_PRESENTATIONS=[
+ {date:"10/7",presenters:[["ms",1],["ms",2],["ug",2]]},
+ {date:"10/14",presenters:[["ms",2],["ug",1]]},
+ {date:"10/21",presenters:[["ms",0],["ug",3],["ug",0]]},
+ {date:"10/28",presenters:[["ms",3],["ug",4],["ug",5]]}
+];
+function studentReportDates(group,index){return OCTOBER_PRESENTATIONS.filter(day=>day.presenters.some(([g,i])=>g===group&&i===index)).map(day=>day.date)}
+function presentationTimelineMarkup(){return `<div class="presentation-timeline">${OCTOBER_PRESENTATIONS.map(day=>`<article class="presentation-slot"><h4>${day.date}</h4><p>點姓名查看該生個人閱讀路徑</p><ul>${day.presenters.map(([group,index])=>{const topic=G[group].topics[index],name=topic.who.split("（")[0];return `<li><a href="${studentHref(group,index)}">${name}</a><span class="role">${group==='ms'?'碩士生':'專題生'}</span></li>`}).join('')}</ul></article>`).join('')}</div>`}
 function drawPanel(){
   if(g==='common'){drawCommonPanel();return}
   const d=G[g];
   panel.innerHTML=`<details class="roadmap-method method-quick"><summary>展開實驗室文獻閱讀方法流程圖</summary>${roadmapMethodMarkup()}</details>${d.intro?'<p class="prose map-group-intro">'+d.intro+'</p>':''}
   <h3 class="blk">題目</h3><div class="topics">${d.topics.map((t,index)=>`<article class="topic" style="--c:${t.c||'var(--ec)'}"><p class="member-name"><a href="${studentHref(g,index)}">${t.who}</a></p><h4>${t.t}</h4>
     <p><span class="lab">要回答：</span>${t.q}</p><p><span class="lab">主要工作：</span>${t.m}</p><p class="rd">本學期 ${t.s.flat().length} 篇，從 ${cite(t.s[0][0])} 開始</p></article>`).join('')}</div>
+  <h3 class="blk">2026 年 10 月文獻報告時程</h3><p class="sub prose">請依報告日期準備個人 10 月指定閱讀；報告文章欄目前留白，題目確定後再補。</p>${presentationTimelineMarkup()}
   <h3 class="blk">2026 年 10 月至 2027 年 1 月</h3><ol class="stages s5">${d.stages.map((s,i)=>`<li data-m="${MONTHS[i]}"><span class="wk">${mcat(d,i).map(c=>CATS[c]).join('＋')}</span><p>${s}</p></li>`).join('')}</ol>
   ${g==='ms'?`<aside class="route-alert"><b>共同知識：</b>四位碩士生共用 SAC／電化學／表徵／穩定性四個先修模組，另須把個人主線延伸到臨場量測與反應器設計。請由「共同知識」分頁查看內容與參考文獻；不另計入每人每月兩篇。</aside>`:''}
   <aside class="pathway"><h3>每篇文獻的共同驗收格式</h3><div class="pathway-grid"><div class="pathway-item"><b>所有成員</b><p>研究問題 → 材料設計 → 表徵 → 電化學結果 → 作者主張；另列量測條件、關鍵數據與控制組。</p></div><div class="pathway-item"><b>${g==='ug'?'專題生加做':'碩士生加做'}</b><p>${g==='ug'?'以自己的圖表說明量測結果，指出一個可能的替代解釋與一項可重現的實驗。':'評估證據鏈與替代假說，指出機理／器件證據缺口，提出可同步驗證的下一個實驗。'}</p></div></div><p class="deliverable"><b>報告成果：</b>一張邏輯圖、一張控制組／替代解釋表、一張關鍵數據表，以及一項可驗收的後續實驗建議。</p></aside>
