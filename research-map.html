@@ -845,7 +845,7 @@ const studentHref=(group,index)=>`research-map.html?student=${group}-${index}`;
 function drawPanel(){
   if(g==='common'){drawCommonPanel();return}
   const d=G[g];
-  panel.innerHTML=`<details class="roadmap-method method-quick"><summary>展開實驗室文獻閱讀方法流程圖</summary>${roadmapMethodMarkup()}</details><p class="prose map-group-intro">${d.intro}</p>
+  panel.innerHTML=`<details class="roadmap-method method-quick"><summary>展開實驗室文獻閱讀方法流程圖</summary>${roadmapMethodMarkup()}</details>${d.intro?'<p class="prose map-group-intro">'+d.intro+'</p>':''}
   <h3 class="blk">題目</h3><div class="topics">${d.topics.map((t,index)=>`<article class="topic" style="--c:${t.c||'var(--ec)'}"><p class="member-name"><a href="${studentHref(g,index)}">${t.who}</a></p><h4>${t.t}</h4>
     <p><span class="lab">要回答：</span>${t.q}</p><p><span class="lab">主要工作：</span>${t.m}</p><p class="rd">本學期 ${t.s.flat().length} 篇，從 ${cite(t.s[0][0])} 開始</p></article>`).join('')}</div>
   <h3 class="blk">2026 年 10 月至 2027 年 1 月</h3><ol class="stages s5">${d.stages.map((s,i)=>`<li data-m="${MONTHS[i]}"><span class="wk">${mcat(d,i).map(c=>CATS[c]).join('＋')}</span><p>${s}</p></li>`).join('')}</ol>
@@ -918,7 +918,7 @@ for(const group of ["ug","ms"]){
   topic.s=MONTHS.map((_,month)=>USER_PLAN_ROWS.map((row,i)=>({row,i})).filter(({row})=>row[0]===who&&row[1]===month).map(({i})=>"provided_"+String(i+1).padStart(3,"0")));
  }
 }
-G.ug.intro="六位專題生各自以一篇/月閱讀實驗室提供的文獻，主線仍是單原子催化劑與水分解量測。期刊難度以 ACS Applied、JPC 與 Energy & Fuels 為主；為湊足 24 篇且不重複，少數文章屬期刊例外，並逐篇標示直接、橋接或弱匹配。";
+G.ug.intro="";
 const USER_PLAN_NOTICE="<b>資料來源與配對界線：</b>以下分派取自實驗室提供的 PDF；作者資訊、DOI、期刊版本與全文／OA 尚未外部核驗。標示「橋接／弱匹配」的文章只供方法或背景練習，不代表直接支持學生的金屬、反應或系統主題。資料夾目前缺少直接涵蓋海水 Cl⁻ 下 OER／氯副反應選擇性的核心文獻，也缺少 SAC 用於完整 VRFB 的直接驗證；專題生有少數期刊例外，頁面逐篇標出。";
 const planCounts=USER_PLAN_NAMES.map(name=>({name,items:USER_PLAN_ROWS.filter(r=>r[0]===name).length}));
 if(USER_PLAN_ROWS.length!==56||new Set(USER_PLAN_ROWS.map(r=>r[4])).size!==56||planCounts.some((x,i)=>x.items!==(i<6?4:8)))throw new Error("使用者文獻分派數量驗證失敗");
