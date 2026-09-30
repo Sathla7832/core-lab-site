@@ -906,10 +906,10 @@ for(const [n,row] of USER_PLAN_ROWS.entries()){
  if(/Single[- ]Atom|single atom|SAC|單原子/i.test(title+" "+fit))tags.push("sac");
  if(/reactor|flow|cell|電解槽|流道/i.test(title+" "+fit))tags.push("rx");
  if(/XAS|operando|臨場/i.test(title+" "+fit))tags.push("xas");
- D[id]={f:tags,t:title,a:"作者資料待核對",j:journal,w:"配對判定："+fit+"。由實驗室提供的 PDF 初步分派；作者、版本、DOI 與全文／OA 狀態尚未外部核驗。"};
+ D[id]={f:tags,t:title,a:"作者資料待核對",j:journal.replace(/（例外）|\(例外\)/g,""),w:"配對判定："+fit+"。由實驗室提供的 PDF 初步分派；作者、版本、DOI 與全文／OA 狀態尚未外部核驗。"};
  DOI[id]=doi;
  READING_GUIDE[id]=[question,"回答時只依文章內容，指出直接支撐答案的圖／表、數據與量測條件，並寫出一項控制或限制。"];
- const status=fit.startsWith("弱匹配")?"弱匹配":journal.includes("例外")?"期刊例外":fit.startsWith("直接")?"直接／系統背景":"橋接閱讀";
+ const status=fit.startsWith("弱匹配")?"弱匹配":fit.startsWith("直接")?"直接／系統背景":"橋接閱讀";
  PAPER_AUDIT[id]=[status,fit+"；請勿把跨反應、跨金屬或方法類比當成本人主題的直接證據。"];
 }
 for(const group of ["ug","ms"]){
@@ -919,7 +919,7 @@ for(const group of ["ug","ms"]){
  }
 }
 G.ug.intro="";
-const USER_PLAN_NOTICE="<b>資料來源與配對界線：</b>以下分派取自實驗室提供的 PDF；作者資訊、DOI、期刊版本與全文／OA 尚未外部核驗。標示「橋接／弱匹配」的文章只供方法或背景練習，不代表直接支持學生的金屬、反應或系統主題。資料夾目前缺少直接涵蓋海水 Cl⁻ 下 OER／氯副反應選擇性的核心文獻，也缺少 SAC 用於完整 VRFB 的直接驗證；專題生有少數期刊例外，頁面逐篇標出。";
+const USER_PLAN_NOTICE="<b>資料來源與配對界線：</b>以下分派取自實驗室提供的 PDF；作者資訊、DOI、期刊版本與全文／OA 尚未外部核驗。標示「橋接／弱匹配」的文章只供方法或背景練習，不代表直接支持學生的金屬、反應或系統主題。資料夾目前缺少直接涵蓋海水 Cl⁻ 下 OER／氯副反應選擇性的核心文獻，也缺少 SAC 用於完整 VRFB 的直接驗證。";
 const planCounts=USER_PLAN_NAMES.map(name=>({name,items:USER_PLAN_ROWS.filter(r=>r[0]===name).length}));
 if(USER_PLAN_ROWS.length!==56||new Set(USER_PLAN_ROWS.map(r=>r[4])).size!==56||planCounts.some((x,i)=>x.items!==(i<6?4:8)))throw new Error("使用者文獻分派數量驗證失敗");
 const requestedTab=new URLSearchParams(location.search).get('tab');
