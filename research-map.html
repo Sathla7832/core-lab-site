@@ -459,7 +459,7 @@ const DOI={
  co_wo3_her:"10.1021/acsami.1c16082",co_coord_her:"10.1021/acscatal.0c05577",co_lowcoord_her:"10.1021/acscatal.2c01253",co_water_activation:"10.1021/acscatal.2c02770",ni_mno2_sac:"10.1021/acsanm.4c03521",ni_highval_sac:"10.1002/advs.201903089",ni_np_synergy:"10.1021/acs.energyfuels.2c02644",
  mn_dorbital_oer:"10.1007/s12274-023-5859-8",mn_ruo2:"10.1021/jacs.5c01886",mn_silane_oer:"10.1002/anie.202315032",mnfe_sa_np:"10.1021/acsami.2c08572",jacsau_sac_perspective:"10.1021/jacsau.1c00121"
 };
-const cite=id=>{const a=D[id].a.split(/[,;]/)[0];const y=D[id].j.match(/(\d{4})\)?$/)[1];return `${a} ${y}`};
+const cite=id=>{const a=D[id].a.split(/[,;]/)[0];const y=D[id].j.match(/(\d{4})\)?$/)?.[1];return y?`${a} ${y}`:D[id].t};
 
 const CATS=["電化學理論","催化劑設計","儀器分析","臨場反應器設計","量測"];
 const G={
