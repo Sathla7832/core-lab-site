@@ -253,12 +253,12 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
 
       const schedulePresentationCell = (people) => {
         const cell = document.createElement("td");
-        const links = people
-          .map((person) => person.presentation || {})
-          .filter((presentation) => presentation.url);
+        const links = people.flatMap((person) => Array.isArray(person.presentations)
+          ? person.presentations
+          : (person.presentation ? [person.presentation] : []))
+          .filter((presentation) => presentation && presentation.url);
         if (!links.length) {
           cell.className = "member-schedule-empty";
-          cell.textContent = "-";
           return cell;
         }
         links.forEach((presentation) => {
