@@ -635,7 +635,7 @@ const ARTICLE_QC={
  co_lowcoord_her:{type:"原始研究",publisher:"ACS / ACS Catalysis",oa:"非 Open Access；出版社標示需訂閱／授權（SI 免費）",doi:"ACS 頁核對題名、DOI、卷期頁碼與摘要",difficulty:"專題生中階至進階",strength:"3/5（EXAFS 配位與長時 HER 數據；需核對單原子證據和比較條件）",conditions:"出版社報告鹼性 HER；全文核對電解液、載量、iR、對照和 500 h durability 的操作定義。",limit:"由摘要無法取代對 Co–N 位點擬合、Co–Co 排除及長時後結構的全文核對。",verdict:"保留為 Co 配位／HER 延伸讀物；非 ACS Applied"},
  co_water_activation:{type:"原始研究",publisher:"ACS / ACS Catalysis",oa:"非 Open Access；出版社標示需訂閱／授權（SI 免費）",doi:"ACS 頁核對題名、DOI、卷期頁碼與摘要",difficulty:"專題生進階",strength:"4/5（單原子與奈米晶控制、原位 ATR-SEIRAS 及機理計算）",conditions:"出版社摘要確認酸性與鹼性 HER、原位 ATR-SEIRAS；全文核對電極、載量、iR、空白對照及 IR 訊號歸屬。",limit:"研究催化劑包含 Co–N₃ 單原子和 Co 奈米晶；活性提升有界面協同，不能稱孤立 Co₁ 單獨作用。",verdict:"保留為 Co₁/Co 顆粒協同與臨場光譜進階案例；非純 SAC 對照"}
 };
-function articleQC(id,group,t,m){const p=D[id],q=ARTICLE_QC[id]||{},audit=PAPER_AUDIT[id];return `<details class="qc-detail"><summary>書目與品質檢核（${q.verdict||audit?.[0]||'待核驗'}）</summary><dl><dt>研究主題／閱讀功能</dt><dd>${t.t}｜${audit?.[1]||p.w}</dd><dt>書目／出版社</dt><dd>${p.a}｜${p.j}｜${q.publisher||'出版社待逐篇核實'}</dd><dt>文章類型／難度</dt><dd>${q.type||'文章類型待查'}｜${q.difficulty|| (group==='ug'?'專題生基礎至中階':'碩班中階至進階，待逐篇定級')}</dd><dt>DOI 核驗</dt><dd>${DOI[id]?`DOI ${DOI[id]}；${q.doi||'DOI 連結存在，題名／作者／卷頁對照尚待核驗'}`:'目前無 DOI；待核驗'}</dd><dt>全文／OA</dt><dd>${q.oa|| (p.u?'已有出版社全文連結；OA 授權仍須逐篇確認':'未確認；不得視為 Open Access')}</dd><dt>電化學條件核對</dt><dd>${q.conditions||'全文待核：電解液與 pH、載量與基材、電位基準及 iR 校正、幾何／ECSA 正規化、穩定時長、產物／法拉第效率、對照與重複數。非電化學方法文則標明適用範圍。'}</dd><dt>本月能力／學生範圍</dt><dd>${MONTH_GOALS[group][m]}｜${group==='ug'?'專題生：回答唯一問題、指出直接證據與一個量測限制，不作深機制推論。':'碩士生：回答唯一問題並評估因果證據，指出一個替代解釋及區辨實驗。'}</dd><dt>題目匹配與處置</dt><dd>${q.verdict||audit?.[0]||'待核驗'}：${audit?.[1]||'需完成出版社元資料與全文內容對照後再定保留、替換或背景閱讀'}</dd><dt>證據強度</dt><dd>${q.strength||'待評分；須讀全文後依直接結構/活性證據、控制組、條件完整度及交叉驗證分級'}</dd><dt>最重要限制</dt><dd>${q.limit||audit?.[1]||'待讀原文確認；不得由題名或摘要推定。'}</dd></dl></details>`}
+function articleQC(id,group,t,m){const p=D[id],q=ARTICLE_QC[id]||{},audit=PAPER_AUDIT[id],auditLabel=audit?.[0]==='弱匹配'?'待閱讀評估':audit?.[0]||'待核驗';return `<details class="qc-detail"><summary>書目與品質檢核（${q.verdict||auditLabel}）</summary><dl><dt>研究主題／閱讀功能</dt><dd>${t.t}｜${audit?.[1]||p.w}</dd><dt>書目／出版社</dt><dd>${p.a}｜${p.j}｜${q.publisher||'出版社待逐篇核實'}</dd><dt>文章類型／難度</dt><dd>${q.type||'文章類型待查'}｜${q.difficulty|| (group==='ug'?'專題生基礎至中階':'碩班中階至進階，待逐篇定級')}</dd><dt>DOI 核驗</dt><dd>${DOI[id]?`DOI ${DOI[id]}；${q.doi||'DOI 連結存在，題名／作者／卷頁對照尚待核驗'}`:'目前無 DOI；待核驗'}</dd><dt>全文／OA</dt><dd>${q.oa|| (p.u?'已有出版社全文連結；OA 授權仍須逐篇確認':'未確認；不得視為 Open Access')}</dd><dt>電化學條件核對</dt><dd>${q.conditions||'全文待核：電解液與 pH、載量與基材、電位基準及 iR 校正、幾何／ECSA 正規化、穩定時長、產物／法拉第效率、對照與重複數。非電化學方法文則標明適用範圍。'}</dd><dt>本月能力／學生範圍</dt><dd>${MONTH_GOALS[group][m]}｜${group==='ug'?'專題生：回答唯一問題、指出直接證據與一個量測限制，不作深機制推論。':'碩士生：回答唯一問題並評估因果證據，指出一個替代解釋及區辨實驗。'}</dd><dt>題目匹配與處置</dt><dd>${q.verdict||auditLabel}：${audit?.[1]||'需完成出版社元資料與全文內容對照後再定保留、替換或背景閱讀'}</dd><dt>證據強度</dt><dd>${q.strength||'待評分；須讀全文後依直接結構/活性證據、控制組、條件完整度及交叉驗證分級'}</dd><dt>最重要限制</dt><dd>${q.limit||audit?.[1]||'待讀原文確認；不得由題名或摘要推定。'}</dd></dl></details>`}
 
 const B=[
  {f:["fb","rx","xas"],t:"液流電池衰退時，電解液價態在哪裡失衡？",p:"在流動的電解液裡直接量 V K-edge，把 SOC 與價態失衡從事後滴定變成即時訊號。",r:"Skyllas-Kazacos 2011、Kwabi 2020、Timoshenko 2021"},
@@ -859,10 +859,10 @@ function drawPanel(){
   <div class="filters" id="cf" role="group" aria-label="依主題篩選"></div><p class="progress" id="prog"></p><div id="list"></div>`;
   drawSched();drawReview(d);drawList();const notice=document.createElement('aside');notice.className='route-alert';notice.innerHTML=USER_PLAN_NOTICE;panel.querySelector('#sched')?.before(notice);
 }
-function paperRow(id,k,tag){const p=D[id],doi=DOI[id],audit=PAPER_AUDIT[id];return `<div class="paper${read[g].has(id)?' done':''}">
+function paperRow(id,k,tag){const p=D[id],doi=DOI[id],audit=PAPER_AUDIT[id],auditBadge=audit&&audit[0]!=='弱匹配'?`<span class="tag audit">${audit[0]}</span>`:'';return `<div class="paper${read[g].has(id)?' done':''}">
     <input type="checkbox" id="${k}" data-i="${id}" ${read[g].has(id)?'checked':''} aria-label="標記已讀：${p.t}">
     <div><label for="${k}" class="t"><span class="dots">${p.f.map(x=>`<span style="background:${COL[x]}" title="${NAME[x]}"></span>`).join('')}</span>${p.t}</label>
-    <div class="meta">${p.a}，${p.j}${p.u?'<span class="tag oa">Open Access</span>':''}${tag?`<span class="tag">${tag}</span>`:''}${audit?`<span class="tag audit">${audit[0]}</span>`:''}</div>${READING_GUIDE[id]?'<p class="reading-question"><b>本篇唯一問題：</b>'+READING_GUIDE[id][0]+'</p>':''}<p class="why">${p.w}${audit?` <span class="audit-note">${audit[1]}</span>`:''}</p>
+    <div class="meta">${p.a}，${p.j}${p.u?'<span class="tag oa">Open Access</span>':''}${tag?`<span class="tag">${tag}</span>`:''}${auditBadge}</div>${READING_GUIDE[id]?'<p class="reading-question"><b>本篇唯一問題：</b>'+READING_GUIDE[id][0]+'</p>':''}<p class="why">${p.w}${audit?` <span class="audit-note">${audit[1]}</span>`:''}</p>
     <div class="paper-links">${p.u?`<a class="s direct" href="${p.u}" target="_blank" rel="noopener">出版社全文 ↗</a>`:''}${doi?`<a class="s" href="https://doi.org/${doi}" target="_blank" rel="noopener">DOI: ${doi} ↗</a>`:''}</div></div></div>`}
 function drawSched(){
   const d=G[g],mf=panel.querySelector('#mf');
@@ -906,11 +906,12 @@ for(const [n,row] of USER_PLAN_ROWS.entries()){
  if(/Single[- ]Atom|single atom|SAC|單原子/i.test(title+" "+fit))tags.push("sac");
  if(/reactor|flow|cell|電解槽|流道/i.test(title+" "+fit))tags.push("rx");
  if(/XAS|operando|臨場/i.test(title+" "+fit))tags.push("xas");
- D[id]={f:tags,t:title,a:"作者資料待核對",j:journal.replace(/（例外）|\(例外\)/g,""),w:"配對判定："+fit+"。由實驗室提供的 PDF 初步分派；作者、版本、DOI 與全文／OA 狀態尚未外部核驗。"};
+ const matchNote=fit.replace(/^弱匹配/,"橋接閱讀");
+ D[id]={f:tags,t:title,a:"作者資料待核對",j:journal.replace(/（例外）|\(例外\)/g,""),w:"配對判定："+matchNote+"。由實驗室提供的 PDF 初步分派；作者、版本、DOI 與全文／OA 狀態尚未外部核驗。"};
  DOI[id]=doi;
  READING_GUIDE[id]=[question,"回答時只依文章內容，指出直接支撐答案的圖／表、數據與量測條件，並寫出一項控制或限制。"];
  const status=fit.startsWith("弱匹配")?"弱匹配":fit.startsWith("直接")?"直接／系統背景":"橋接閱讀";
- PAPER_AUDIT[id]=[status,fit+"；請勿把跨反應、跨金屬或方法類比當成本人主題的直接證據。"];
+ PAPER_AUDIT[id]=[status,matchNote+"；請勿把跨反應、跨金屬或方法類比當成本人主題的直接證據。"];
 }
 for(const group of ["ug","ms"]){
  for(const topic of G[group].topics){
@@ -919,7 +920,7 @@ for(const group of ["ug","ms"]){
  }
 }
 G.ug.intro="";
-const USER_PLAN_NOTICE="<b>資料來源與配對界線：</b>以下分派取自實驗室提供的 PDF；作者資訊、DOI、期刊版本與全文／OA 尚未外部核驗。標示「橋接／弱匹配」的文章只供方法或背景練習，不代表直接支持學生的金屬、反應或系統主題。資料夾目前缺少直接涵蓋海水 Cl⁻ 下 OER／氯副反應選擇性的核心文獻，也缺少 SAC 用於完整 VRFB 的直接驗證。";
+const USER_PLAN_NOTICE="<b>資料來源與配對界線：</b>以下分派取自實驗室提供的 PDF；作者資訊、DOI、期刊版本與全文／OA 尚未外部核驗。橋接閱讀只供方法或背景練習，不代表直接支持學生的金屬、反應或系統主題。資料夾目前缺少直接涵蓋海水 Cl⁻ 下 OER／氯副反應選擇性的核心文獻，也缺少 SAC 用於完整 VRFB 的直接驗證。";
 const planCounts=USER_PLAN_NAMES.map(name=>({name,items:USER_PLAN_ROWS.filter(r=>r[0]===name).length}));
 if(USER_PLAN_ROWS.length!==56||new Set(USER_PLAN_ROWS.map(r=>r[4])).size!==56||planCounts.some((x,i)=>x.items!==(i<6?4:8)))throw new Error("使用者文獻分派數量驗證失敗");
 const requestedTab=new URLSearchParams(location.search).get('tab');
