@@ -217,7 +217,7 @@ footer{margin-top:28px;background:var(--deep);border-top:0;color:#bfd1db;padding
 
 <section id="people" class="wrap">
   <h2>題目與閱讀路徑</h2>
-  <p class="sub prose reading-intro">2026 年 10 月至 2027 年 1 月，規劃每月 14 篇指定閱讀：六位專題生各 1 篇（共 6 篇），四位碩士生各 2 篇（共 8 篇）；四個月合計 56 篇，且全數不重複。全體成員均以單原子催化劑的設計、結構確認、活性與穩定性為核心；碩士生另須將各自主題接入臨場量測與反應器設計，建立可在工作條件下驗證活性位的研究能力。</p>
+  <p class="sub prose reading-intro">2026 年 10–12 月的個人指定閱讀依 Presentation Schedule 排定，並按月份放入每位學生的文獻路徑；2027 年 1 月沿用原先安排。各月份篇數依報告名單而異。全體成員仍以各自研究主題、結構證據、量測條件與可驗收成果為主軸。</p>
   <div class="tabs" role="tablist">
     <button role="tab" data-g="ug" aria-selected="true">專題生</button>
     <button role="tab" data-g="ms" aria-selected="false">碩班</button>
@@ -465,7 +465,7 @@ const cite=id=>{const a=D[id].a.split(/[,;]/)[0];const y=D[id].j.match(/(\d{4})\
 const CATS=["電化學理論","催化劑設計","儀器分析","臨場反應器設計","量測"];
 const G={
  ug:{
-  intro:"專題生 6 人以 Cu 與 3d 過渡金屬單原子催化劑為共同主線，採用可比較的 M–Nₓ／M–Oₓ 錨定架構，分別處理 Cu、Fe、Co、Ni、Mn、Zn 六種金屬中心。Cu 與 Zn 定位為配位與結構對照；Fe、Co、Ni、Mn 分別用於 OER、HER 與耐久性比較。修訂選文原則為近十年 ACS Applied Materials & Interfaces、ACS Applied Nano Materials 或 ACS Applied Energy Materials；但原排 24 篇仍須逐篇符合期刊、年份與題目條件，已在個人頁標出判定與待替換項，不把尚未核實的篇目宣稱為合格。每月每人讀 1 篇，六人合計 6 篇，彼此不重複。",
+  intro:"專題生 6 人以單原子催化劑的設計、結構確認、活性與穩定性為共同學習主線。10–12 月指定閱讀依 Presentation Schedule 配置；2027 年 1 月保留原閱讀路徑。閱讀篇數隨報告名單而異，個別文章的書目與主題配對仍以頁面標示為準。",
   per:1,
   mc:[0,1,2,4],
   stages:["從單原子活性位、配位環境、電位與過電位開始，建立與水分解相關的理論基礎。",
@@ -496,9 +496,9 @@ const G={
    "單原子位點、載體與電極架構設計；選定能在臨場條件下驗證的模型系統。",
    "以離線表徵、產物分析與空白對照建立參照，確認後續臨場訊號可被正確判讀。",
    "每人完成一個反應器／cell 設計與一個臨場量測案例；月底以單原子活性位為核心寫兩頁提案。"],
-  note:"<b>每月文獻會</b>：每人報告當月兩篇，各 15 分鐘。<b>一頁筆記</b>：這篇要回答什麼問題、用了什麼方法、最關鍵的一張圖、一件我還不懂的事、可以接到實驗室的哪一層。",
+   note:"<b>文獻報告</b>：依 Presentation Schedule 安排文章與報告月份，每篇 15 分鐘。<b>一頁筆記</b>：這篇要回答什麼問題、用了什麼方法、最關鍵的一張圖、一件我還不懂的事、可以接到實驗室的哪一層。",
   topics:[
-   {k:"fb",who:"呂安璿（碩士生）",c:"var(--sac)",t:"RFB 單原子電極：反應動力學、衰退與流動式臨場驗證",q:"單原子位點如何改變 RFB 電極反應與衰退？如何以流動式臨場 cell 分開觀察價態失衡、跨膜與電極劣化？",m:"單原子電極設計、自組流動電池、長循環測試、臨場 XAS 與反應器設計",goal:"釐清 VRFB 正負極反應、SOC、電荷轉移、傳質、跨膜與價態失衡；區分半電池活性與完整 cell 效率／容量衰退。",task:"每月兩篇中至少一篇聚焦 SAC 電極或活性位證據；另一篇建立流道、流量、壓降、SOC/crossover 或臨場量測方法。",output:"交付一張 flow-through/flow-by cell 草圖與條件表、一份效率／SOC／衰退拆解圖，以及一項同步電化學與 XAS/Raman 的可驗證實驗。",s:[["ma19","wang26fb"],["sun92","fe_rfb23"],["choi17","petch16"],["houser16","kwabi"]]},
+    {k:"fb",who:"呂安璿（碩士生）",c:"var(--sac)",t:"RFB 單原子電極：反應動力學、衰退與流動式臨場驗證",q:"單原子位點如何改變 RFB 電極反應與衰退？如何以流動式臨場 cell 分開觀察價態失衡、跨膜與電極劣化？",m:"單原子電極設計、自組流動電池、長循環測試、臨場 XAS 與反應器設計",goal:"釐清 VRFB 正負極反應、SOC、電荷轉移、傳質、跨膜與價態失衡；區分半電池活性與完整 cell 效率／容量衰退。",task:"依報告時程閱讀指定文章；聚焦 SAC 電極或活性位證據，以及流道、流量、壓降、SOC/crossover 或臨場量測方法。",output:"交付一張 flow-through/flow-by cell 草圖與條件表、一份效率／SOC／衰退拆解圖，以及一項同步電化學與 XAS/Raman 的可驗證實驗。",s:[["ma19","wang26fb"],["sun92","fe_rfb23"],["choi17","petch16"],["houser16","kwabi"]]},
    {k:"ec",who:"李承叡（碩士生）",c:"var(--sac)",t:"海水分解 SAC：OER/氯氧化選擇性與臨場反應器",q:"在含 Cl⁻ 的鹼性電解液中，單原子位點如何維持 OER 選擇性並避免氯氧化與劣化？如何以臨場 cell 驗證？",m:"單原子催化劑設計、模擬海水反應器、選擇性／穩定性測試、臨場 XANES／EXAFS",goal:"建立 OER 與氯氧化競爭的反應圖；理解 Cl⁻、pH、電位、局部濃度與氣泡對選擇性的作用，並區分純鹼液、模擬海水與真海水證據。",task:"每月至少一篇要連結 SAC/OER；同步追蹤 O₂ 與含氯副產物的定量、空白／回收率和反應後位點變化。ORR 理論僅作對照背景，不作海水 OER 主證據。",output:"提出含氯副產物定量與安全檢核表、一張選擇性證據鏈，及能同步收集電化學、產物與臨場結構訊號的 cell 草圖。",s:[["man","irsea24"],["sunt","irsea22"],["major20","ru_cer23"],["irx26","co_dsw24"]]},
    {k:"fb2",who:"林庭暉（碩士生）",c:"var(--sac)",t:"RFB 單原子電極：流道、零間隙架構與系統效率",q:"單原子位點、零間隙 cell、電解液與流道設計如何共同改變極化、效率與長循環表現？",m:"單原子電極架構、流動 cell 設計、流量／壓降紀錄、臨場量測與效率判讀",goal:"從電極材料推進到完整 RFB：掌握電極厚度、壓縮、流速、流道、膜與泵浦的耦合，拆解能量效率、電流效率、電壓效率和容量保持。",task:"每月至少一篇直接連結 SAC 電極；另一篇用 flow cell/全電池資料比較操作條件。明確標示半電池、對稱電池與完整電池不可互換的結論。",output:"完成反應器尺寸/流道/壓縮及操作條件圖表、半電池至 full-cell 指標轉換表，並提出一個把 SAC 電極放入流動系統的驗證設計。",s:[["weber","cu_rfb26"],["skk","gattrell04"],["aaron","flowfield22"],["rfb35kw","darling"]]},
    {k:"op",who:"林宥陞（碩士生）",c:"var(--sac)",t:"海水分解 SAC：臨場 XAS、選擇性與 cell 設計",q:"如何設計可控 Cl⁻、氣泡與流動條件的海水分解 cell，並以臨場 XAS 分辨單原子位點的配位重構與劣化？",m:"單原子催化劑、海水分解 cell 設計、時間同步、XANES／EXAFS 與光束線實驗",goal:"能讀 XANES/EXAFS、配位數/鍵長/無序度與擬合不確定性；把 X-ray 光程、窗口、電極距離、流量與氣泡條件連到可判讀的工作態訊號。",task:"每月至少一篇連結 SAC/海水 OER；方法文獻需轉成實際 cell 圖，並同步規劃電流、光譜、流量及 O₂/含氯產物的時間軸。",output:"交付標註 X-ray path 與電極/流道的 operando cell 草圖、同步量測流程和一張證據缺口表，說明哪些結果仍不足以證明活性位。",s:[["newville","rehr00"],["lien20xas","lin20xas"],["ravel","timo21"],["li25xas","baur"]]}],
@@ -689,8 +689,8 @@ const ROADMAP_MERMAID=String.raw`flowchart TD
     A[研究問題、學生名單、主題、月份與成果目標]
   end
   subgraph ST[學生分類]
-    U[六位專題生<br/>每人每月 1 篇<br/>每月 6 篇｜四月 24 篇]
-    M[四位碩士生<br/>每人每月 2 篇<br/>每月 8 篇｜四月 32 篇]
+    U[六位專題生<br/>10–12 月依報告名單排定<br/>1 月沿用原閱讀路徑]
+    M[四位碩士生<br/>依各月 Presentation Schedule 配置文章]
   end
   subgraph CORE[共同知識與月份程度]
     C[共同先修：SAC、反應與電化學、表徵、量測規範<br/>設定由淺入深的月份目標]
@@ -778,7 +778,7 @@ function roadmapMethodMarkup(){return `<section class="roadmap-method" aria-labe
   <div class="method-flow" aria-label="文字版流程圖">
     <div class="method-step map">① 研究地圖輸入｜學生名單・研究題目・月份・預期成果</div>
     <div class="method-step">② 學生與題目分類</div>
-    <div class="method-branches"><article class="method-track ug"><h4>專題生｜6 人</h4><b>每人每月 1 篇</b>・每月 6 篇・四月 24 篇<br>選刊順序：ACS Applied Materials &amp; Interfaces → ACS Applied Energy Materials → ACS Applied Nano Materials → 其他 ACS／Nature／Wiley／Springer。<br>難度漸進：材料、基本表徵、電化學性能與證據辨識。</article><article class="method-track ms"><h4>碩士生｜4 人</h4><b>每人每月 2 篇</b>・每月 8 篇・四月 32 篇<br>每月盡量配成「基礎／方法／系統」＋「直接支援 SAC／臨場量測／反應器／器件」兩篇。<br>加深機理、替代解釋、工作態證據與實驗設計。</article></div>
+    <div class="method-branches"><article class="method-track ug"><h4>專題生｜6 人</h4><b>10–12 月依報告名單排定</b><br>2027 年 1 月沿用原閱讀路徑。閱讀時著重材料、基本表徵、電化學性能與證據辨識。</article><article class="method-track ms"><h4>碩士生｜4 人</h4><b>篇數依各月報告名單調整</b><br>2027 年 1 月沿用原閱讀路徑。閱讀時加深機理、替代解釋、工作態證據與實驗設計。</article></div>
     <div class="method-step map">③ 設定共同知識與程度｜共同先修 × 個人主題 × 當月目標</div>
     <div class="method-step">④ 搜尋候選文獻｜先查出版社原始頁，再用 Crossref 等資料交叉核對</div>
     <div class="method-step verify">⑤ 書目核驗｜題名 → 作者 → 期刊 → 年份／卷頁 → DOI → 出版社 → OA → 文章類型與內容</div>
@@ -805,7 +805,7 @@ function drawCommonPanel(){
   const foundation=G.ms.foundation;
   panel.innerHTML=`${roadmapMethodMarkup()}<p class="prose map-group-intro">這是十位成員共用的先備知識與討論框架，不另外增加每月指定篇數。專題生以實驗與圖表判讀為主；碩士生須再評估機理證據、工作態與器件設計。</p>
   <h3 class="blk">十人共同核心</h3><div class="common-core">${COMMON_CORE.map(([title,description])=>`<article><h4>${title}</h4><p>${description}</p></article>`).join('')}</div>
-  <h3 class="blk">四個先修閱讀模組</h3><p class="sub prose">模組取代原先分散的六組清單；作為查找工具與共同討論材料，不列入 56 篇個人主排程，也不要求把所有篇目當作額外必讀。</p><div class="foundation-grid">${foundation.map(([title,ids])=>`<section class="foundation"><h4>${title}</h4>${ids.map((id,i)=>paperRow(id,`c${id}${i}`,'先修參考')).join('')}</section>`).join('')}</div>
+   <h3 class="blk">四個先修閱讀模組</h3><p class="sub prose">模組作為查找工具與共同討論材料，不計入依報告時程安排的個人指定閱讀，也不要求把所有篇目當作額外必讀。</p><div class="foundation-grid">${foundation.map(([title,ids])=>`<section class="foundation"><h4>${title}</h4>${ids.map((id,i)=>paperRow(id,`c${id}${i}`,'先修參考')).join('')}</section>`).join('')}</div>
   <h3 class="blk">四個月共同進階</h3><ol class="stages s5">${MONTH_GOALS.ug.map((s,i)=>`<li data-m="${MONTHS[i]}"><span class="wk">${i===0?'全員基礎':i===1?'結構與設計':i===2?'表徵與工作態':'可靠數據與整合'}</span><p><b>共同：</b>${s}<br><b>碩班加深：</b>${MONTH_GOALS.ms[i]}</p></li>`).join('')}</ol>`;
 }
 function monthEndMarkup(group,index,t){
@@ -830,7 +830,7 @@ function drawStudentPath(group,index){
   document.querySelector('.tabs').hidden=true;
   panel.innerHTML=`<article class="topic" style="--c:${t.c||'var(--ec)'}"><p class="member-name">${t.who}</p><h4>${t.t}</h4><p><span class="lab">要回答：</span>${t.q}</p><p><span class="lab">主要工作：</span>${t.m}</p></article>
   <h3 class="blk">共同知識 → 個人目標 → 文獻任務 → 成果</h3><section class="pathway"><div class="pathway-grid"><div class="pathway-item"><b>共同知識先備</b><p>${COMMON_CORE.map(([title])=>title).join('；')}。專題生以量測與圖表正確判讀為主；碩班再評估機理證據並整合工作態與器件。</p></div><div class="pathway-item"><b>個人學習目標</b><p>${t.goal||t.q}</p></div><div class="pathway-item"><b>每篇文獻任務</b><p>${t.task||'用統一閱讀表整理研究問題、材料設計、關鍵表徵、性能條件、控制組與可移植方法。'}</p></div><div class="pathway-item"><b>共通閱讀方法</b><p>問題 → 材料設計 → 表徵 → 電化學結果 → 作者主張；另列量測條件、關鍵數據、控制組與替代解釋。</p></div></div><p class="deliverable"><b>可驗收成果：</b>${t.output||'交一張研究邏輯圖（問題→設計→表徵→電化學→主張）、控制組與替代解釋表、關鍵數據表、150–250 字機理判斷，以及一項可在本實驗室驗證的實驗建議。'}</p></section>
-  ${group==='ug'?`<aside class="route-alert"><b>文獻配對檢核：</b>此頁保留既有每人每月 1 篇的 56 篇排程與 DOI；附件指出部分文章與指定金屬／研究問題未直接對應。請把每篇視為待逐篇核對的候選文獻，不以「水分解」關鍵字相同就當作已符合 Cu/Fe/Co/Ni/Mn/Zn SAC 題目。專題生文獻仍以近十年 ACS Applied 系列為範圍；未核實對題性與全文取得狀態前，不標示為已完成篩選。</aside>`:''}
+  ${group==='ug'?`<aside class="route-alert"><b>文獻配對檢核：</b>10–12 月依報告時程配置，2027 年 1 月沿用原路徑。請將橋接閱讀視為方法或背景練習，不以關鍵字相近就當成直接支持學生的金屬、反應或研究主題；書目待補項目已明確標示。</aside>`:''}
   <h3 class="blk">10 月至 1 月：每月學習任務</h3><ol class="stages s5">${MONTH_GOALS[group].map((goal,m)=>`<li data-m="${MONTHS[m]}"><span class="wk">${mcat(d,m).map(x=>CATS[x]).join('＋')}</span><p>${goal}</p><p><b>個人焦點：</b>${t.goal||t.q}</p></li>`).join('')}</ol>
   ${group==='ms'?`<h3 class="blk">碩班每月共同討論主題</h3><div class="path-review-grid">${[["10 月｜界定比較前提","什麼證據足以支持材料性能改善？半電池、全電池、原海水與模擬電解液的邊界如何交代？"],["11 月｜活性位證據與比較","如何證明活性來自單原子位點，而非載體、團簇、奈米粒子或雜質？不同系統的結構證據如何比較？"],["12 月｜工作態與選擇性","工作電位下活性位如何變化？如何區分 OER 與氯氧化、材料重構與失活？"],["1 月｜器件與尺度轉移","流場、氣泡、泵耗或膜如何改變實際表現？材料層級結果能否轉移到反應器／全電池？"]].map(([h,p])=>`<article class="path-review-card"><h4>${h}</h4><p>${p}</p></article>`).join('')}</div><aside class="pathway"><b>四個月期末交付</b><p>每位碩士生交一張「位點—電化學—器件」證據鏈圖、一張文獻條件比較表、一份含替代解釋的判讀，以及一頁可執行的研究提案（含反應器草圖、臨場同步量測、對照組與風險）。各自的每篇文章仍只回答表列的一個核心問題。</p></aside>`:`<aside class="pathway"><b>專題生期末交付</b><p>交一張「材料製備—結構證據—量測條件—電化學結果」圖、一張對照與量測檢核表，以及一份可重複執行的水分解量測流程；以數據可信與操作正確為主，不要求過度推論機制。</p></aside>`}
   ${monthEndMarkup(group,index,t)}
@@ -868,7 +868,8 @@ function drawSched(){
   mf.innerHTML=MONTHS.map((c,m)=>`<button data-v="${m}" aria-pressed="${m===mSel}">${c}：${mcat(d,m).map(x=>CATS[x]).join('＋')}</button>`).join('');
   mf.onclick=e=>{const b=e.target.closest('button');if(!b)return;mSel=+b.dataset.v;drawSched()};
   const ids=d.topics.flatMap(t=>t.s[mSel]),done=ids.filter(i=>read[g].has(i)).length;
-  panel.querySelector('#mprog').textContent=`${MONTHS[mSel]}主題「${mcat(d,mSel).map(x=>CATS[x]).join('＋')}」，共 ${ids.length} 篇（${d.topics.length} 人，每人 ${d.per} 篇），已讀 ${done} 篇。10 月到 1 月合計 ${ids.length*4} 篇。`;
+  const assigned=d.topics.filter(t=>t.s[mSel].length).length,maxPerStudent=Math.max(0,...d.topics.map(t=>t.s[mSel].length)),total=d.topics.reduce((sum,t)=>sum+t.s.reduce((n,papers)=>n+papers.length,0),0);
+  panel.querySelector('#mprog').textContent=`${MONTHS[mSel]}主題「${mcat(d,mSel).map(x=>CATS[x]).join('＋')}」，${assigned} 位學生共 ${ids.length} 篇（每人依報告安排，至多 ${maxPerStudent} 篇），已讀 ${done} 篇。10 月到 1 月合計 ${total} 篇指定閱讀。`;
   panel.querySelector('#sched').innerHTML=d.topics.map((t,index)=>`<div class="srow" style="--c:${t.c||'var(--ec)'}"><div class="who"><b><a href="${studentHref(g,index)}">${t.who}</a></b><span>${t.t}</span></div>
     <div>${t.s[mSel].map(id=>paperRow(id,'s'+g+id)).join('')}</div></div>`).join('');
 }
@@ -912,14 +913,79 @@ for(const [n,row] of USER_PLAN_ROWS.entries()){
  const status=fit.startsWith("弱匹配")?"弱匹配":fit.startsWith("直接")?"直接／系統背景":"橋接閱讀";
  PAPER_AUDIT[id]=[status,matchNote+"；請勿把跨反應、跨金屬或方法類比當成本人主題的直接證據。"];
 }
+// 2026 年 10–12 月依最新 presentation schedule 排定；1 月沿用原閱讀路徑。
+const PRESENTATION_READINGS=[
+ [0,"李承叡","Driving Tetratomic Iron Clusters via a Ce3+/Ce4+ Electron Pump for Enhanced Oxygen Electrocatalysis"],
+ [0,"洪志嘉","Boosted Catalytic Hydrogenation Performance Using Isolated Co Sites Anchored on Nitrogen-Incorporated Hollow Porous Carbon"],
+ [0,"林庭暉","Single-Atom Catalysts at the Crossroads: Navigating the Path from Laboratory Synthesis to Real-World Devices"],
+ [0,"顏晨宇","Modulating the Spin State of Fe−N−C Single-Atom Catalysts via MoC Clusters for Enhanced Oxygen Reduction Electrocatalysis"],
+ [0,"呂安璿","Defect-Mediated Oxygen Vacancy Engineering of CeO₂ Unlocks Fast V²⁺/V³⁺ Kinetics for Vanadium Redox Flow Batteries"],
+ [0,"蔡宜蓁","Geminal Nickel Atom Boosting the Electrochemical Performance of Cobalt Single Atom Nanoparticle Synergistic Catalysts for Rapid Polysulfide Conversion in Li−S Batteries"],
+ [0,"陳泓嘉","Electrocatalytic Hydrogen Evolution on SiX Nanosheets: Unlocking Superior Activity through Cu Single-Atom Decoration"],
+ [0,"林宥陞","Application of Single-Atom Synergistic Catalysts in Multifield Coupling Reactions"],
+ [0,"包師為","Bimetallic Mn/Cu Single-Atom Catalysts Derived from Natural Wood for High-Performance Rechargeable Zinc-Air Batteries"],
+ [0,"黃震霖","Zn, Fe Dual-Atom Sites Catalyst Constructed by Metal Vacancy Strategy for Oxygen Reduction Reaction and Zn-Air Battery"],
+ [1,"李承叡","Efficient and Stable Alkaline Oxygen Evolution on Fe/Co Co-Doped NiSe"],
+ [1,"林庭暉","Ammonium Chloride Additive for Enhanced Thermal Stability and Kinetics of Vanadium Redox Flow Battery Electrolytes"],
+ [1,"洪志嘉","Co Single Atom Coupled with 3D-Printed Electrodes for High-Efficiency Solar-Driven Oxygen Evolution"],
+ [1,"顏晨宇","Ligand Modulation Induced Spin-State Transition Enhances Oxygen Electrocatalysis in Co Single-Atom Catalysts"],
+ [1,"呂安璿","Iodine-Functionalized rGO Graphite Felt Interfaces for Enhanced Mass Transport and Charge-Transfer Kinetics in Vanadium Redox Flow Batteries"],
+ [1,"林宥陞","Synergistic Effect on the Photocatalytic CO₂ Hydrogenation to Methanol Using Dual Co−Cu Single Atom Poly(heptazine imide): Influence of Pressure on Product Selectivity"],
+ [1,"蔡宜蓁","Fundamentals and Perspectives of Positively Charged Single-Metal Site Catalysts for CO₂ Electroreduction"],
+ [1,"李承叡","Emerging Single-Atom Alloys for Electroreduction of Waste Inorganic Nitrogen Sources toward Ammonia"],
+ [1,"林庭暉","Decoding CO₂ Adsorption Modes and CO Yield Variation on TM–N₄ Single-Atom Catalysts via Constant-Potential Computation and Machine-Learning Investigation"],
+ [1,"陳泓嘉","Fluxional Coordination-Driven Reversible Metal–Support Bonding in Dual-Atom Electrocatalysts for HER"],
+ [1,"包師為","Atomic Level Surface Tuning of High-Performance Cobalt Single Atom Electrocatalysts for ORR: From Active Sites to Nanostructures"],
+ [2,"呂安璿","Effect of Inorganic Additive Strategy on the Stability of VO₂⁺ in Vanadium Redox Flow Battery Electrolyte by Molecular Dynamics"],
+ [2,"林宥陞","Unsaturated Cu Single-Atom Catalysts in COFs for Efficient Neutral Ammonia Electrosynthesis from Nitrate"],
+ [2,"黃震霖","Advances and Challenges of Single-Atom Metals-Based Materials for Sensing Applications through Structure−Function Relationships"],
+ [2,"李承叡","Spin-State Engineering in Single-Atom Catalysts for NOx and COx Electrocatalysis"],
+ [2,"林庭暉","Continuous-Flow Plasma Synthesis of Single-Atom Au₁/CeO₂−Fe for Wide-Temperature-Window Water−Gas Shift Reaction"],
+ [2,"洪志嘉","Regulating Sub-1 nm Ru Clusters via Single-Atom Catalyst Support toward Efficient Anion Exchange Membrane Water Electrolysis"],
+ [2,"顏晨宇","Nickel Single Atoms Embedded in 2D Stacked Polytriazine as an Electrocatalyst for Oxygen Evolution Reaction"],
+ [2,"呂安璿","Advanced Vanadium Redox Flow Battery Facilitated by Synergistic Effects of the Co₂P-Modified Electrode"],
+ [2,"林宥陞","Electron Redistribution via LDH-to-DACs Coupling Enhances d-Band Regulation and Stability for Zinc-Air Battery Electrocatalysis"],
+ [2,"蔡宜蓁","Paired Electrocatalysis: Nitrate Reduction to Ammonia Coupled with Anodic Upcycling of Biomass and Plastic Waste"],
+ [2,"李承叡","Iron Single-Atom Catalysts Anchored on Defect-Engineered N-Doped Graphene Reveal an Interplay between CO₂ Reduction Activity and Stability"],
+ [2,"林庭暉","Structure−Stability Relation of Single-Atom Catalysts under Operating Conditions of CO₂ Reduction"],
+ [2,"陳泓嘉","Rational Design of 3d-Transition Metal Phthalocyanine Sheet Electrocatalysts for Overall Water Splitting: A DFT Investigation"],
+ [2,"包師為","Synergistic Co−Ru Dual-Atom Sites Anchored on Porous Carbon Nanofibers for Efficient Electrochemical NO₂⁻ Reduction to NH₃"],
+ [2,"呂安璿","Dual-Functional Hydroxyethylidene Diphosphate Additive for Broadening the Operating Temperature Range and Optimizing the Reaction Kinetics of Electrolyte in Vanadium Redox Flow Battery"],
+ [2,"林宥陞","Toward Stable Single-Atom Catalysts for Electro- and Thermocatalytic Applications: Conventional Approaches and Emergent Strategies"],
+ [2,"黃震霖","Precisely Engineered Co−O−Mn Co Sites in Cobalt Single-Atom Catalysts for Highly Sensitive Detection of As(III) in Water"]
+];
+const PRESENTATION_ONLY=[
+ ["李承叡","Efficient and Stable Alkaline Oxygen Evolution on Fe/Co Co-Doped NiSe","由報告排程提供，作者、期刊及 DOI 資料待補。","作者以哪些結構或電化學對照，支持 Fe/Co 共摻雜 NiSe 的鹼性 OER 表現？"],
+ ["林庭暉","Decoding CO₂ Adsorption Modes and CO Yield Variation on TM–N₄ Single-Atom Catalysts via Constant-Potential Computation and Machine-Learning Investigation","由報告排程提供，作者、期刊及 DOI 資料待補。","作者如何結合定電位計算與機器學習，將 CO₂ 吸附模式和 CO 產率變化連結？"],
+ ["陳泓嘉","Fluxional Coordination-Driven Reversible Metal–Support Bonding in Dual-Atom Electrocatalysts for HER","由報告排程提供，作者、期刊及 DOI 資料待補。","作者用什麼證據支持雙原子電催化劑的金屬—載體鍵結可逆變化，及其與 HER 的關聯？"]
+];
+const titleKey=s=>s.toLowerCase().replace(/[⁰¹²³⁴⁵⁶⁷⁸⁹₀₁₂₃₄₅₆₇₈₉]/g,c=>({"⁰":"0","¹":"1","²":"2","³":"3","⁴":"4","⁵":"5","⁶":"6","⁷":"7","⁸":"8","⁹":"9","₀":"0","₁":"1","₂":"2","₃":"3","₄":"4","₅":"5","₆":"6","₇":"7","₈":"8","₉":"9"}[c])).replace(/[^a-z0-9]/g,"");
+const presentationOnlyIds=new Map();
+for(const [i,[who,title,note,question]] of PRESENTATION_ONLY.entries()){
+ const id="schedule_only_"+String(i+1).padStart(3,"0");
+ D[id]={f:["ec"],t:title,a:"作者資料待補",j:"書目資料待補",w:note};
+ READING_GUIDE[id]=[question,"回答時只依文章內容，指出直接支撐答案的圖／表、數據與量測條件，並寫出一項控制或限制。"];
+ PAPER_AUDIT[id]=["待補書目資料","題名來自報告排程；作者、期刊、DOI 與版本待補，不將未提供的資料當成已核驗資訊。"];
+ presentationOnlyIds.set(who+"|"+titleKey(title),id);
+}
+const scheduledByStudent=new Map();
+for(const [month,who,title] of PRESENTATION_READINGS){
+ const rowIndex=USER_PLAN_ROWS.findIndex(row=>row[0]===who&&titleKey(row[2])===titleKey(title));
+ const id=rowIndex>=0?"provided_"+String(rowIndex+1).padStart(3,"0"):presentationOnlyIds.get(who+"|"+titleKey(title));
+ if(!id)throw new Error("報告排程文章未找到對應資料："+who+"／"+title);
+ const key=who+"|"+month;
+ if(!scheduledByStudent.has(key))scheduledByStudent.set(key,[]);
+ scheduledByStudent.get(key).push(id);
+}
+if(PRESENTATION_READINGS.length!==38||PRESENTATION_ONLY.length!==3||[0,1,2].map(month=>PRESENTATION_READINGS.filter(x=>x[0]===month).length).join(",")!=="10,11,17"||USER_PLAN_ROWS.filter(row=>row[1]===3).length!==14)throw new Error("報告閱讀排程驗證失敗");
 for(const group of ["ug","ms"]){
  for(const topic of G[group].topics){
   const who=USER_PLAN_NAMES.find(name=>topic.who.startsWith(name));
-  topic.s=MONTHS.map((_,month)=>USER_PLAN_ROWS.map((row,i)=>({row,i})).filter(({row})=>row[0]===who&&row[1]===month).map(({i})=>"provided_"+String(i+1).padStart(3,"0")));
+  topic.s=[0,1,2,3].map(month=>month<3?(scheduledByStudent.get(who+"|"+month)||[]):USER_PLAN_ROWS.map((row,i)=>({row,i})).filter(({row})=>row[0]===who&&row[1]===3).map(({i})=>"provided_"+String(i+1).padStart(3,"0")));
  }
 }
 G.ug.intro="";
-const USER_PLAN_NOTICE="<b>資料來源與配對界線：</b>以下分派取自實驗室提供的 PDF；作者資訊、DOI、期刊版本與全文／OA 尚未外部核驗。橋接閱讀只供方法或背景練習，不代表直接支持學生的金屬、反應或系統主題。資料夾目前缺少直接涵蓋海水 Cl⁻ 下 OER／氯副反應選擇性的核心文獻，也缺少 SAC 用於完整 VRFB 的直接驗證。";
+const USER_PLAN_NOTICE="<b>閱讀安排：</b>2026 年 10–12 月依報告時程配置；2027 年 1 月保留原閱讀路徑。標示「書目資料待補」的文章來自報告排程，作者、期刊與 DOI 尚未提供；其餘文獻書目資訊亦尚未外部核驗。橋接閱讀只供方法或背景練習，不代表直接支持學生的金屬、反應或系統主題。";
 const planCounts=USER_PLAN_NAMES.map(name=>({name,items:USER_PLAN_ROWS.filter(r=>r[0]===name).length}));
 if(USER_PLAN_ROWS.length!==56||new Set(USER_PLAN_ROWS.map(r=>r[4])).size!==56||planCounts.some((x,i)=>x.items!==(i<6?4:8)))throw new Error("使用者文獻分派數量驗證失敗");
 const requestedTab=new URLSearchParams(location.search).get('tab');
