@@ -394,6 +394,7 @@ input:focus, textarea:focus { outline: 3px solid rgba(23,81,140,.18); border-col
 .member-schedule-empty-state { padding: 32px; border: 1px dashed var(--line); border-radius: 14px; background: var(--surface); text-align: center; }
 .member-schedule-empty-state h3 { margin: 6px 0; color: var(--brand-dark); }
 .member-schedule-empty-state p { margin: 0; color: var(--muted); }
+.member-schedule-open-date { margin: 18px 0 8px; padding: 14px 16px; border: 1px dashed var(--line); border-radius: 12px; color: var(--muted); background: var(--soft); font-weight: 700; }
 @media (max-width: 760px) { .member-schedule-date-grid { grid-template-columns: 1fr; } }
 @media (max-width: 620px) { .member-report-schedule-heading { align-items: flex-start; padding: 23px 20px; flex-direction: column; gap: 16px; } .member-schedule-presenter-card { grid-template-columns: 1fr; gap: 7px; } .member-schedule-group { padding-right: 16px; padding-left: 16px; } .member-schedule-date-head { padding-right: 18px; padding-left: 18px; } }
 .member-directory-table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }

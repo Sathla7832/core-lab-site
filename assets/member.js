@@ -253,13 +253,15 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
       const renderScheduleBoard = (host, rows) => {
         const board = document.createElement("div");
         board.className = "member-schedule-date-grid";
-        rows.forEach((row, index) => {
+        rows.forEach((row) => {
+          const [month, day] = String(row.date || "").split("/").map(Number);
+          const monthLabel = Number.isInteger(month) ? new Intl.DateTimeFormat("en", { month: "long" }).format(new Date(2026, month - 1, 1)).toUpperCase() : "FALL";
           const date = document.createElement("article");
           date.className = "member-schedule-date-card";
           const dateHead = document.createElement("header");
           dateHead.className = "member-schedule-date-head";
           dateHead.append(
-            createText("span", `OCTOBER · ${String(index + 1).padStart(2, "0")}`, "member-schedule-date-kicker"),
+            createText("span", `${monthLabel} · ${String(day || "").padStart(2, "0")}`, "member-schedule-date-kicker"),
             createText("h3", row.date || "Presentation date"),
             createText("span", `${(Array.isArray(row.graduate) ? row.graduate.length : 0) + (Array.isArray(row.undergraduate) ? row.undergraduate.length : 0)} presenters`, "member-schedule-presenter-count"),
           );
@@ -287,6 +289,9 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
             });
             date.append(section);
           });
+          if (!row.graduate.length && !row.undergraduate.length) {
+            date.append(createText("p", "Open date · No presentations scheduled.", "member-schedule-open-date"));
+          }
           board.append(date);
         });
         host.replaceChildren(board);
@@ -296,8 +301,8 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
         const message = document.createElement("div");
         message.className = "member-schedule-empty-state";
         message.append(
-          createText("span", "OCTOBER 2026", "member-report-schedule-eyebrow"),
-          createText("h3", "October's presentation schedule has not been published yet."),
+          createText("span", "FALL 2026", "member-report-schedule-eyebrow"),
+          createText("h3", "The Fall 2026 presentation schedule has not been published yet."),
           createText("p", "The schedule will appear here after the administrator publishes it."),
         );
         return message;
@@ -310,7 +315,7 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
         host.dataset.loading = "true";
         if (state) state.textContent = "Loading the presentation schedule...";
         try {
-          const octoberDates = ["10/7", "10/14", "10/21", "10/28"];
+          const scheduleDates = ["10/7", "10/14", "10/21", "10/28", "11/3", "11/10", "11/17", "11/24", "12/1", "12/8", "12/15", "12/22", "12/29"];
           const snapshot = await dbSdk.getDocs(dbSdk.query(
             dbSdk.collection(db, "resources"),
             dbSdk.where("category", "==", "presentation-schedule"),
@@ -320,15 +325,15 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
               try { return JSON.parse(String(item.data().description || "")); }
               catch (_error) { return null; }
             })
-            .filter((entry) => entry && octoberDates.includes(String(entry.date || "").trim())
+            .filter((entry) => entry && scheduleDates.includes(String(entry.date || "").trim())
               && ["graduate", "undergraduate"].includes(entry.role) && entry.person);
-          const rowsByDate = new Map(octoberDates.map((date) => [date, { date, graduate: [], undergraduate: [] }]));
+          const rowsByDate = new Map(scheduleDates.map((date) => [date, { date, graduate: [], undergraduate: [] }]));
           schedulePeople
-            .sort((a, b) => octoberDates.indexOf(a.date) - octoberDates.indexOf(b.date)
+            .sort((a, b) => scheduleDates.indexOf(a.date) - scheduleDates.indexOf(b.date)
               || a.role.localeCompare(b.role)
               || Number(a.order || 0) - Number(b.order || 0))
             .forEach((entry) => rowsByDate.get(entry.date)[entry.role].push(entry.person));
-          const rows = octoberDates.map((date) => rowsByDate.get(date)).filter((row) => row.graduate.length || row.undergraduate.length);
+          const rows = scheduleDates.map((date) => rowsByDate.get(date));
           if (!rows.length) {
             host.replaceChildren(scheduleEmptyState());
           } else {
@@ -1361,11 +1366,11 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
             try {
               if (!currentIsAdmin) throw new Error("Only an administrator can publish the schedule.");
               const parsed = JSON.parse(String(textarea?.value || ""));
-              const expectedDates = ["10/7", "10/14", "10/21", "10/28"];
+              const expectedDates = ["10/7", "10/14", "10/21", "10/28", "11/3", "11/10", "11/17", "11/24", "12/1", "12/8", "12/15", "12/22", "12/29"];
               const rows = Array.isArray(parsed.rows) ? parsed.rows : [];
               if (rows.length !== expectedDates.length || rows.some((row, index) => row.date !== expectedDates[index]
                 || !Array.isArray(row.graduate) || !Array.isArray(row.undergraduate))) {
-                throw new Error("Enter the four October dates in order, with graduate and undergraduate lists for each date.");
+                throw new Error("Enter all Fall 2026 dates in order, with graduate and undergraduate lists for each date.");
               }
               for (const row of rows) {
                 for (const person of [...row.graduate, ...row.undergraduate]) {
@@ -1386,7 +1391,7 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
                   role,
                   person,
                   order: index + 1,
-                  ref: dbSdk.doc(db, "resources", `schedule-2026-10-${row.date.slice(3)}-${role}-${index + 1}`),
+                  ref: dbSdk.doc(db, "resources", `schedule-2026-${row.date.replace("/", "-")}-${role}-${index + 1}`),
                 }))));
               const existing = await Promise.all(references.map(({ ref }) => dbSdk.getDoc(ref)));
               if (existing.some((item) => item.exists() && item.data()?.category !== "presentation-schedule")) {
@@ -1395,10 +1400,12 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
               const batch = dbSdk.writeBatch(db);
               references.forEach(({ row, role, person, order, ref }, index) => {
                 const prior = existing[index].data() || {};
+                const month = Number(row.date.split("/")[0]);
+                const monthName = new Intl.DateTimeFormat("en", { month: "long" }).format(new Date(2026, month - 1, 1));
                 const firstPaper = (Array.isArray(person.presentations) ? person.presentations : (person.presentation ? [person.presentation] : []))
                   .find((paper) => secureHttpsUrl(paper?.url));
                 batch.set(ref, {
-                  title: `October 2026 · ${row.date} · ${person.zh || person.en}`,
+                  title: `${monthName} 2026 · ${row.date} · ${person.zh || person.en}`,
                   description: JSON.stringify({ date: row.date, role, order, person }),
                   category: "presentation-schedule",
                   url: firstPaper?.url || "https://sathla7832.github.io/core-lab-site/research-map.html",
@@ -1411,7 +1418,7 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
               const scheduleHost = document.querySelector("[data-member-report-schedule-table]");
               if (scheduleHost) scheduleHost.dataset.loaded = "false";
               await loadMemberReportSchedule();
-              setStatus("October presentation schedule published to approved members.", "success");
+              setStatus("Fall 2026 presentation schedule published to approved members.", "success");
             } catch (error) {
               setStatus(error instanceof SyntaxError ? "The schedule must be valid JSON." : friendlyError(error), "error");
             } finally {

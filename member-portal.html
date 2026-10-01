@@ -23,7 +23,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/styles.css?v=presentation-board-firestore-20261001" />
+  <link rel="stylesheet" href="assets/styles.css?v=fall-presentation-schedule-20261001" />
 </head>
 <body>
   <a class="skip-link" href="#main-content">Skip to main content</a>
@@ -91,12 +91,12 @@
         <section id="member-panel-report-schedule" class="member-content-section member-portal-panel member-report-schedule-panel" role="tabpanel" aria-labelledby="member-tab-report-schedule" data-member-panel="report-schedule">
           <header class="member-report-schedule-heading">
             <div>
-              <p class="member-report-schedule-eyebrow">CORE LAB · OCTOBER 2026</p>
+              <p class="member-report-schedule-eyebrow">CORE LAB · FALL 2026</p>
               <h2>Presentation Schedule</h2>
-              <p class="member-report-schedule-lead">Each presenter has 15 minutes. Assigned readings follow each student's October route in the Research Map &amp; Reading Plan. This schedule is maintained here and does not sync with Google Calendar.</p>
+              <p class="member-report-schedule-lead">Each presenter has 15 minutes. Assigned readings appear when provided. This schedule is maintained here and does not sync with Google Calendar.</p>
             </div>
-            <div class="member-report-schedule-total" aria-label="Four presentation dates">
-              <strong>04</strong><span>meeting dates</span>
+            <div class="member-report-schedule-total" aria-label="Twelve scheduled presentation dates">
+              <strong>12</strong><span>report dates</span>
             </div>
           </header>
           <p class="member-report-schedule-state muted" data-member-report-schedule-state>Loading the presentation schedule...</p>
@@ -152,8 +152,8 @@
           <div class="member-section-head"><div><h2>Manage Portal</h2></div></div>
           <div class="member-admin-grid">
             <form class="member-form member-schedule-publish-form" data-presentation-schedule-form hidden>
-              <h3>Publish October presentation schedule</h3>
-              <p class="muted">Paste the four-date schedule JSON here. It is stored in the authenticated member database and does not use Google Calendar.</p>
+              <h3>Publish Fall 2026 presentation schedule</h3>
+              <p class="muted">Paste the Fall 2026 schedule JSON here. Leave graduate and undergraduate lists empty to show an open date. It is stored in the authenticated member database and does not use Google Calendar.</p>
               <label>Schedule data<textarea name="schedule" rows="12" maxlength="12000" spellcheck="false" required placeholder='{"rows":[{"date":"10/7","graduate":[],"undergraduate":[]}]}'></textarea></label>
               <button class="btn btn-primary" type="submit">Publish schedule to members</button>
             </form>
@@ -216,6 +216,6 @@
     </div>
   </footer>
   <script defer src="assets/main.js?v=786f78fe16d8"></script>
-  <script src="assets/firebase-config.js?v=786f78fe16d8"></script><script type="module" src="assets/member.js?v=presentation-board-firestore-20261001"></script>
+  <script src="assets/firebase-config.js?v=786f78fe16d8"></script><script type="module" src="assets/member.js?v=fall-presentation-schedule-20261001"></script>
 </body>
 </html>
