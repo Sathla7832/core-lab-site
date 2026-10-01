@@ -23,7 +23,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/styles.css?v=presentation-board-20260930" />
+  <link rel="stylesheet" href="assets/styles.css?v=presentation-board-firestore-20261001" />
 </head>
 <body>
   <a class="skip-link" href="#main-content">Skip to main content</a>
@@ -151,6 +151,12 @@
         <section id="member-panel-manage" class="member-admin member-portal-panel" role="tabpanel" aria-labelledby="member-tab-manage" data-member-panel="manage" data-member-admin hidden>
           <div class="member-section-head"><div><h2>Manage Portal</h2></div></div>
           <div class="member-admin-grid">
+            <form class="member-form member-schedule-publish-form" data-presentation-schedule-form hidden>
+              <h3>Publish October presentation schedule</h3>
+              <p class="muted">Paste the four-date schedule JSON here. It is stored in the authenticated member database and does not use Google Calendar.</p>
+              <label>Schedule data<textarea name="schedule" rows="12" maxlength="12000" spellcheck="false" required placeholder='{"rows":[{"date":"10/7","graduate":[],"undergraduate":[]}]}'></textarea></label>
+              <button class="btn btn-primary" type="submit">Publish schedule to members</button>
+            </form>
             <form class="member-form" data-announcement-form>
               <h3>Add announcement</h3>
               <label>Title<input name="title" type="text" maxlength="120" required></label>
@@ -210,6 +216,6 @@
     </div>
   </footer>
   <script defer src="assets/main.js?v=786f78fe16d8"></script>
-  <script src="assets/firebase-config.js?v=786f78fe16d8"></script><script type="module" src="assets/member.js?v=presentation-board-20260930"></script>
+  <script src="assets/firebase-config.js?v=786f78fe16d8"></script><script type="module" src="assets/member.js?v=presentation-board-firestore-20261001"></script>
 </body>
 </html>

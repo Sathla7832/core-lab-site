@@ -297,8 +297,8 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
         message.className = "member-schedule-empty-state";
         message.append(
           createText("span", "OCTOBER 2026", "member-report-schedule-eyebrow"),
-          createText("h3", "No presentation dates are available yet."),
-          createText("p", "The schedule will appear here after it is published."),
+          createText("h3", "October's presentation schedule has not been published yet."),
+          createText("p", "The schedule will appear here after the administrator publishes it."),
         );
         return message;
       };
@@ -310,19 +310,25 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
         host.dataset.loading = "true";
         if (state) state.textContent = "Loading the presentation schedule...";
         try {
-          if (!resourceApiUrl) throw new Error("The member resource service is not configured.");
-          const token = await auth.currentUser?.getIdToken();
-          if (!token) throw new Error("Please sign in again to load the presentation schedule.");
-          const response = await fetch(`${resourceApiUrl}/api/resources/report-schedule`, {
-            method: "GET",
-            headers: { Authorization: `Bearer ${token}` },
-          });
-          const data = await response.json().catch(() => ({}));
-          if (!response.ok) throw new Error(String(data.error || "The presentation schedule could not be loaded."));
-          const octoberDates = new Set(["10/7", "10/14", "10/21", "10/28"]);
-          const rows = Array.isArray(data.rows)
-            ? data.rows.filter((row) => octoberDates.has(String(row.date || "").trim()))
-            : [];
+          const octoberDates = ["10/7", "10/14", "10/21", "10/28"];
+          const snapshot = await dbSdk.getDocs(dbSdk.query(
+            dbSdk.collection(db, "resources"),
+            dbSdk.where("category", "==", "presentation-schedule"),
+          ));
+          const schedulePeople = snapshot.docs
+            .map((item) => {
+              try { return JSON.parse(String(item.data().description || "")); }
+              catch (_error) { return null; }
+            })
+            .filter((entry) => entry && octoberDates.includes(String(entry.date || "").trim())
+              && ["graduate", "undergraduate"].includes(entry.role) && entry.person);
+          const rowsByDate = new Map(octoberDates.map((date) => [date, { date, graduate: [], undergraduate: [] }]));
+          schedulePeople
+            .sort((a, b) => octoberDates.indexOf(a.date) - octoberDates.indexOf(b.date)
+              || a.role.localeCompare(b.role)
+              || Number(a.order || 0) - Number(b.order || 0))
+            .forEach((entry) => rowsByDate.get(entry.date)[entry.role].push(entry.person));
+          const rows = octoberDates.map((date) => rowsByDate.get(date)).filter((row) => row.graduate.length || row.undergraduate.length);
           if (!rows.length) {
             host.replaceChildren(scheduleEmptyState());
           } else {
@@ -1019,7 +1025,9 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
 
       const fetchResourceRecords = async () => {
         const snapshot = await dbSdk.getDocs(dbSdk.query(dbSdk.collection(db, "resources"), dbSdk.orderBy("createdAt", "desc"), dbSdk.limit(100)));
-        return snapshot.docs.map((item) => ({ id: item.id, ref: item.ref, ...item.data() }));
+        return snapshot.docs
+          .map((item) => ({ id: item.id, ref: item.ref, ...item.data() }))
+          .filter((item) => item.category !== "presentation-schedule");
       };
 
       const experimentStudentName = (record) => {
@@ -1343,6 +1351,75 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
           }
         });
 
+        const scheduleForm = document.querySelector("[data-presentation-schedule-form]");
+        if (scheduleForm) {
+          scheduleForm.addEventListener("submit", async (event) => {
+            event.preventDefault();
+            const submit = scheduleForm.querySelector('button[type="submit"]');
+            const textarea = scheduleForm.querySelector('textarea[name="schedule"]');
+            submit.disabled = true;
+            try {
+              if (!currentIsAdmin) throw new Error("Only an administrator can publish the schedule.");
+              const parsed = JSON.parse(String(textarea?.value || ""));
+              const expectedDates = ["10/7", "10/14", "10/21", "10/28"];
+              const rows = Array.isArray(parsed.rows) ? parsed.rows : [];
+              if (rows.length !== expectedDates.length || rows.some((row, index) => row.date !== expectedDates[index]
+                || !Array.isArray(row.graduate) || !Array.isArray(row.undergraduate))) {
+                throw new Error("Enter the four October dates in order, with graduate and undergraduate lists for each date.");
+              }
+              for (const row of rows) {
+                for (const person of [...row.graduate, ...row.undergraduate]) {
+                  if (!person || (!String(person.zh || "").trim() && !String(person.en || "").trim())) {
+                    throw new Error("Every presenter needs a name.");
+                  }
+                  const papers = Array.isArray(person.presentations)
+                    ? person.presentations
+                    : (person.presentation ? [person.presentation] : []);
+                  for (const paper of papers) {
+                    if (paper.url && !secureHttpsUrl(paper.url)) throw new Error("Reading links must use secure HTTPS URLs.");
+                  }
+                }
+              }
+              const references = rows.flatMap((row) => ["graduate", "undergraduate"].flatMap((role) =>
+                row[role].map((person, index) => ({
+                  row,
+                  role,
+                  person,
+                  order: index + 1,
+                  ref: dbSdk.doc(db, "resources", `schedule-2026-10-${row.date.slice(3)}-${role}-${index + 1}`),
+                }))));
+              const existing = await Promise.all(references.map(({ ref }) => dbSdk.getDoc(ref)));
+              if (existing.some((item) => item.exists() && item.data()?.category !== "presentation-schedule")) {
+                throw new Error("A resource already uses one of the schedule records. Contact the portal administrator.");
+              }
+              const batch = dbSdk.writeBatch(db);
+              references.forEach(({ row, role, person, order, ref }, index) => {
+                const prior = existing[index].data() || {};
+                const firstPaper = (Array.isArray(person.presentations) ? person.presentations : (person.presentation ? [person.presentation] : []))
+                  .find((paper) => secureHttpsUrl(paper?.url));
+                batch.set(ref, {
+                  title: `October 2026 · ${row.date} · ${person.zh || person.en}`,
+                  description: JSON.stringify({ date: row.date, role, order, person }),
+                  category: "presentation-schedule",
+                  url: firstPaper?.url || "https://sathla7832.github.io/core-lab-site/research-map.html",
+                  createdAt: prior.createdAt || dbSdk.serverTimestamp(),
+                  createdBy: prior.createdBy || user.uid,
+                });
+              });
+              await batch.commit();
+              textarea.value = "";
+              const scheduleHost = document.querySelector("[data-member-report-schedule-table]");
+              if (scheduleHost) scheduleHost.dataset.loaded = "false";
+              await loadMemberReportSchedule();
+              setStatus("October presentation schedule published to approved members.", "success");
+            } catch (error) {
+              setStatus(error instanceof SyntaxError ? "The schedule must be valid JSON." : friendlyError(error), "error");
+            } finally {
+              submit.disabled = false;
+            }
+          });
+        }
+
         const calendarForm = document.querySelector("[data-calendar-form]");
         calendarForm?.addEventListener("submit", async (event) => {
           event.preventDefault();
@@ -1436,6 +1513,8 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
           document.querySelector("[data-member-content]")?.removeAttribute("hidden");
           const adminTab = document.querySelector("[data-member-admin-tab]");
           if (adminTab) adminTab.hidden = !currentIsAdmin;
+          const scheduleForm = document.querySelector("[data-presentation-schedule-form]");
+          if (scheduleForm) scheduleForm.hidden = !currentIsAdmin;
           activatePortalTab("report-schedule");
           setStatus(currentIsAdmin ? "Administrator access verified." : "Member access verified.", "success");
           if (currentIsAdmin) bindAdminForms(user);
