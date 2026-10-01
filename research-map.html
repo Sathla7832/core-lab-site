@@ -849,7 +849,7 @@ function drawPanel(){
   panel.innerHTML=`<details class="roadmap-method method-quick"><summary>展開實驗室文獻閱讀方法流程圖</summary>${roadmapMethodMarkup()}</details>${d.intro?'<p class="prose map-group-intro">'+d.intro+'</p>':''}
   <h3 class="blk">題目</h3><div class="topics">${d.topics.map((t,index)=>`<article class="topic" style="--c:${t.c||'var(--ec)'}"><p class="member-name"><a href="${studentHref(g,index)}">${t.who}</a></p><h4>${t.t}</h4>
     <p><span class="lab">要回答：</span>${t.q}</p><p><span class="lab">主要工作：</span>${t.m}</p><p class="rd">本學期 ${t.s.flat().length} 篇，從 ${cite(t.s[0][0])} 開始</p></article>`).join('')}</div>
-  <h3 class="blk">2026 年 10 月至 2027 年 1 月</h3><ol class="stages s5">${d.stages.map((s,i)=>`<li data-m="${MONTHS[i]}"><span class="wk">${mcat(d,i).map(c=>CATS[c]).join('＋')}</span><p>${s}</p></li>`).join('')}</ol>
+  
   ${g==='ms'?`<aside class="route-alert"><b>共同知識：</b>四位碩士生共用 SAC／電化學／表徵／穩定性四個先修模組，另須把個人主線延伸到臨場量測與反應器設計。請由「共同知識」分頁查看內容與參考文獻；不另計入每人每月兩篇。</aside>`:''}
   <aside class="pathway"><h3>每篇文獻的共同驗收格式</h3><div class="pathway-grid"><div class="pathway-item"><b>所有成員</b><p>研究問題 → 材料設計 → 表徵 → 電化學結果 → 作者主張；另列量測條件、關鍵數據與控制組。</p></div><div class="pathway-item"><b>${g==='ug'?'專題生加做':'碩士生加做'}</b><p>${g==='ug'?'以自己的圖表說明量測結果，指出一個可能的替代解釋與一項可重現的實驗。':'評估證據鏈與替代假說，指出機理／器件證據缺口，提出可同步驗證的下一個實驗。'}</p></div></div><p class="deliverable"><b>報告成果：</b>一張邏輯圖、一張控制組／替代解釋表、一張關鍵數據表，以及一項可驗收的後續實驗建議。</p></aside>
   <div class="filters" id="mf" role="group" aria-label="選擇月份" style="margin-top:28px"></div>
