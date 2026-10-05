@@ -77,6 +77,7 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
       const resourceSubtabs = Array.from(document.querySelectorAll("[data-member-resource-subtab]"));
       let activeResourceSubtab = "experiments";
       let loadMemberRoadmap = () => {};
+      let loadMemberResearchPlans = () => {};
       let loadMemberReportSchedule = () => {};
       let loadMemberResourceTree = () => {};
       let loadMemberDirectory = () => {};
@@ -96,6 +97,7 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
     });
     if (target === "resources") loadMemberResourceTree();
     if (target === "report-schedule") loadMemberReportSchedule();
+    if (target === "research-map") loadMemberResearchPlans();
     if (target === "members") loadMemberDirectory();
     if (target === "calendars") loadMemberCalendars();
     if (target === "progress") loadMemberProgress();
@@ -209,6 +211,41 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
           window.addEventListener("beforeunload", () => {
             URL.revokeObjectURL(blobUrl);
           }, { once: true });
+        } catch (error) {
+          frame.dataset.loading = "false";
+          if (state) state.textContent = friendlyError(error);
+        }
+      };
+
+      loadMemberResearchPlans = async () => {
+        const frame = document.querySelector("[data-member-research-map-frame]");
+        const state = document.querySelector("[data-member-research-map-state]");
+        if (!frame || frame.dataset.loaded === "true" || frame.dataset.loading === "true") return;
+        frame.dataset.loading = "true";
+        if (state) state.textContent = "正在載入成員專用研究計畫…";
+        try {
+          if (!resourceApiUrl) throw new Error("The member resource service is not configured.");
+          const token = await auth.currentUser?.getIdToken();
+          if (!token) throw new Error("Please sign in again to load the research plans.");
+          const response = await fetch(`${resourceApiUrl}/api/resources/research-plans`, {
+            method: "GET",
+            cache: "no-store",
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          if (!response.ok) {
+            const data = await response.json().catch(() => ({}));
+            throw new Error(String(data.error || "The research plans could not be loaded."));
+          }
+          const html = await response.text();
+          const blobUrl = URL.createObjectURL(new Blob([html], { type: "text/html;charset=utf-8" }));
+          frame.addEventListener("load", () => {
+            frame.hidden = false;
+            if (state) state.hidden = true;
+            frame.dataset.loaded = "true";
+            frame.dataset.loading = "false";
+          }, { once: true });
+          frame.setAttribute("src", blobUrl);
+          window.addEventListener("beforeunload", () => URL.revokeObjectURL(blobUrl), { once: true });
         } catch (error) {
           frame.dataset.loading = "false";
           if (state) state.textContent = friendlyError(error);

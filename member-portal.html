@@ -104,7 +104,8 @@
         </section>
 
         <section id="member-panel-research-map" class="member-content-section member-portal-panel member-research-map-panel" role="tabpanel" aria-labelledby="member-tab-research-map" data-member-panel="research-map" hidden>
-          <iframe class="member-research-map-frame" title="CORE Lab 學生研究計畫與文獻閱讀路徑" src="research-map.html?v=student-research-plans-20261005" loading="lazy" scrolling="no" style="display:block;width:100%;min-height:78vh;height:calc(100vh - 250px);border:1px solid #cbd8e1;border-radius:16px;background:#eef3f5;"></iframe>
+          <p class="member-research-map-state muted" data-member-research-map-state>登入並通過成員資格驗證後，研究計畫才會載入。</p>
+          <iframe class="member-research-map-frame" title="CORE Lab 學生研究計畫與文獻閱讀路徑" data-member-research-map-frame sandbox="allow-popups allow-popups-to-escape-sandbox" loading="lazy" scrolling="auto" hidden style="display:block;width:100%;min-height:78vh;height:calc(100vh - 250px);border:1px solid #cbd8e1;border-radius:16px;background:#eef3f5;"></iframe>
         </section>
         <section id="member-panel-calendars" class="member-content-section member-calendar-section member-portal-panel" role="tabpanel" aria-labelledby="member-tab-calendars" data-member-panel="calendars" hidden>
           <div class="member-section-head member-calendar-intro">
@@ -216,6 +217,6 @@
     </div>
   </footer>
   <script defer src="assets/main.js?v=786f78fe16d8"></script>
-  <script src="assets/firebase-config.js?v=786f78fe16d8"></script><script type="module" src="assets/member.js?v=fall-presentation-schedule-20261001"></script>
+  <script src="assets/firebase-config.js?v=786f78fe16d8"></script><script type="module" src="assets/member.js?v=authenticated-research-plans-20261005"></script>
 </body>
 </html>
