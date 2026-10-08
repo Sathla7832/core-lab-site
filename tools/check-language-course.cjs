@@ -10,6 +10,9 @@ const counts=await page.evaluate(()=>({lang:document.documentElement.lang,tabs:d
 const sections=await page.locator('article > h2').allTextContents();
 if(sections.length!==2||!sections[0].startsWith('2.')||!sections[1].startsWith('5.'))throw Error('Unexpected sections: '+sections.join(', '));
 if(await page.locator('.week-panel h3').count()!==12)throw Error('Unexpected quiz content');
+if(await page.locator('.daily-applied-task').count()!==60||await page.locator('.applied-language').count()!==12)throw Error('Missing applied lessons');
+const dates=await page.locator('.week-panel h4').allTextContents();
+if(!dates.some(t=>t.includes('2026-10-08'))||!dates.some(t=>t.includes('2026-12-30')))throw Error('Wrong start/end dates');
 if(counts.tabs!==12||counts.panels!==12||counts.days!==60||counts.undefined)throw Error(JSON.stringify(counts));
 for(let i=1;i<=12;i++){await page.locator('#week-tab-'+i).click();if(await page.locator('.week-panel:visible').count()!==1)throw Error('Panel visibility');if(!await page.locator('#week-'+i).isVisible())throw Error('Wrong week');if(await page.locator('#week-'+i+' h4').count()<5)throw Error('Missing daily lessons');}
 if(!(await page.locator('.language-switch a').first().getAttribute('href')).endsWith('#week-12'))throw Error('Language link lost selected week');

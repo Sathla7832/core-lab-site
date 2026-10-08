@@ -27,7 +27,7 @@ const http=require('node:http');
  const lesson=page.frameLocator('#language-lesson');
  await lesson.locator('#week-tab-1').waitFor();
  if(!await lesson.locator('h1').isVisible())throw Error('Language content not shown directly');
- if(await lesson.locator('.back').isVisible())throw Error('Extra entrance in embedded lesson');
+ await lesson.locator('.back').waitFor({state:'hidden'});
  await lesson.locator('#week-tab-3').click();
  if(!await lesson.locator('#week-3').isVisible())throw Error('Embedded week switch failed');
  await lesson.locator('.language-switch a[lang="vi"]').click();

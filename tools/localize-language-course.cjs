@@ -97,7 +97,11 @@ async function main(){
    if(p.querySelector('strong')?.textContent==='週四測驗：')p.remove();
   });
  },{common,topics});
+ const baseHTML=await page.content();
+ const enhance=require('./enhance-language-course.cjs');
+ await enhance(page,false);
  const zh=await page.content();
+ await page.setContent(baseHTML);
  await page.evaluate(({translations})=>{
   const map=new Map(translations);const walk=document.createTreeWalker(document.querySelector('article'),NodeFilter.SHOW_TEXT);let n;
   while(n=walk.nextNode()){if(n.parentElement.closest('[data-example]'))continue;const key=n.nodeValue.trim();if(map.has(key)){const leading=n.nodeValue.match(/^\s*/)[0],trailing=n.nodeValue.match(/\s*$/)[0];n.nodeValue=leading+map.get(key)+trailing;}}
@@ -109,6 +113,7 @@ async function main(){
   document.querySelector('.week-tabs').setAttribute('aria-label','Chương trình 12 tuần');
  },{translations:data.source.map(t=>[t,translate(t)])});
  await page.evaluate(topics=>document.querySelectorAll('.week-tabs button').forEach((b,i)=>{b.textContent='Tuần '+(i+1)+' | '+topics[i]}),topics);
+ await enhance(page,true);
  const viHTML=await page.content();
  const script='<script src="assets/language-course.js?v=20261008-inline"></script>';
  fs.writeFileSync(path.join(root,'course-language.html'),zh.replace('</body>',script+'</body>'));
