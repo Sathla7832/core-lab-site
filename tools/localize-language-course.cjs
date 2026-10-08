@@ -115,7 +115,7 @@ async function main(){
  await page.evaluate(topics=>document.querySelectorAll('.week-tabs button').forEach((b,i)=>{b.textContent='Tuần '+(i+1)+' | '+topics[i]}),topics);
  await enhance(page,true);
  const viHTML=await page.content();
- const script='<script src="assets/language-course.js?v=20261008-inline"></script>';
+ const script='<script src="assets/language-course.js?v=20261008-applied"></script>';
  fs.writeFileSync(path.join(root,'course-language.html'),zh.replace('</body>',script+'</body>'));
  fs.writeFileSync(path.join(root,'course-language-vi.html'),viHTML.replace('</body>',script+'</body>'));
  console.log('Built both static pages; translated '+data.source.length+' unique instructional text fragments.');
