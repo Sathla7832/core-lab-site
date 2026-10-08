@@ -8,7 +8,7 @@ for(const file of ['course-language.html','course-language-vi.html']){
 await page.goto(process.argv[2]?new URL(file,process.argv[2]).href:'file:///'+path.resolve(__dirname,'..',file).replace(/\\/g,'/'));
 const counts=await page.evaluate(()=>({lang:document.documentElement.lang,tabs:document.querySelectorAll('.week-tabs button').length,panels:document.querySelectorAll('.week-panel').length,days:[...document.querySelectorAll('.week-panel h4')].filter(h=>/^D\d\d/.test(h.textContent)).length,undefined:document.body.textContent.includes('undefined'),overflow:document.documentElement.scrollWidth>innerWidth}));
 const sections=await page.locator('article > h2').allTextContents();
-if(sections.length!==2||!sections[0].startsWith('2.')||!sections[1].startsWith('5.'))throw Error('Unexpected sections: '+sections.join(', '));
+if(sections.length!==2||!sections[0].startsWith('1.')||!sections[1].startsWith('2.'))throw Error('Unexpected sections: '+sections.join(', '));
 if(await page.locator('.week-panel h3').count()!==12)throw Error('Unexpected quiz content');
 if(await page.locator('.daily-applied-task').count()!==60||await page.locator('.applied-language').count()!==12)throw Error('Missing applied lessons');
 const dates=await page.locator('.week-panel h4').allTextContents();

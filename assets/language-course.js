@@ -12,7 +12,7 @@
     });
     document.querySelectorAll('.language-switch a').forEach(link => {
       link.hash = 'week-' + (index + 1);
-      if (embedded) link.search = '?embed=1&v=applied-20261008';
+      if (embedded) link.search = '?embed=1&v=numbered-20261008';
     });
     if (focus) tabs[index].focus();
   }

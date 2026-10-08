@@ -2,6 +2,12 @@ const lessons=require('./language-applied-lessons.json');
 module.exports=async function enhance(page,vi){
  await page.evaluate(({lessons,vi})=>{
   const l=vi?1:0;
+  document.querySelectorAll('article > h2').forEach((heading,index)=>{
+   heading.textContent=heading.textContent.replace(/^\d+\./,(index+1)+'.');
+  });
+  document.querySelectorAll('article > h3').forEach(heading=>{
+   heading.textContent=heading.textContent.replace(/^2\.(\d+)/,'1.$1');
+  });
   const text=(zh,v)=>vi?v:zh;
   const make=(tag,value)=>{const n=document.createElement(tag);n.textContent=value;return n;};
   const date=offset=>new Date(Date.UTC(2026,9,8+offset));
