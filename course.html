@@ -75,8 +75,8 @@
   </div>
   <div id="differential-thermodynamics"><iframe id="course-lesson" data-src="calculus-thermodynamics.html?embed=1&amp;rev=course-inline-1" title="微分與熱力學互動課程" style="display:block;width:100%;height:940px;border:0;background:#fff" loading="lazy"></iframe></div>
 </section>
-<section id="language" class="course-panel" role="tabpanel" tabindex="0" aria-labelledby="tab-language" hidden style="scroll-margin-top:24px;margin:0 0 36px;padding:28px 32px;border:1px solid #cbd8e1;border-left:6px solid #36cbbb;border-radius:14px;background:#fff;box-shadow:0 8px 24px rgba(18,55,85,.08)">
-  <h2 id="language-title" style="margin:0 0 10px"><a href="course-language.html" style="color:inherit;text-decoration:none">語言</a></h2>
+<section id="language" class="course-panel" role="tabpanel" tabindex="0" aria-labelledby="tab-language" hidden style="margin:0 0 36px">
+  <iframe id="language-lesson" data-src="course-language.html?embed=1&amp;v=inline-language-1" title="越南學生華語教材，中越文切換與每週分頁" style="display:block;width:100%;height:1100px;border:0;background:transparent" loading="lazy"></iframe>
 </section>
 <script>
 (()=>{
@@ -86,6 +86,7 @@
   if(!ids.includes(id))id=ids[0];
   tabs.forEach(tab=>{const active=tab.getAttribute('aria-controls')===id;tab.setAttribute('aria-selected',String(active));tab.tabIndex=active?0:-1;document.getElementById(tab.getAttribute('aria-controls')).hidden=!active;if(active&&focus)tab.focus();});
   if(id==='materials-thermodynamics'){const frame=document.getElementById('course-lesson');if(!frame.hasAttribute('src'))frame.src=frame.dataset.src;}
+  if(id==='language'){const frame=document.getElementById('language-lesson');if(!frame.hasAttribute('src'))frame.src=frame.dataset.src;else frame.contentWindow.postMessage({type:'language-course-resize'},location.origin);}
  }
  function activate(index,focus=false){history.pushState(null,'','#'+ids[index]);select(ids[index],focus);}
  tabs.forEach((tab,index)=>{
@@ -96,6 +97,7 @@
  window.addEventListener('hashchange',restore);window.addEventListener('popstate',restore);restore();
 })();
 window.addEventListener('message',function(event){var frame=document.getElementById('course-lesson');if(event.origin!==location.origin||event.source!==frame.contentWindow||!event.data||event.data.type!=='course-height')return;var h=Number(event.data.height);if(Number.isFinite(h)&&h>100&&h<12000)frame.style.height=Math.ceil(h)+'px';});
+window.addEventListener('message',function(event){var frame=document.getElementById('language-lesson');if(event.origin!==location.origin||event.source!==frame.contentWindow||!event.data||event.data.type!=='language-course-height')return;var h=Number(event.data.height);if(Number.isFinite(h)&&h>100&&h<100000)frame.style.height=Math.ceil(h)+'px';});
 </script>
 </div></section></main>
   <footer class="footer">

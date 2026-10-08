@@ -110,7 +110,7 @@ async function main(){
  },{translations:data.source.map(t=>[t,translate(t)])});
  await page.evaluate(topics=>document.querySelectorAll('.week-tabs button').forEach((b,i)=>{b.textContent='Tuần '+(i+1)+' | '+topics[i]}),topics);
  const viHTML=await page.content();
- const script='<script src="assets/language-course.js?v=20261008-bilingual"></script>';
+ const script='<script src="assets/language-course.js?v=20261008-inline"></script>';
  fs.writeFileSync(path.join(root,'course-language.html'),zh.replace('</body>',script+'</body>'));
  fs.writeFileSync(path.join(root,'course-language-vi.html'),viHTML.replace('</body>',script+'</body>'));
  console.log('Built both static pages; translated '+data.source.length+' unique instructional text fragments.');
