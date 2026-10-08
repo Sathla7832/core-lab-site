@@ -1462,3 +1462,24 @@
 <p>每週維持平日五天及週四一小時；下一階段以最常遇到、仍無法獨立完成的任務優先。</p>
 <hr>
 <p><strong>來源與查核說明：</strong> 逐日詞句、活動與測驗為本版整合編寫；發音資源資訊來自第2節所列官方或供應者頁面，中文譯音系統的AI限制依教育部說明列出，外部教材未整本轉載。越南文為情境翻譯，未經越南籍華語教師逐條審校；正式教學時請確認學生理解，並由雙語教師校訂。資源查核日期：2026-10-08。</p></article></main></body></html>
+<style>
+.week-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:18px 0}.week-tabs button{padding:12px;border:1px solid #cbd8e1;border-radius:10px;background:#fff;color:#123c64;font:inherit;font-weight:700;text-align:left;cursor:pointer}.week-tabs button[aria-selected="true"]{border-color:#17518c;background:#17518c;color:#fff}.week-panel{padding:10px 18px 24px;border:1px solid #d9e0e4;border-radius:14px;background:#fff}.week-panel[hidden]{display:none!important}.week-panel>h3:first-child{margin-top:.6em}.week-panel .week-quiz-title{padding-top:18px;border-top:1px solid #d9e0e4}@media(max-width:760px){.week-tabs{grid-template-columns:repeat(3,minmax(0,1fr))}.week-tabs button{padding:10px;font-size:.92rem}}@media(max-width:440px){.week-tabs{grid-template-columns:repeat(2,minmax(0,1fr))}}
+</style>
+<script>
+(() => {
+ const article=document.querySelector('.language-course article'); if(!article)return;
+ const heads=Array.from(article.children).filter(n=>/^H[1-6]$/.test(n.tagName));
+ const daily=heads.find(n=>/^5\./.test(n.textContent.trim()));
+ const tests=heads.find(n=>/^6\./.test(n.textContent.trim()));
+ const teacher=heads.find(n=>/^7\./.test(n.textContent.trim()));
+ if(!daily||!tests||!teacher)return;
+ const panels=Array.from({length:12},(_,i)=>{const p=document.createElement('section');p.className='week-panel';p.id='week-'+(i+1);p.setAttribute('role','tabpanel');p.setAttribute('aria-labelledby','week-tab-'+(i+1));p.hidden=i!==0;return p;});
+ const weekOf=t=>{const m=t.match(/^第\s*(\d+)\s*週(?:[｜|]|測驗)/);return m?Number(m[1]):0;};
+ const collect=(start,end,quiz)=>{let nodes=[];for(let n=start.nextElementSibling;n&&n!==end;n=n.nextElementSibling)nodes.push(n);let week=0;for(const n of nodes){if(/^H[34]$/.test(n.tagName)){const w=weekOf(n.textContent.trim());if(w)week=w;}if(week>=1&&week<=12){if(quiz&&/^H[34]$/.test(n.tagName)&&weekOf(n.textContent.trim()))n.classList.add('week-quiz-title');panels[week-1].append(n);}}};
+ collect(daily,tests,false);collect(tests,teacher,true);daily.textContent='5. 12 週教學內容與每週測驗';tests.remove();
+ const nav=document.createElement('div');nav.className='week-tabs';nav.setAttribute('role','tablist');nav.setAttribute('aria-label','12週教學內容');
+ function select(i){panels.forEach((p,j)=>{p.hidden=j!==i;nav.children[j].setAttribute('aria-selected',j===i?'true':'false');nav.children[j].tabIndex=j===i?0:-1;});}
+ panels.forEach((p,i)=>{const b=document.createElement('button');b.type='button';b.id='week-tab-'+(i+1);b.setAttribute('role','tab');b.setAttribute('aria-controls',p.id);b.setAttribute('aria-selected',i===0?'true':'false');b.tabIndex=i===0?0:-1;const title=p.querySelector('h3:not(.week-quiz-title)');b.textContent='第 '+(i+1)+' 週'+(title?'｜'+title.textContent.replace(/^第\s*\d+\s*週[｜|]\s*/,''):'');b.addEventListener('click',()=>select(i));b.addEventListener('keydown',e=>{let j=i;if(e.key==='ArrowRight')j=(i+1)%12;else if(e.key==='ArrowLeft')j=(i+11)%12;else if(e.key==='Home')j=0;else if(e.key==='End')j=11;else return;e.preventDefault();select(j);nav.children[j].focus();});nav.append(b);});
+ daily.after(nav,...panels);
+})();
+</script>
