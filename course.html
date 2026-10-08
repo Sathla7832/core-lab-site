@@ -49,29 +49,52 @@
   <main id="main-content"><section class="section" lang="zh-Hant"><div class="container" style="padding-top:28px;padding-bottom:36px;max-width:1600px">
 <h1 style="margin-bottom:8px">Course</h1>
 <p style="margin:0 0 18px;color:#5f6c76">依課目分類瀏覽課程與教材。</p>
-<nav aria-label="課程主題" style="display:flex;flex-wrap:wrap;gap:4px;border-bottom:1px solid #ccd3db;margin:16px 0 28px">
-  <a href="#online-quiz" style="padding:12px 20px;border-bottom:3px solid #17518c;font-weight:700">線上小考系統</a>
-  <a href="#materials-thermodynamics" style="padding:12px 20px;font-weight:700">材料熱力學</a>
-  <a href="#language" style="padding:12px 20px;font-weight:700">語言</a>
+<style>
+.course-tabs{display:flex;flex-wrap:wrap;gap:4px;border-bottom:1px solid #ccd3db;margin:16px 0 28px}
+.course-tabs button{padding:12px 20px;border:0;border-bottom:3px solid transparent;background:transparent;color:#17518c;font:inherit;font-weight:700;cursor:pointer}
+.course-tabs button[aria-selected="true"]{border-bottom-color:#17518c;background:#fff}
+.course-tabs button:focus-visible{outline:2px solid #17518c;outline-offset:3px}
+.course-panel[hidden]{display:none!important}
+</style>
+<nav class="course-tabs" role="tablist" aria-label="課程主題">
+  <button id="tab-online-quiz" type="button" role="tab" aria-controls="online-quiz" aria-selected="true" tabindex="0">線上小考系統</button>
+  <button id="tab-materials-thermodynamics" type="button" role="tab" aria-controls="materials-thermodynamics" aria-selected="false" tabindex="-1">材料熱力學</button>
+  <button id="tab-language" type="button" role="tab" aria-controls="language" aria-selected="false" tabindex="-1">語言</button>
 </nav>
-<section id="online-quiz" aria-labelledby="online-quiz-title" style="scroll-margin-top:24px;margin:0 0 36px;padding:28px 32px;border:1px solid #cbd8e1;border-left:6px solid #17518c;border-radius:14px;background:#fff;box-shadow:0 8px 24px rgba(18,55,85,.08)">
+<section id="online-quiz" class="course-panel" role="tabpanel" tabindex="0" aria-labelledby="tab-online-quiz" style="scroll-margin-top:24px;margin:0 0 36px;padding:28px 32px;border:1px solid #cbd8e1;border-left:6px solid #17518c;border-radius:14px;background:#fff;box-shadow:0 8px 24px rgba(18,55,85,.08)">
   <p style="margin:0 0 8px;color:#17518c;font-weight:700;letter-spacing:.04em">CORE LAB · ONLINE QUIZ</p>
   <h2 id="online-quiz-title" style="margin:0 0 12px">線上小考系統</h2>
   <p style="max-width:780px;margin:0 0 20px;line-height:1.75">提供教師建立題目與試卷、學生登入後練習與作答，以及自動批改與學習紀錄。請使用個人帳號進入系統。</p>
   <a class="button" href="https://quizbank-production.up.railway.app" target="_blank" rel="noopener noreferrer">進入線上小考系統 <span aria-hidden="true">↗</span></a>
 </section>
-<section id="materials-thermodynamics" aria-labelledby="materials-thermodynamics-title" style="scroll-margin-top:24px;margin:0 0 36px">
+<section id="materials-thermodynamics" class="course-panel" role="tabpanel" tabindex="0" aria-labelledby="tab-materials-thermodynamics" hidden style="scroll-margin-top:24px;margin:0 0 36px">
   <h2 id="materials-thermodynamics-title" style="margin:0 0 16px">材料熱力學</h2>
   <div style="padding:16px 20px;margin-bottom:14px;border:1px solid #cbd8e1;border-radius:12px;background:#fff">
     <h3 style="margin:0 0 6px">微分與熱力學</h3>
     <p style="margin:0;color:#5f6c76">互動課程</p>
   </div>
-  <div id="differential-thermodynamics"><iframe id="course-lesson" src="calculus-thermodynamics.html?embed=1&amp;rev=course-inline-1" title="微分與熱力學互動課程" style="display:block;width:100%;height:940px;border:0;background:#fff" loading="eager"></iframe></div>
+  <div id="differential-thermodynamics"><iframe id="course-lesson" data-src="calculus-thermodynamics.html?embed=1&amp;rev=course-inline-1" title="微分與熱力學互動課程" style="display:block;width:100%;height:940px;border:0;background:#fff" loading="lazy"></iframe></div>
 </section>
-<section id="language" aria-labelledby="language-title" style="scroll-margin-top:24px;margin:0 0 36px;padding:28px 32px;border:1px solid #cbd8e1;border-left:6px solid #36cbbb;border-radius:14px;background:#fff;box-shadow:0 8px 24px rgba(18,55,85,.08)">
+<section id="language" class="course-panel" role="tabpanel" tabindex="0" aria-labelledby="tab-language" hidden style="scroll-margin-top:24px;margin:0 0 36px;padding:28px 32px;border:1px solid #cbd8e1;border-left:6px solid #36cbbb;border-radius:14px;background:#fff;box-shadow:0 8px 24px rgba(18,55,85,.08)">
   <h2 id="language-title" style="margin:0 0 10px"><a href="course-language.html" style="color:inherit;text-decoration:none">語言</a></h2>
 </section>
 <script>
+(()=>{
+ const tabs=[...document.querySelectorAll('.course-tabs [role="tab"]')];
+ const ids=tabs.map(tab=>tab.getAttribute('aria-controls'));
+ function select(id,focus=false){
+  if(!ids.includes(id))id=ids[0];
+  tabs.forEach(tab=>{const active=tab.getAttribute('aria-controls')===id;tab.setAttribute('aria-selected',String(active));tab.tabIndex=active?0:-1;document.getElementById(tab.getAttribute('aria-controls')).hidden=!active;if(active&&focus)tab.focus();});
+  if(id==='materials-thermodynamics'){const frame=document.getElementById('course-lesson');if(!frame.hasAttribute('src'))frame.src=frame.dataset.src;}
+ }
+ function activate(index,focus=false){history.pushState(null,'','#'+ids[index]);select(ids[index],focus);}
+ tabs.forEach((tab,index)=>{
+  tab.addEventListener('click',()=>activate(index));
+  tab.addEventListener('keydown',event=>{const next=event.key==='ArrowRight'?(index+1)%tabs.length:event.key==='ArrowLeft'?(index+tabs.length-1)%tabs.length:event.key==='Home'?0:event.key==='End'?tabs.length-1:null;if(next===null)return;event.preventDefault();activate(next,true);});
+ });
+ const restore=()=>select(location.hash.slice(1));
+ window.addEventListener('hashchange',restore);window.addEventListener('popstate',restore);restore();
+})();
 window.addEventListener('message',function(event){var frame=document.getElementById('course-lesson');if(event.origin!==location.origin||event.source!==frame.contentWindow||!event.data||event.data.type!=='course-height')return;var h=Number(event.data.height);if(Number.isFinite(h)&&h>100&&h<12000)frame.style.height=Math.ceil(h)+'px';});
 </script>
 </div></section></main>
