@@ -101,8 +101,8 @@ async function main(){
  await page.evaluate(({translations})=>{
   const map=new Map(translations);const walk=document.createTreeWalker(document.querySelector('article'),NodeFilter.SHOW_TEXT);let n;
   while(n=walk.nextNode()){if(n.parentElement.closest('[data-example]'))continue;const key=n.nodeValue.trim();if(map.has(key)){const leading=n.nodeValue.match(/^\s*/)[0],trailing=n.nodeValue.match(/\s*$/)[0];n.nodeValue=leading+map.get(key)+trailing;}}
-  document.documentElement.lang='vi';document.title='Giáo trình tiếng Hoa: 12 tuần / 60 ngày | CORE Lab';
-  document.querySelector('meta[name="description"]').content='Giáo trình tiếng Hoa dành cho người lớn Việt Nam: 60 ngày học, giao tiếp công việc, bài kiểm tra và đáp án.';
+  document.documentElement.lang='vi';document.title='Giáo trình tiếng Hoa dành cho học viên Việt Nam: 12 tuần / 60 ngày | CORE Lab';
+  document.querySelector('meta[name="description"]').content='Giáo trình tiếng Hoa dành cho học viên Việt Nam: 60 ngày học, phát âm và giao tiếp công việc.';
   document.querySelector('.back').textContent='← Quay lại khóa học ngôn ngữ';
   document.querySelector('.language-switch').setAttribute('aria-label','Ngôn ngữ giáo trình');
   document.querySelector('.language-switch [aria-current]').removeAttribute('aria-current');document.querySelector('.language-switch a[lang="vi"]').setAttribute('aria-current','page');
