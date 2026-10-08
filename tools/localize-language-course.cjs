@@ -84,8 +84,18 @@ async function main(){
   const panels=Array.from({length:12},(_,i)=>{const p=document.createElement('section');p.className='week-panel';p.id='week-'+(i+1);p.setAttribute('role','tabpanel');p.setAttribute('aria-labelledby','week-tab-'+(i+1));p.hidden=i!==0;return p;});
   const nav=document.createElement('div');nav.className='week-tabs';nav.setAttribute('role','tablist');nav.setAttribute('aria-label','12 週教學內容');
   panels.forEach((p,i)=>{const b=document.createElement('button');b.type='button';b.id='week-tab-'+(i+1);b.dataset.week=String(i+1);b.setAttribute('role','tab');b.setAttribute('aria-controls',p.id);b.setAttribute('aria-selected',String(i===0));b.tabIndex=i===0?0:-1;b.textContent='第 '+(i+1)+' 週';nav.append(b)});
-  for(const nodes of[collect(daily,tests),collect(tests,teacher)]){let week=0;for(const n of nodes){const m=/^H[34]$/.test(n.tagName)&&n.textContent.match(/^第\s*(\d+)\s*週/);if(m)week=Number(m[1]);if(week)panels[week-1].append(n)}}
+  for(const nodes of[collect(daily,tests)]){let week=0;for(const n of nodes){const m=/^H[34]$/.test(n.tagName)&&n.textContent.match(/^第\s*(\d+)\s*週/);if(m)week=Number(m[1]);if(week)panels[week-1].append(n)}}
   daily.after(nav,...panels);tests.remove();
+  // Only the requested original sections 2 and 5 remain, in both languages.
+  let keep=false;
+  for(const node of [...a.children]){
+   if(node.tagName==='H1')continue;
+   if(node.tagName==='H2')keep=/^[25]\./.test(node.textContent);
+   if(!keep)node.remove();
+  }
+  a.querySelectorAll('.week-panel p').forEach(p=>{
+   if(p.querySelector('strong')?.textContent==='週四測驗：')p.remove();
+  });
  },{common,topics});
  const zh=await page.content();
  await page.evaluate(({translations})=>{
