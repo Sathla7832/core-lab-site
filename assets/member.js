@@ -21,11 +21,12 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
   const configured = Boolean(config.apiKey && config.apiKey !== "PENDING_FIREBASE_SETUP" && config.authDomain && config.projectId && config.appId);
 
   const fallPresentationDateChanges = {
+    "11/3": "11/4",
     "11/10": "11/11", "11/17": "11/18", "11/24": "11/25",
     "12/1": "12/2", "12/8": "12/9", "12/15": "12/16",
     "12/22": "12/23", "12/29": "12/30",
   };
-  const fallPresentationDates = ["10/7", "10/14", "10/21", "10/28", "11/3", "11/11", "11/18", "11/25", "12/2", "12/9", "12/16", "12/23", "12/30"];
+  const fallPresentationDates = ["10/7", "10/14", "10/21", "10/28", "11/4", "11/11", "11/18", "11/25", "12/2", "12/9", "12/16", "12/23", "12/30"];
   const correctedPresentationDate = (date) => {
     const value = String(date || "").trim();
     return fallPresentationDateChanges[value] || value;
