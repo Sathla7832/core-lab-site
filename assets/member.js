@@ -20,6 +20,20 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
   const resourceApiUrl = String(window.CORE_LAB_RESOURCE_API_URL || syncApiUrl).replace(/\/$/, "");
   const configured = Boolean(config.apiKey && config.apiKey !== "PENDING_FIREBASE_SETUP" && config.authDomain && config.projectId && config.appId);
 
+  const fallPresentationDateChanges = {
+    "11/10": "11/11", "11/17": "11/18", "11/24": "11/25",
+    "12/1": "12/2", "12/8": "12/9", "12/15": "12/16",
+    "12/22": "12/23", "12/29": "12/30",
+  };
+  const fallPresentationDates = ["10/7", "10/14", "10/21", "10/28", "11/3", "11/11", "11/18", "11/25", "12/2", "12/9", "12/16", "12/23", "12/30"];
+  const correctedPresentationDate = (date) => {
+    const value = String(date || "").trim();
+    return fallPresentationDateChanges[value] || value;
+  };
+  // Keep existing database record IDs when publishing a corrected date.
+  const presentationRecordDate = (date) => Object.keys(fallPresentationDateChanges)
+    .find((priorDate) => fallPresentationDateChanges[priorDate] === date) || date;
+
   const setStatus = (message, tone = "") => {
     if (!statusElement) return;
     statusElement.textContent = message;
@@ -352,14 +366,17 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
         host.dataset.loading = "true";
         if (state) state.textContent = "Loading the presentation schedule...";
         try {
-          const scheduleDates = ["10/7", "10/14", "10/21", "10/28", "11/3", "11/10", "11/17", "11/24", "12/1", "12/8", "12/15", "12/22", "12/29"];
+          const scheduleDates = fallPresentationDates;
           const snapshot = await dbSdk.getDocs(dbSdk.query(
             dbSdk.collection(db, "resources"),
             dbSdk.where("category", "==", "presentation-schedule"),
           ));
           const schedulePeople = snapshot.docs
             .map((item) => {
-              try { return JSON.parse(String(item.data().description || "")); }
+              try {
+                const entry = JSON.parse(String(item.data().description || ""));
+                return entry && { ...entry, date: correctedPresentationDate(entry.date) };
+              }
               catch (_error) { return null; }
             })
             .filter((entry) => entry && scheduleDates.includes(String(entry.date || "").trim())
@@ -1403,7 +1420,7 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
             try {
               if (!currentIsAdmin) throw new Error("Only an administrator can publish the schedule.");
               const parsed = JSON.parse(String(textarea?.value || ""));
-              const expectedDates = ["10/7", "10/14", "10/21", "10/28", "11/3", "11/10", "11/17", "11/24", "12/1", "12/8", "12/15", "12/22", "12/29"];
+              const expectedDates = fallPresentationDates;
               const rows = Array.isArray(parsed.rows) ? parsed.rows : [];
               if (rows.length !== expectedDates.length || rows.some((row, index) => row.date !== expectedDates[index]
                 || !Array.isArray(row.graduate) || !Array.isArray(row.undergraduate))) {
@@ -1428,7 +1445,7 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
                   role,
                   person,
                   order: index + 1,
-                  ref: dbSdk.doc(db, "resources", `schedule-2026-${row.date.replace("/", "-")}-${role}-${index + 1}`),
+                  ref: dbSdk.doc(db, "resources", `schedule-2026-${presentationRecordDate(row.date).replace("/", "-")}-${role}-${index + 1}`),
                 }))));
               const existing = await Promise.all(references.map(({ ref }) => dbSdk.getDoc(ref)));
               if (existing.some((item) => item.exists() && item.data()?.category !== "presentation-schedule")) {
