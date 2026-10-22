@@ -104,7 +104,8 @@
         </section>
 
         <section id="member-panel-research-map" class="member-content-section member-portal-panel member-research-map-panel" role="tabpanel" aria-labelledby="member-tab-research-map" data-member-panel="research-map" hidden>
-          <p class="member-research-map-state muted" data-member-research-map-state>登入並通過成員資格驗證後，研究計畫才會載入。</p>
+          <p class="member-research-map-state muted" data-member-research-map-state role="status" aria-live="polite">登入並通過成員資格驗證後，研究計畫才會載入。</p>
+          <button class="btn btn-outline" type="button" data-member-research-map-retry hidden>重新載入研究計畫</button>
           <iframe class="member-research-map-frame" title="CORE Lab 學生研究計畫與文獻閱讀路徑" data-member-research-map-frame sandbox="allow-popups allow-popups-to-escape-sandbox" loading="lazy" scrolling="auto" hidden style="display:block;width:100%;min-height:78vh;height:calc(100vh - 250px);border:1px solid #cbd8e1;border-radius:16px;background:#eef3f5;"></iframe>
         </section>
         <section id="member-panel-calendars" class="member-content-section member-calendar-section member-portal-panel" role="tabpanel" aria-labelledby="member-tab-calendars" data-member-panel="calendars" hidden>
@@ -217,6 +218,6 @@
     </div>
   </footer>
   <script defer src="assets/main.js?v=786f78fe16d8"></script>
-  <script src="assets/firebase-config.js?v=786f78fe16d8"></script><script type="module" src="assets/member.js?v=wednesday-schedule-20261022b"></script>
+  <script src="assets/firebase-config.js?v=786f78fe16d8"></script><script type="module" src="assets/member.js?v=research-plan-retry-20261022"></script>
 </body>
 </html>

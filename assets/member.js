@@ -235,9 +235,11 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
       loadMemberResearchPlans = async () => {
         const frame = document.querySelector("[data-member-research-map-frame]");
         const state = document.querySelector("[data-member-research-map-state]");
+        const retry = document.querySelector("[data-member-research-map-retry]");
         if (!frame || frame.dataset.loaded === "true" || frame.dataset.loading === "true") return;
         frame.dataset.loading = "true";
-        if (state) state.textContent = "正在載入成員專用研究計畫…";
+        if (retry) { retry.hidden = true; retry.disabled = true; }
+        if (state) { state.hidden = false; state.textContent = "正在載入成員專用研究計畫…"; }
         try {
           if (!resourceApiUrl) throw new Error("The member resource service is not configured.");
           const token = await auth.currentUser?.getIdToken();
@@ -249,7 +251,9 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
           });
           if (!response.ok) {
             const data = await response.json().catch(() => ({}));
-            throw new Error(String(data.error || "The research plans could not be loaded."));
+            const error = new Error(String(data.error || "The research plans could not be loaded."));
+            error.status = response.status;
+            throw error;
           }
           const html = await response.text();
           const blobUrl = URL.createObjectURL(new Blob([html], { type: "text/html;charset=utf-8" }));
@@ -263,9 +267,16 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
           window.addEventListener("beforeunload", () => URL.revokeObjectURL(blobUrl), { once: true });
         } catch (error) {
           frame.dataset.loading = "false";
-          if (state) state.textContent = friendlyError(error);
+          console.error("[member-portal] Research plan load failed", error);
+          if (state) state.textContent = error?.status === 401 || error?.status === 403
+            ? "目前無法驗證研究計畫的存取資格，請重新登入後再試。"
+            : "研究計畫服務暫時無法連線或尚未就緒，請稍後按「重新載入研究計畫」。若持續失敗，請通知管理者。";
+          if (retry) retry.hidden = false;
+        } finally {
+          if (retry) retry.disabled = false;
         }
       };
+      document.querySelector("[data-member-research-map-retry]")?.addEventListener("click", () => loadMemberResearchPlans());
 
       // The protected schedule API returns structured data, never markup.
       // Build each date and presenter card with text nodes so paper titles
