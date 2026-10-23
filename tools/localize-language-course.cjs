@@ -118,6 +118,8 @@ async function main(){
  const script='<script src="assets/language-course.js?v=20261008-applied"></script>';
  fs.writeFileSync(path.join(root,'course-language.html'),zh.replace('</body>',script+'</body>'));
  fs.writeFileSync(path.join(root,'course-language-vi.html'),viHTML.replace('</body>',script+'</body>'));
+ const python=process.env.PYTHON || path.join(process.env.USERPROFILE || '', '.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe');
+ require('node:child_process').execFileSync(python,[path.join(__dirname,'add-language-english.py')],{stdio:'inherit'});
  console.log('Built both static pages; translated '+data.source.length+' unique instructional text fragments.');
  await browser.close();
 }
