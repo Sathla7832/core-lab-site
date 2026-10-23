@@ -19,6 +19,8 @@ def original_examples(page):
         heads=table.xpath('./thead/tr/th')
         if len(heads)==3 and heads[-1].text_content() in ('越南文','Tiếng Việt'):
             result.extend(tuple(c.text_content() for c in row) for row in table.xpath('./tbody/tr'))
+        elif len(heads)==4 and heads[0].text_content()=='English':
+            result.extend(tuple(c.text_content() for c in row[1:]) for row in table.xpath('./tbody/tr'))
     return result
 
 

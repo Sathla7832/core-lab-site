@@ -12,7 +12,7 @@
     });
     document.querySelectorAll('.language-switch a').forEach(link => {
       link.hash = 'week-' + (index + 1);
-      if (embedded) link.search = '?embed=1&v=english-comparisons-20261023';
+      link.search = (embedded ? '?embed=1&v=' : '?v=') + 'english-comparisons-20261023';
     });
     if (focus) tabs[index].focus();
   }
