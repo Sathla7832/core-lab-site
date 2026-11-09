@@ -1,0 +1,17 @@
+const assert = require("node:assert/strict");
+const { partition } = require("../assets/schedule-timeline.js");
+const dates = ["10/7", "10/14", "10/21", "10/28", "11/4", "11/11", "11/18", "11/25", "12/2", "12/9", "12/16", "12/23", "12/30"];
+const rows = dates.map((date) => ({ date, graduate: [{ zh: "Test" }], undergraduate: [] }));
+const before = JSON.stringify(rows);
+let result = partition(rows, new Date("2026-11-09T04:00:00Z"));
+assert.equal(result.upcoming[0].date, "11/11");
+assert.equal(result.past.length, 5);
+assert.equal(result.upcoming.length, 8);
+assert.equal(partition(rows, new Date("2026-11-10T16:00:00Z")).upcoming[0].date, "11/11");
+assert.equal(partition(rows, new Date("2026-11-11T16:00:00Z")).upcoming[0].date, "11/18");
+assert.equal(partition(rows, new Date("2026-10-01T00:00:00Z")).past.length, 0);
+assert.equal(partition(rows, new Date("2026-12-31T00:00:00Z")).upcoming.length, 0);
+assert.equal(partition([], new Date()).past.length, 0);
+assert.equal(partition([...rows].reverse(), new Date("2026-11-09T00:00:00Z")).upcoming[0].date, "11/11");
+assert.equal(JSON.stringify(rows), before);
+console.log("PASS: Taiwan date, midnight rollover, current-day inclusion, history, sorting and source preservation.");

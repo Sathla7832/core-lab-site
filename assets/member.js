@@ -313,10 +313,28 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
         return list;
       };
 
+      let loadedScheduleRows = null;
+      let displayedScheduleDay = "";
       const renderScheduleBoard = (host, rows) => {
+        const timeline = window.CORE_SCHEDULE_TIMELINE;
+        const { today, upcoming, past } = timeline.partition(rows);
+        displayedScheduleDay = today;
+        loadedScheduleRows = rows;
+        const total = document.querySelector(".member-report-schedule-total");
+        if (total) {
+          total.setAttribute("aria-label", `${rows.length} scheduled presentation dates`);
+          total.querySelector("strong").textContent = String(rows.length);
+        }
+        const content = document.createDocumentFragment();
+        const next = upcoming[0];
+        const message = next
+          ? `${timeline.dateKey(next.date) === today ? "Today" : "Next date"}: ${next.date} · ${upcoming.length} upcoming dates`
+          : "All Fall 2026 dates have passed. View the schedule history below.";
+        content.append(createText("p", `Taiwan date: ${today} · ${message}`, "member-schedule-timeline-status"));
+        const makeGrid = (entries, highlightNext = false) => {
         const board = document.createElement("div");
         board.className = "member-schedule-date-grid";
-        rows.forEach((row) => {
+        entries.forEach((row, index) => {
           const [month, day] = String(row.date || "").split("/").map(Number);
           const monthLabel = Number.isInteger(month) ? new Intl.DateTimeFormat("en", { month: "long" }).format(new Date(2026, month - 1, 1)).toUpperCase() : "FALL";
           const date = document.createElement("article");
@@ -328,6 +346,10 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
             createText("h3", row.date || "Presentation date"),
             createText("span", `${(Array.isArray(row.graduate) ? row.graduate.length : 0) + (Array.isArray(row.undergraduate) ? row.undergraduate.length : 0)} presenters`, "member-schedule-presenter-count"),
           );
+          if (highlightNext && index === 0) {
+            date.classList.add("member-schedule-next-date");
+            dateHead.append(createText("span", timeline.dateKey(row.date) === today ? "Today" : "Next date", "member-schedule-next-label"));
+          }
           date.append(dateHead);
 
           [
@@ -357,8 +379,29 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
           }
           board.append(date);
         });
-        host.replaceChildren(board);
+        return board;
+        };
+        if (upcoming.length) content.append(makeGrid(upcoming, true));
+        if (past.length) {
+          const history = document.createElement("details");
+          history.className = "member-schedule-history";
+          history.append(createText("summary", `Past dates (${past.length}) · Show history`), makeGrid(past));
+          content.append(history);
+        }
+        host.replaceChildren(content);
       };
+      const refreshScheduleDay = () => {
+        const host = document.querySelector("[data-member-report-schedule-table]");
+        if (!host || host.hidden || !loadedScheduleRows) return;
+        if (window.CORE_SCHEDULE_TIMELINE.todayKey() !== displayedScheduleDay) {
+          renderScheduleBoard(host, loadedScheduleRows);
+        }
+      };
+      window.setInterval(refreshScheduleDay, 60000);
+      window.addEventListener("focus", refreshScheduleDay);
+      document.addEventListener("visibilitychange", () => {
+        if (!document.hidden) refreshScheduleDay();
+      });
 
       const scheduleEmptyState = () => {
         const message = document.createElement("div");

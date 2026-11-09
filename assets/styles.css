@@ -373,6 +373,12 @@ input:focus, textarea:focus { outline: 3px solid rgba(23,81,140,.18); border-col
 .member-report-schedule-total strong { color: var(--brand); font-size: 28px; line-height: 1; }
 .member-report-schedule-total span { font-size: 12px; font-weight: 750; }
 .member-schedule-date-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+.member-schedule-timeline-status { margin: 0 0 18px; color: var(--brand-dark); font-weight: 700; }
+.member-schedule-next-date { border: 2px solid var(--brand); }
+.member-schedule-next-label { grid-column: 1 / -1; justify-self: start; margin-top: 7px; padding: 3px 9px; border-radius: 999px; color: #fff; background: var(--brand); font-size: 12px; font-weight: 800; }
+.member-schedule-history { margin-top: 28px; }
+.member-schedule-history > summary { cursor: pointer; padding: 16px; border: 1px solid var(--line); border-radius: 12px; color: var(--brand-dark); background: var(--surface); font-weight: 750; }
+.member-schedule-history[open] > summary { margin-bottom: 18px; }
 .member-schedule-date-card { min-width: 0; overflow: hidden; border: 1px solid var(--line); border-radius: 15px; background: var(--surface); box-shadow: 0 8px 22px rgba(18, 50, 74, .055); }
 .member-schedule-date-head { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 3px 12px; padding: 19px 22px; border-bottom: 1px solid var(--line); background: var(--soft); }
 .member-schedule-date-kicker { grid-column: 1; color: var(--brand); font-size: 10px; font-weight: 850; letter-spacing: .13em; }
