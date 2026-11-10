@@ -296,17 +296,20 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
         const assigned = Array.isArray(person.presentations)
           ? person.presentations
           : (person.presentation ? [person.presentation] : []);
-        const links = assigned.filter((presentation) => presentation && presentation.url);
+        const links = assigned.filter((presentation) => presentation && (presentation.label || presentation.url));
         if (!links.length) {
           list.append(createText("li", "Reading assignment is not available yet.", "member-schedule-reading-pending"));
           return list;
         }
         links.forEach((presentation) => {
           const item = document.createElement("li");
-          const link = createText("a", scheduleChemistryText(presentation.label || "Open assigned reading"), "member-schedule-paper-link");
-          link.href = presentation.url;
-          link.target = "_blank";
-          link.rel = "noopener noreferrer";
+          const safeUrl = /^https?:\/\//i.test(String(presentation.url || ""));
+          const link = createText(safeUrl ? "a" : "span", scheduleChemistryText(presentation.label || "Open assigned reading"), "member-schedule-paper-link");
+          if (safeUrl) {
+            link.href = presentation.url;
+            link.target = "_blank";
+            link.rel = "noopener noreferrer";
+          }
           item.append(link);
           list.append(item);
         });
@@ -315,22 +318,67 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
 
       let loadedScheduleRows = null;
       let displayedScheduleDay = "";
+      let activeScheduleGroup = "undergraduate";
       const renderScheduleBoard = (host, rows) => {
         const timeline = window.CORE_SCHEDULE_TIMELINE;
-        const { today, upcoming, past } = timeline.partition(rows);
+        // The legacy mixed schedule is now solely the undergraduate view.
+        // Keep graduate source readings in memory for the new weekly schedule,
+        // but never render their superseded 15-minute dates in this view.
+        const undergraduateRows = rows.map((row) => ({ ...row, graduate: [] }));
+        const { today, upcoming, past } = timeline.partition(undergraduateRows);
         displayedScheduleDay = today;
         loadedScheduleRows = rows;
-        const total = document.querySelector(".member-report-schedule-total");
-        if (total) {
-          total.setAttribute("aria-label", `${rows.length} scheduled presentation dates`);
-          total.querySelector("strong").textContent = String(rows.length);
-        }
         const content = document.createDocumentFragment();
+        const tabs = document.createElement("nav");
+        tabs.className = "member-schedule-tabs";
+        tabs.setAttribute("role", "tablist");
+        tabs.setAttribute("aria-label", "報告學生類別");
+        const panels = {};
+        const buttons = {};
+        const selectGroup = (key, focus = false) => {
+          activeScheduleGroup = key;
+          Object.keys(panels).forEach((group) => {
+            panels[group].hidden = group !== key;
+            buttons[group].setAttribute("aria-selected", String(group === key));
+            buttons[group].tabIndex = group === key ? 0 : -1;
+          });
+          const masters = key === "graduate";
+          document.querySelector(".member-report-schedule-heading h2").textContent = masters ? "碩士班報告與共同討論" : "專題生報告時程";
+          document.querySelector(".member-report-schedule-lead").textContent = masters
+            ? "A／B 組每週交替。個別報告 13:00–14:00；每週一 14:00–17:00 四人共同討論下一組文獻。"
+            : "專題生沿用原報告日期與指定文獻，每人 15 分鐘。此排程不與 Google Calendar 同步。";
+          const total = document.querySelector(".member-report-schedule-total");
+          if (total) {
+            total.setAttribute("aria-label", masters ? "8 個碩士班報告週" : `${rows.length} 個專題生報告日期`);
+            total.querySelector("strong").textContent = masters ? "8" : String(rows.length);
+            total.querySelector("span").textContent = masters ? "報告週" : "報告日期";
+          }
+          if (focus) buttons[key].focus();
+        };
+        [ ["undergraduate", "專題生"], ["graduate", "碩士班"] ].forEach(([key, label], index) => {
+          const button = createText("button", label, "member-schedule-tab");
+          button.type = "button"; button.id = `schedule-tab-${key}`;
+          button.setAttribute("role", "tab");
+          button.setAttribute("aria-controls", `schedule-panel-${key}`);
+          button.addEventListener("click", () => selectGroup(key));
+          button.addEventListener("keydown", (event) => {
+            if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+            event.preventDefault();
+            selectGroup(event.key === "Home" ? "undergraduate" : event.key === "End" ? "graduate" : index === 0 ? "graduate" : "undergraduate", true);
+          });
+          buttons[key] = button; tabs.append(button);
+          const panel = document.createElement("section");
+          panel.id = `schedule-panel-${key}`;
+          panel.setAttribute("role", "tabpanel");
+          panel.setAttribute("aria-labelledby", button.id);
+          panels[key] = panel;
+        });
+        const undergraduate = panels.undergraduate;
         const next = upcoming[0];
         const message = next
           ? `${timeline.dateKey(next.date) === today ? "Today" : "Next date"}: ${next.date} · ${upcoming.length} upcoming dates`
           : "All Fall 2026 dates have passed. View the schedule history below.";
-        content.append(createText("p", `Taiwan date: ${today} · ${message}`, "member-schedule-timeline-status"));
+        undergraduate.append(createText("p", `Taiwan date: ${today} · ${message}`, "member-schedule-timeline-status"));
         const makeGrid = (entries, highlightNext = false) => {
         const board = document.createElement("div");
         board.className = "member-schedule-date-grid";
@@ -353,8 +401,7 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
           date.append(dateHead);
 
           [
-            { key: "graduate", label: "Graduate students" },
-            { key: "undergraduate", label: "Undergraduate students" },
+            { key: "undergraduate", label: "專題生" },
           ].forEach((group) => {
             const people = Array.isArray(row[group.key]) ? row[group.key] : [];
             if (!people.length) return;
@@ -381,14 +428,17 @@ if ((loginPage || portalPage) && !memberPageIsFramed) {
         });
         return board;
         };
-        if (upcoming.length) content.append(makeGrid(upcoming, true));
+        if (upcoming.length) undergraduate.append(makeGrid(upcoming, true));
         if (past.length) {
           const history = document.createElement("details");
           history.className = "member-schedule-history";
           history.append(createText("summary", `Past dates (${past.length}) · Show history`), makeGrid(past));
-          content.append(history);
+          undergraduate.append(history);
         }
+        window.CORE_MASTERS_SCHEDULE.render(panels.graduate, rows, schedulePresentationList, today);
+        content.append(tabs, undergraduate, panels.graduate);
         host.replaceChildren(content);
+        selectGroup(activeScheduleGroup);
       };
       const refreshScheduleDay = () => {
         const host = document.querySelector("[data-member-report-schedule-table]");

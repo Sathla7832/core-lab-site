@@ -401,6 +401,33 @@ input:focus, textarea:focus { outline: 3px solid rgba(23,81,140,.18); border-col
 .member-schedule-empty-state h3 { margin: 6px 0; color: var(--brand-dark); }
 .member-schedule-empty-state p { margin: 0; color: var(--muted); }
 .member-schedule-open-date { margin: 18px 0 8px; padding: 14px 16px; border: 1px dashed var(--line); border-radius: 12px; color: var(--muted); background: var(--soft); font-weight: 700; }
+.member-schedule-tabs { display: flex; gap: 8px; border-bottom: 1px solid var(--line); margin: 0 0 24px; }
+.member-schedule-tab { padding: 14px 24px; border: 0; border-bottom: 4px solid transparent; background: transparent; color: var(--muted); font: inherit; font-weight: 800; cursor: pointer; }
+.member-schedule-tab[aria-selected="true"] { border-bottom-color: var(--brand); background: var(--surface); color: var(--brand-dark); }
+.member-schedule-tab:focus-visible { outline: 3px solid var(--brand); outline-offset: 2px; }
+.member-masters-intro { line-height: 1.8; color: var(--muted); }
+.member-masters-scroll-hint { font-size: 13px; color: var(--muted); }
+.member-masters-scroll { max-width: 100%; overflow-x: auto; border: 1px solid var(--line); border-radius: 14px; }
+.member-masters-scroll:focus-visible { outline: 3px solid var(--brand); }
+.member-masters-table { width: 100%; min-width: 1180px; border-collapse: collapse; table-layout: fixed; background: var(--surface); font-size: 13px; }
+.member-masters-table caption { padding: 18px; background: #f0f5fa; color: var(--brand-dark); font-weight: 800; text-align: left; }
+.member-masters-table th, .member-masters-table td { padding: 16px 14px; vertical-align: top; text-align: left; border: 1px solid var(--line); overflow-wrap: anywhere; }
+.member-masters-table thead th { background: var(--brand-dark); color: #fff; }
+.member-masters-table th:first-child { width: 11%; }
+.member-masters-table th:last-child { width: 31%; }
+.member-masters-table tbody th > strong { font-size: 23px; color: var(--brand); }
+.member-masters-table p { margin: 8px 0 12px; }
+.member-masters-table small { display: block; color: var(--muted); }
+.member-masters-table .member-masters-person { display: block; font-size: 14px; line-height: 1.6; }
+.member-masters-table .member-masters-time { display: block; color: var(--brand-dark); font-weight: 800; }
+.member-masters-table .member-masters-discussion { background: #e7f3ed; }
+.member-masters-discussion h4 { color: #17694f; margin: 18px 0 10px; }
+.member-masters-discussion-reading { padding: 12px; margin: 10px 0; border-radius: 8px; background: #fff; }
+.member-masters-discussion-reading small { margin-top: 9px; }
+.member-masters-b { background: #f6f2fa; }
+.member-masters-b > th > strong { color: #8052a1 !important; }
+.member-masters-week-badge { display: inline-block; margin-top: 12px; padding: 5px 8px; border-radius: 7px; color: #fff; background: var(--brand); font-size: 11px; }
+.member-masters-next > th { border-left: 4px solid var(--brand); }
 @media (max-width: 760px) { .member-schedule-date-grid { grid-template-columns: 1fr; } }
 @media (max-width: 620px) { .member-report-schedule-heading { align-items: flex-start; padding: 23px 20px; flex-direction: column; gap: 16px; } .member-schedule-presenter-card { grid-template-columns: 1fr; gap: 7px; } .member-schedule-group { padding-right: 16px; padding-left: 16px; } .member-schedule-date-head { padding-right: 18px; padding-left: 18px; } }
 .member-directory-table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
